@@ -13,9 +13,11 @@ library(ggplot2)   # for visualising data
 library(ggalt)     # for plotting lollipops
 library(lmerTest)  # for linear-mixed models
 library(patchwork) # for attaching plots together
+library(googledrive)
 
 #### import data #############################################################
 
+drive_download("data/data_flip", path = "data/", overwrite = TRUE) 
 data <-
   read_xlsx("data/data_flip.xlsx") %>%                # import data
   mutate(group = case_when(hpp > 0 ~ "more",          # group participants into one or several HPP
