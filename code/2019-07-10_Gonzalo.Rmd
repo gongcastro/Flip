@@ -1,0 +1,385 @@
+---
+title: "Flip: Data analysis"
+csl: apa.csl
+date: "10/07/2019"
+output:
+  word_document:
+    reference_docx: reference.docx
+  pdf_document:
+    number_sections: yes
+bibliography: bibliography/flip.bib
+nocite: | 
+  @santolin2019a, @santolin2019b
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	message = FALSE,
+	warning = FALSE,
+	include = TRUE
+)
+options(knitr.kable.NA = '-')
+```
+
+```{r load_packages, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+# load packages
+library(readxl)    # for importing Excel files
+library(magrittr)  # for using pipes
+library(dplyr)     # for manipulating data
+library(tidyr)     # for manipulating datasets
+library(nlme)      # for fitting Linear-Mixed Models
+library(car)       # for checking assumptions 
+library(knitr)     # for table presentation
+library(ggplot2)   # for visualising data
+library(patchwork) # for arranging plots
+library(purrr)     # for functional programming
+library(ggthemes)  # plot colours
+```
+
+# Novelty Preference Score (NPS)
+We calculated the corrected novelty preference score for each participant by subtracting the average looking time in familiar trials from average looking time in novel trials; then, we divided the result by the sum of both. This is to correct for the total time each baby looks. We then transformed this score to a percentage by multiplying it for 100. For formula is as follows:
+
+$$ NPS_i = \frac{LT_{novel_i} - LT_{familiar_i}}{LT_{novel_i} + LT_{familiar_i}}\times100$$
+
+$LT_{novel_i}$ is the mean looking time in novel trials, calcultated as follows (where $i$ and $j$ index participant and trial, respectively): 
+
+$$LT_{novel} = \frac{\sum{LT_{novel_{ij}}}}{j}$$
+
+$LT_{familiar_i}$ is the mean looking time in familiar trials, calculated as follows:
+
+$$LT_{familiar} = \frac{\sum{LT_{familiar_{ij}}}}{j}$$
+
+# Descriptive statistics
+
+The number of HeadTurn Preference Procedure (HPP) studies represents the total number of HPP studies done by the infants (it goes from 1 to 5). 
+
+```{r import, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+data <-
+  read_xlsx("data/flip.xlsx") %>%                              # import data
+  mutate(
+    total           = novel+familiar,                          # total looking time (ms)
+    difference      = novel-familiar,                          # difference score (ms, uncorrected)
+    preference      = ((novel-familiar)/(novel+familiar))*100, # preference (corrected by total looking time)
+    preference_abs  = abs(preference),                         # absolute preference (no direction of preference)
+)          
+```
+
+```{r descriptives, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+data %>%
+  group_by(study, hpp) %>%                              # group by conditions of interest
+  summarise(n = n(),                                    # number of observations in each condition
+            mean_preference = mean(preference),         # Mean preference
+            sd_preference = sd(preference),             # SD of preference
+            sem_preference = sd_preference/sqrt(n)) %>% # SEM of preference
+  kable(.,
+        digits = 2,
+        row.names = FALSE,
+        col.names = c("Study", "HPP", "n", "NPS average (%)", "SD", "SEM"),
+        align = "c", caption = "Saffran & Wilson refers to Saffran & Wilson (2003, Exp. 2); Syntax refers to Wisconsin experiment (Santolin & Saffran, 2019) and Barcelona experiment (Santolin, Saffran & Sebastian-Galles, WILD poster). ")
+```
+
+# Linear Mixed Modeling
+
+## Specifying the model
+
+All experiments had been run with HPP. Despite them being similar/identical in terms of procedure, experiments do differ in terms of learning problem. Therefore, it is reasonable to expect the intercept (= overall mean) of NPS to be different across studies 
+It is also possible that the effect of number of HPP studies done by infants “behaves” differently across studies. To account for such variability, we will incorporate random intercepts and slopes in our model. In other words, NPS will not be forced to fit an overall model but will only have to fit the intercept of the correspondent study.
+
+We have built three models that we will compare to each other to explore which one better accounts for NPS (the novelty preference): 
+
+* 1st model (*M0*) only incorporates random intercepts for each study (study). 
+* 2nd model (*M1*) incorporates an additional predictor: total number of HPP studies done by infants (hpp)
+* 3rd model (*M2*) also incorporates a random slope, allowing predictor hpp to exert a different effect in each study.
+
+We used the nlme R package [@nlme] for fitting the Linear Mixed Models. We have assumed a variance components covariance structure for both all models. The HPP predictor was not centered (the grand or group mean was not subtracted from each score), given that such transformation would only change the interpretation of the parameters, and the scale in which this variable is expressed is meaningful in itself. We are thus interested in exploring whether the flip in preference can be explained by an increment (in units) in number of HPP.
+
+
+$$ M0: NPS = (\beta_0 + \gamma_{0i})+ \varepsilon_{ij}$$
+
+$$ M1: NPS = (\beta_0 + \gamma_{0i}) + (\beta_1 \times HPP_{ij}) + \varepsilon_{ij}$$
+
+$$ M2: NPS = (\beta_0 + \gamma_{0i}) + (\beta_1 + \gamma_{1i}) \times HPP_{ij} + \varepsilon_{ij}$$
+
+## Estimating coefficients
+
+We used the method of Maximum Likelihood (ML) to estimate parameters, instead of the by-default suggested Restricted Maximum Likelihood (REML), give its higher accuracy when estimating the coefficeints of the fixed effects. In our case, the fixed effect is the one of most interest. Due to the failure of the M2 model (random slopes) to converge, we changed the optimiser to `opt`, following @field2013's recomendations.
+
+```{r fit, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+
+M0 <- nlme::lme( # fit data to random intercepts
+  preference ~ 1, random = ~1|study,
+  data = data, method = "ML",
+  control = list(opt = "optim"), 
+) 
+
+M1 <- nlme::lme( # fit data to random intercepts and fixed slope
+  preference ~ hpp, random = ~1|study,
+  data = data, method = "ML",
+  control = list(opt = "optim")
+) 
+
+M2 <- nlme::lme( # fit data to random intercepts and random slope
+  preference ~ hpp, random = ~hpp|study,
+  data = data, method = "ML",
+  control = list(opt = "optim")
+) 
+
+anova <- anova(M0, M1, M2) # compare models
+
+# models' predictions
+predicted0 <- predict(M0)
+predicted1 <- predict(M1)
+predicted2 <- predict(M2)
+predicted.fixed <- predict(lm(preference~hpp, data = data)) # just for comparing the fit with an only-fixed effects model (i.e. just for fun)
+
+```
+
+**Akaike's Information Criterion (AIC)** was lower for the *M1* model (`r round(summary(M1)$AIC, 2)`, random intercepts and hpp) than for the *M0* (`r round(summary(M0)$AIC, 2)`, only random intercepts) and the *M2* (`r round(summary(M2)$AIC, 2)`, random slopes) models. Regarding the change in **-2LogLikelihood**, incorporating `HPP` as a predictor in addition to the random intercepts lead to a statistically significant reduction of the -2LogLikelihood (i.e. better fit): $\chi^2_{Change}$ (`r anova[2, 3] - anova[1, 3]`) = `r round(anova[2, 8], 2)`, *p* = `r round(anova[2, 9], 3)`. Incorporating random slopes  of `HPP` to the previous model did not lead to a statistically significant reduction of the -2LogLikelihood: $\chi^2_{Change}$ (`r anova[3, 3] - anova[2, 3]`) = `r round(anova[3, 8], 2)`, *p* = `r round(anova[3, 9], 3)`.
+    
+```{r anova_table, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+anova %>%
+  select(
+    df,
+    AIC,
+    logLik,
+    L.Ratio,
+    "p-value") %>%
+  knitr::kable(.,
+               digits = 3,
+               col.names = c("DF", "AIC", "logLik", "L. Ratio", "p"),
+               align = 'c',
+               caption = 'Model comparison. The random intercepts + HPPs fitted best the data.')
+```
+
+## Significance testing
+
+We performed a t-test for each coefficient of the *M1* model, which is the one that best fitted the data. The significance criterion was set at $\alpha$ = .05. The number of HPP significantly predicted an increase in novelty preference, *b* = `r round(summary(M1)$coefficients$fixed[2], 2)`, *t*(`r round(summary(M1)$tTable[2, 3], 2)`) = `r round(summary(M1)$tTable[2, 4], 2)`, `r round(summary(M1)$tTable[2, 5], 3)`, $CI_{0.95}$ = `r round(intervals(M1)$fixed[2, 1], 2)`, `r round(intervals(M1)$fixed[2, 3], 2)`, Cohen's *d* = `r round(2*(summary(M1)$tTable[2, 4])/sqrt(summary(M1)$tTable[2, 3]), 2)`.
+
+
+```{r t.table, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+t.table <-
+  summary(M1)$tTable %>%
+  as.data.frame() %>%
+  rename(
+    t = 't-value',
+    p = 'p-value',
+    b = 'Value'
+  ) %>%
+  mutate(
+    ci95_low = round(intervals(M1, 0.95)$fixed[,1], 2),
+    ci95_upp = round(intervals(M1, 0.95)$fixed[,3], 2),
+    es = (2*t)/sqrt(DF)
+  ) %>%
+  select(b, ci95_low, ci95_upp, Std.Error, DF, t, p, es) %>%
+  unite("ci95", c("ci95_low", "ci95_upp"), sep = ", ")
+
+knitr::kable(
+  t.table,
+  digits = 3,
+  align = 'c',
+  col.names = c("b", "95% CI", "SEM", "DF", "t-value", "p-value", 'd')
+)
+```
+
+## Interpreting the model
+
+The model that included random intercepts for each study, and the number of HPP as a predictor fitted the data better than the rest. A increase of one HPP study predicted a `r round(t.table$b[2], 2)`% increase in novelty preference. The probability associated with this value was low enough to reject the null hypothesis of $H_0: b = 0$, where $b$ is the coefficient at .05 significance criterion (*p* = `r round(t.table$p[2], 3)`). The associated effect size was a Cohen's *d* of `r round(t.table$es[2], 2)`, large following Cohen's benchmarks [@cohen2013].
+
+```{r M1, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+ggplot(data, aes(x = hpp, y = preference, colour = study, group = study)) +
+  geom_point(alpha = 0.7, size = 2, position = position_nudge(x = -0.1)) +
+  stat_summary(fun.data = "mean_cl_boot", geom = "pointrange", size = 0.7) +
+  stat_summary(aes(y = predicted1), fun.y = mean, geom = "line") +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  labs(title = "Random intercepts + HPP", x = "Nº HPP", y = "Novelty preference score (%)", colour = "Study") +
+  scale_color_few() +
+  theme(
+    legend.position = "top",
+    panel.grid.major.x = element_blank(),
+    text = element_text(size = 12),
+    axis.text = element_text(colour = "black")
+  ) +
+  ggsave("figures/m1.png")
+
+```  
+ 
+In other words, M1 is saying that the more HPP, the higher the preference for the novel stimulus at test. One could argue that infants are just “getting better” at task, instead of really showing a flip in preference. This is because the model doesn’t really tell us if babies discriminated (we do know this from results of each study, though). What we did next is re-testing discrimination for each study. 
+
+We re-tested discrimination using the absolute NPS and compare it to chance level (0%) instead of classic difference score ($LT_{novel} - LT_{familiar}$). This is because difference score does not take into account total looking time of each baby. For instance, let’s say that in the same sample, we have: 
+* Baby A looking at novel stimulus for 10 secs, and at familiar for 8 secs; total looking time = 18 secs, and difference score = 2 secs. 
+* Baby B looking at novel for 4 secs, and at familiar for 2 secs; total looking time = 6, difference score = 2
+Difference score is the same for both babies, but they differ in the proportion of looking at the novel stimulus. 
+
+# Testing discrimination
+
+We compared the NPS in absolute value to chance level (= 0%, no preference). We computed the absolute value to avoid infants in the same group presenting opposite preferences that would result in a misleading close-to-chance preference score. Let’s say that half of the infants that completed 5 HPPs displayed a 5% novelty, and that the other half displayed a -5% novelty preference (i.e. a familiarity preference); when doing the average of such values, we would get a 0% preference. Nonetheless, these infants are discriminating. Using absolute NPS allows us to avoid this. For now, we are interested in testing whether infants are showing any preference, and not in the direction of such preference.
+
+```{r descriptives_absolute, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+discrimination <-
+  data %>%
+  group_by(study, hpp) %>%                          # group by conditions of interest
+  summarise(n = n(),                                # number of observations in each condition
+            mean_preference = mean(preference_abs), # Mean absolute novelty preference
+            sd_preference = sd(preference_abs),     # SD of absolute novelty preference
+            sem_preference = sd_preference/sqrt(n)) # SEM of absolute novelty preference 
+  kable(discrimination,
+        digits = 2,
+        row.names = FALSE,
+        col.names = c("Study", "HPP", "n", "Mean (%)", "SD", "SEM"),
+        align = "c",
+        caption = "Mean abolute novelty preference score by study and number of HPPs.")
+```
+
+The absolute NPS score was >5% in all Study  HPP conditions. No significance testing was performed, given that in some conditions the sample size was too small. Nonetheless, a 5% preference is higher than what other studies have considered as meaningful^[Actually I have not checked yet. We may need to calculate the difference in time between novel and familiar trials in some relevant studies to be able to say that all groups in this study showed a preference toward any of the stimuli. This way, we would adress any concern about whether the number of HPP studies predicts an increase in overall performance instead of a flip in the direction of the preference. For instance, if infants with no experience on HPP studies show no preference, but more experienced infants do, it could be said that the number of HPPs predicts a better performance in the task.]. Therefore, we conclude that, at the group level, all infants in all conditions showed a preference toward either the familiar or the unfamiliar stimuli.
+
+```{r discrimination_plots, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(data, aes(x = hpp, y = preference_abs, group = hpp, colour = study)) +
+  geom_point(size = 2, alpha = 0.7, position = position_nudge(x = -0.2)) +
+  stat_summary(fun.data = mean_cl_boot, geom = "pointrange", size = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  labs(x = "Nº HPP", y = "Absolute novelty preference (%)",
+       title = "Absolute novelty preference score by Nº HPP and study",
+       subtitle = "Red dots and whiskers indicate mean and bootstrapped 95% CI, respectively",
+       colour = "Study") +
+  scale_colour_few() +
+  theme(
+    text = element_text(colour = "black", size = 12),
+    legend.position = "top"
+  ) +
+  facet_wrap(~study) +
+  ggsave("figures/discrimination.png")
+  
+```
+
+# Appendices
+
+## Appendix 1: All models (and an only-fixed-effects model for comparison)
+
+```{r visualise_models, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# only fixed effects
+ggplot(data, aes(x = hpp, y = preference)) +
+  geom_point(alpha = 0.7, size = 2, aes(colour = study), position = position_nudge(x = -0.2)) +
+  stat_summary(fun.data = "mean_cl_boot", geom = "pointrange") +
+  stat_summary(aes(y = predicted.fixed), fun.y = mean, geom = "line") +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  labs(title = "No random effects (just HPP)", x = "Nº HPP", y = "Novelty preference score (%)", colour = "Study") +
+  scale_colour_few() +
+  theme(text = element_text(size = 12),
+        axis.text = element_text(colour = "black"),
+        legend.position = "top",
+        axis.title.x = element_blank(),
+        panel.grid.major.x = element_blank()) +
+  # M0: random intercepts
+  ggplot(data, aes(x = hpp, y = preference, colour = study, group = study)) +
+  geom_point(alpha = 0.7, size = 2, position = position_nudge(x = -0.2)) +
+  stat_summary(fun.data = "mean_cl_boot", geom = "pointrange") +
+  stat_summary(aes(y = predicted0), fun.y = mean, geom = "line") +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  labs(title = "Random intercepts", x = "Nº HPP", y = "Novelty preference score (%)", colour = "Study") +
+  scale_colour_few() +
+  theme(text = element_text(size = 12),
+        axis.text = element_text(colour = "black"),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        legend.position = "top",
+        panel.grid.major.x = element_blank()) +
+  # M1: random intercepts + HPP
+  ggplot(data, aes(x = hpp, y = preference, colour = study, group = study)) +
+  geom_point(alpha = 0.7, size = 2, aes(colour = study), position = position_nudge(x = -0.2)) +
+  stat_summary(fun.data = "mean_cl_boot", geom = "pointrange") +
+  stat_summary(aes(y = predicted1), fun.y = mean, geom = "line") +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  labs(title = "Random intercepts + HPP", x = "Nº HPP", y = "Novelty preference score (%)", colour = "Study") +
+  scale_colour_few() +
+  theme(text = element_text(size = 12),
+        axis.text = element_text(colour = "black"),
+        legend.position = "top",
+        panel.grid.major.x = element_blank()) +
+  # M2: random intercepts + HPP + random slopes
+  ggplot(data, aes(x = hpp, y = preference, colour = study, group = study)) +
+  geom_point(alpha = 0.7, size = 2, aes(colour = study), position = position_nudge(x = -0.2)) +
+  stat_summary(fun.data = "mean_cl_boot", geom = "pointrange") +
+  stat_summary(aes(y = predicted2, group = study), fun.y = mean, geom = "line") +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  labs(title = "Random intercepts + HPP + random slopes", x = "Nº HPP", y = "Novelty preference score (%)", colour = "Study") +
+  scale_colour_few() +
+  theme(text = element_text(size = 12),
+        axis.text = element_text(colour = "black"),
+        axis.title.y = element_blank(),
+        legend.position = "top",
+        panel.grid.major.x = element_blank()) +
+  # layout
+  plot_layout(ncol = 2, nrow = 2) +
+  ggsave("figures/models.png", height = 6, width = 9)
+```
+
+
+## Appendix 2: Raw data
+
+```{r data, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+data %>%
+  select(study, hpp, novel, familiar, total, preference) %>%
+  kable(.,
+        digits = 2,
+        row.names = TRUE,
+        col.names = c("Study", "HPP", "Novel (ms)", "Familiar (ms)",
+                      "Total (ms)", "Preference (%)"))
+```
+
+## Appendix 3: Checking assumptions
+
+### Normality of residuals
+
+```{r normality, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+residuals <- data.frame(residuals = residuals(M1))
+residuals %>%
+  ggplot() +
+  geom_density(aes(x = residuals)) +
+  labs(x = "Residuals", y = "Probability density", title = "Distribution of residuals") +
+  theme(
+    text = element_text(size = 12),
+    axis.text = element_text(colour = "black")
+  ) +
+  ggplot(data = residuals, aes(sample = residuals)) +
+  geom_qq() +
+  geom_qq_line(colour = "red") +
+  labs(x = "Theoretical normal distribution", y = "Oberseved residuals", title = "QQ plot") +
+  theme(
+    text = element_text(size = 12),
+    axis.text = element_text(colour = "black")
+    ) +
+  plot_layout(nrow = 1)
+```
+
+### Homoskedasticity
+
+```{r homoskedasticity, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+levene <-
+  leveneTest(residuals(M1) ~factor(data$hpp)*data$study) %>%
+  rename(
+    f = 'F value',
+    p = 'Pr(>F)'
+  )
+```
+
+We checked the homoskedasticity assumption (i.e. equality of variances) using the Levene's test included in the `car` R package [@car]. We found no evidence against null hypothesis of equality of variances across the different levels of the `HPP` predictor in either of the studies, *F*(`r levene$Df[1]`, `r levene$Df[2]`) = `r round(levene$f[1], 3)`, *p* = `r round(levene$p[1], 3)`.
+
+```{r homoskedasticity_plot, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+data.frame(study = data$study, hpp = data$hpp, residuals = residuals(M1)) %>%
+ggplot(., aes(x = hpp, y = residuals, group = hpp)) +
+  geom_boxplot() +
+  labs(x = "Residuals", y = "Nº HPP") +
+  facet_wrap(.~study, ncol = 1) +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    text = element_text(size = 12),
+    axis.text = element_text(colour = "black")
+  )
+```
+
+
+# References
