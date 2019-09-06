@@ -1,4 +1,6 @@
-# Flip: Is previous experience with the HeadTurn Preference Procedure associated to the novelty/familiarity preference displayed at testing?
+# Flip
+
+Is previous experience with the **HeadTurn Preference Procedure** associated to the **novelty/familiarity** preference displayed at testing?
 
 This repository is organised as follows:
 
