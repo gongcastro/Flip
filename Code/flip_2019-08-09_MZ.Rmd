@@ -1,0 +1,506 @@
+---
+title: "Flip - Further Preliminary Analyses"
+output:
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 4
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+#install packages
+library(tidyverse) #tidyr packages
+library(cowplot) #nice plot defaults
+library(lmSupport) #for linear model analysis
+library(lme4)
+library(car)
+library(psych)
+library(knitr)
+library(broom)
+```
+
+First, we read in the data and compute both the novelty preference (total looking time to the novel stimuli minus total looking time to familiar stimuli), as well as the novelty preference **corrected for total looking time**, i.e. the "novelty preference score" described in the summary from 10 July 2019.
+
+```{r, message=F}
+#read in data
+d <- read_csv("data/flip.csv")
+
+#novelty preference measures
+d <- d %>%
+  mutate(
+    novel_pref=novel-familiar,
+    novel_pref_corr=(novel-familiar)/(familiar+novel),
+    avg_looking_time=(novel+familiar)/2)
+```
+
+##Compare distributions of Syntax and Saffran & Wilson
+
+The first thing I think that it makes sense to do is just to look at the distribution of (average) looking time for familiar and novel stimuli in the two studies. This seems like a good first step before combining the data from the two studies.
+
+```{r}
+##convert data to long format
+#also perform some centering transformations that will be useful in fitting models
+d_long <- gather(d,"looking.type","looking.time",familiar,novel)  %>%
+  mutate(
+    looking.type.c=case_when(
+      looking.type == "familiar" ~ -0.5,
+      looking.type == "novel" ~ 0.5
+      ),
+    hpp.c=hpp-mean(hpp)
+  )
+
+ggplot(d_long,aes(looking.type,looking.time,color=looking.type))+
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))+
+  geom_jitter(width=0.01, height=0.01)+
+  geom_line(aes(group=baby),color="black",alpha=0.2)+
+  facet_wrap(~study+location)
+```
+
+Looking at the average looking times, it seems from visual inspection that the distributions look somewhat similar. Perhaps the looking times for Syntax in Wisconsin are somewhat shorter, mainly because the looking times to familiar items look substantially shorter in Wisconsin compared to Barcelona. 
+
+In general, there's nothing that looks too dramatic here to me suggesting that one distribution looks radically different than the others (in shape or in the range of values).
+
+##Linear (Correlational) Analyses
+
+As a first step, I'm just going to look at the linear relationship between visit number and headturn preference, not accounting for non-independence due to other factors (e.g., study). This helps for getting a sense of the simple effect and how robust it is to different sources of non-independence/ analytical decisions. I'll also look at how much the effect relies on high leverage points (children with higher visit numbers) and visualize the effect for each study and location.
+
+###Visit number predicts magnitude of novelty/ familiarity preference {.tabset}
+
+####Uncorrected novelty preference
+```{r}
+ggplot(d, aes(hpp, novel_pref,color=as.factor(hpp)))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75))+
+  geom_jitter(width=0.01, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position="none")+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(not corrected for total looking time")
+```
+
+Fit a linear model predicting novelty preference from number of HPP visits (equivalent to a correlation).
+
+```{r results="asis"}
+#novelty preference
+m <- lm(novel_pref~hpp,data=d)
+#modelSummary(m)
+m %>%
+  summary() %>%
+  tidy() %>%
+  kable(digits=5)
+```
+
+
+####Corrected novelty preference
+```{r}
+ggplot(d, aes(hpp, novel_pref_corr,color=as.factor(hpp)))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75))+
+  geom_jitter(width=0.01, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position="none")+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(corrected for total looking time")
+```
+
+Fit a linear model predicting novelty preference from number of HPP visits (equivalent to a correlation).
+
+```{r results="asis"}
+#novelty preference
+m <- lm(novel_pref_corr~hpp,data=d)
+#modelSummary(m)
+m %>%
+  summary() %>%
+  tidy() %>%
+  kable(digits=5)
+```
+
+###Split the prediction by study/location {.tabset}
+
+####Split by study (Santolin vs. Saffran & Wilson)
+```{r}
+#split by study
+ggplot(d, aes(hpp, novel_pref_corr,color=study))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75))+
+  geom_jitter(width=0.01, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position="none")+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(corrected for total looking time")+
+  facet_wrap(~study)
+```
+
+
+####Split by study and location (Wisconsin vs. Barcelona)
+```{r}
+ggplot(d, aes(hpp, novel_pref_corr,color=study))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75))+
+  geom_jitter(width=0.01, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position="none")+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(corrected for total looking time")+
+  facet_wrap(~study+location)
+```
+
+###How robust is this analysis to reduced numbers of visits {.tabset}
+
+####1 - 5 visits
+```{r}
+ggplot(d, aes(hpp, novel_pref_corr,color=study))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75))+
+  geom_jitter(width=0.05, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position=c(0.65,0.3))+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(corrected for total looking time")
+```
+
+Fit a linear model predicting novelty preference from number of HPP visits (equivalent to a correlation).
+
+```{r results="asis"}
+#novelty preference
+m <- lm(novel_pref_corr~hpp,data=d)
+#modelSummary(m)
+m %>%
+  summary() %>%
+  tidy() %>%
+  kable(digits=5)
+```
+
+####1 - 4 visits
+```{r}
+ggplot(filter(d,hpp<5), aes(hpp, novel_pref_corr,color=study))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75))+
+  geom_jitter(width=0.05, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position=c(0.7,0.3))+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(corrected for total looking time")
+```
+
+Fit a linear model predicting novelty preference from number of HPP visits (equivalent to a correlation).
+
+```{r results="asis"}
+#novelty preference
+m <- lm(novel_pref_corr~hpp,data=filter(d,hpp<5))
+#modelSummary(m)
+m %>%
+  summary() %>%
+  tidy() %>%
+  kable(digits=5)
+```
+
+####1 - 3 visits
+```{r}
+ggplot(filter(d,hpp<4), aes(hpp, novel_pref_corr,color=study))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75))+
+  geom_jitter(width=0.05, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position=c(0.7,0.2))+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(corrected for total looking time")
+```
+
+Fit a linear model predicting novelty preference from number of HPP visits (equivalent to a correlation).
+
+```{r}
+#novelty preference
+m <- lm(novel_pref_corr~hpp,data=filter(d,hpp<4))
+#modelSummary(m)
+m %>%
+  summary() %>%
+  tidy() %>%
+  kable(digits=5)
+```
+
+####1 - 2 visits
+```{r}
+ggplot(filter(d,hpp<3), aes(hpp, novel_pref_corr,color=study))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75))+
+  geom_jitter(width=0.05, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position=c(0.35,0.8))+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(corrected for total looking time")+
+  scale_x_continuous(breaks=c(1,2))
+```
+
+Fit a linear model predicting novelty preference from number of HPP visits (equivalent to a correlation).
+
+```{r}
+#novelty preference
+m <- lm(novel_pref_corr~hpp,data=filter(d,hpp<3))
+#modelSummary(m)
+m %>%
+  summary() %>%
+  tidy() %>%
+  kable(digits=5)
+```
+
+## Linear mixed-effects analyses
+
+###Reproducing analysis with summarized difference score
+
+This essentially reproduces the model reported in the shared analysis script from
+10 July 2019, with a few slight technical differences. For instance, I will simply fit the model with the maximal random effects structure here as the "default" and use Wald chi-squared tests to get p-values (not my preferred method, which is Kenward-Rogers approximantion, but this has some odd issues in this instance - see below).
+
+```{r}
+#center hpp
+d <- d%>%
+  mutate(
+    hpp.c=hpp - mean(hpp)
+)
+m <- lmer(novel_pref_corr~hpp.c+(1+hpp.c|study),data=d)
+summary(m)
+Anova(m,type="III")
+```
+
+
+###Approach using long-format data & lme4
+
+The best (most powerful) analysis would involve fitting linear mixed-effects models to the trial-by-trial looking data. This model would look something like this, fit on the trial-level looking data:
+
+**lmer(looking.time ~ looking.type x hpp + (1 + looking.type| baby) + (1 | item)+ (1+looking.typexhpp|study))**
+
+For now, let's consider a mixed-effects model fit to the average looking time data.
+
+I think the model that we want to test would involve predicting an interaction between item type (familiar vs. novel) and number of hpp visits on looking time - the effect of familiar vs. novel items on looking behavior **depends on** the number of headturn visits an infant has had.
+
+**lmer(looking.time ~ looking.type x hpp + (1 | baby) + (1+hpp|study))**
+
+We include a by-participant random intercept, since we have multiple observations per baby. Since item type has only two levels, we fit the model without a by-participant random slope (since this overdetermines the model; my understanding is that it's OK to still force the model to accept the random slope, but it shouldn't much matter for the estimates).
+
+```{r}
+m <- lmer(looking.time~looking.type.c*hpp.c+(1|baby)+(1+hpp.c|study),data=d_long)
+summary(m)
+Anova(m,type="III")
+```
+
+The significant interaction term suggests that the number of visits changes the relationship between item type and looking time, i.e. the nature of the familiarity/novelty preference.
+
+The way to get appropriate p-values from lmer models is of course a matter of debate. Here, we used a Wald chi-squared test. Typically, the method I prefer is the Kenward-Rogers approximation which estimates the "correct" degrees of freedom. However, there's something a bit odd going on when adding the hpp by-study random slope with this method, which is probably because study only has two levels. The chi-squared method should be fine, but this is also something we could do a deeper dive on down the road (it might also be just another argument against including the hpp by-study random slope).
+
+
+###Is the effect robust when we remove babies with high numbers of visits (4 or 5)?
+
+Checking here that the effect still holds when we remove high leverage points - the handful of babies who had 4 or 5 visits.
+
+```{r}
+m <- lmer(looking.time~looking.type.c*hpp.c+(1|baby)+(1+hpp.c|study),data=filter(d_long,hpp<4))
+summary(m)
+Anova(m,type="III")
+```
+
+##How to interpret the distribution of absolute values of novelty preference scores?
+
+To address this question, I ran two separate small-scale simulations based on the distribution of looking times in our existing data set. The general question is - what might the distribution of absolute novelty preferences scores look like, in general, even in the absence of underlying systematic individual differences in preference direction.
+
+###Shuffled ids
+
+The first simulation I ran was simply re-shuffling infant ids across the observed looking times. On each iteration, I re-shuffled subject ids within the set of novel and familiar looking times for each study, while maintaining the proportion of infants with each number of HPP visits. This breaks the association between a specific looking time for familiar stimuli and a specific looking time for novel stimuli. 
+
+Below is a plot of the distribution of **average** absolute NPS values after 1000 simulations. The observed absolute NPS values in the current study are plotted in black. As we can see, it seems like the observed absolute NPS values would not be surprising in the absence of systematic relationships between familiar and novel looking time stimuli, given the distribution of those values in the population in general.
+
+```{r, message=F, warning=F}
+#simulation of noisy looking and using absolute values in preferential looking.
+
+#shuffle infant ids across looking type
+
+summary_stats_shuffling <- data.frame()
+
+num_reps <- 1000
+
+set.seed(100)
+
+for (i in 1:num_reps) {
+  d_long_shuffled <- data.frame()
+  
+  for (study_name in unique(d_long$study)) {
+    #break apart long data into a familiar and novel looking data frame
+    familiar <- filter(d_long,looking.type=="familiar"&study==study_name)
+    novel <- filter(d_long,looking.type=="novel"&study==study_name)
+    
+    #shuffle subject ids within each of these data frames
+    #in other words, each subject becomes randomly associated with another looking time
+    familiar_shuffled_order <- sample(1:nrow(familiar))
+    familiar$baby_shuffled <- familiar$baby[familiar_shuffled_order]
+    familiar$hpp_shuffled <- familiar$hpp[familiar_shuffled_order]
+    
+    novel_shuffled_order <- sample(1:nrow(novel))
+    novel$baby_shuffled <- novel$baby[novel_shuffled_order]
+    novel$hpp_shuffled <- novel$hpp[novel_shuffled_order]
+    
+    #recombine the two data sets
+    temp <- bind_rows(familiar,novel)
+    d_long_shuffled <- bind_rows(d_long_shuffled,temp)
+    
+  }
+  
+  
+  #compute novelty preference for shuffled baby labels
+  d_shuffled <- d_long_shuffled %>%
+    group_by(baby_shuffled,hpp_shuffled,study) %>%
+    summarize(
+      novelty_pref=looking.time[looking.type=="novel"]-looking.time[looking.type=="familiar"],
+      novelty_pref_corr=(looking.time[looking.type=="novel"]-looking.time[looking.type=="familiar"])/(looking.time[looking.type=="novel"]+looking.time[looking.type=="familiar"]),
+      novelty_pref_corr_abs=abs(novelty_pref_corr)
+    )
+  
+  summary_shuffled <- d_shuffled %>%
+    group_by(study, hpp_shuffled) %>%
+    summarize(N=sum(!is.na(novelty_pref_corr_abs)),M_abs_novelty_pref_corr=mean(novelty_pref_corr_abs),SD=sd(novelty_pref_corr_abs)) %>%
+    mutate(CI_low=M_abs_novelty_pref_corr-qt(0.975,df=N-1)*SD/sqrt(N), CI_high=M_abs_novelty_pref_corr+qt(0.975,df=N-1)*SD/sqrt(N))
+  
+  summary_shuffled$repetition <- i
+  
+  #add to overall data frame
+  summary_stats_shuffling <- bind_rows(summary_stats_shuffling,summary_shuffled)
+}
+
+summary_absolute_preference <- d %>%
+  mutate(novelty_pref_corr_abs=abs(novel_pref_corr)) %>%
+  group_by(study, hpp) %>%
+  summarize(N=sum(!is.na(novelty_pref_corr_abs)),M_abs_novelty_pref_corr=mean(novelty_pref_corr_abs),SD=sd(novelty_pref_corr_abs)) %>%
+  mutate(CI_low=M_abs_novelty_pref_corr-qt(0.975,df=N-1)*SD/sqrt(N), CI_high=M_abs_novelty_pref_corr+qt(0.975,df=N-1)*SD/sqrt(N))
+  
+
+
+#plot distribution of mean absolute novelty preference numbers, by study
+ggplot(summary_stats_shuffling,aes(hpp_shuffled,M_abs_novelty_pref_corr,color=study))+
+  geom_violin(aes(group=hpp_shuffled))+
+  geom_boxplot(aes(group=hpp_shuffled),width=0.5)+
+  geom_jitter(width=0.01)+
+  facet_wrap(~study)+
+  scale_y_continuous(breaks=seq(0,0.6,0.1))+
+  geom_hline(yintercept=0)+
+  geom_point(data=summary_absolute_preference,aes(x=hpp),color="black",size=4)+
+  geom_errorbar(data=filter(summary_absolute_preference,N>3),aes(x=hpp,ymin=CI_low,ymax=CI_high),color="black",width=0)
+
+```
+
+###Simulated data assuming no individual-level effect
+
+Although I find the simulation above informative and fun, it's not entirely obvious to me that it's the strongest test of whether the absolute NPS values are meaningful, since it's not explicitly investigating the distribution of absolute values, **assuming absolutely no systematic preference**.
+
+To investigate this question, I simulated new observations based on the variation in values in the current data set, assuming no significant preference for familiar and novel stimuli for each simulated individual and that the log looking time values are normally distributed.
+
+Empirically, it appears from the plot below that the looking times themselves are not normally distributed, but the log-transformed values are somewhat consistent with a normal distribution.
+
+```{r, message =F}
+#analyze general mean and sd of the total data set, on corrected looking time values.
+
+p1 <- ggplot(d_long,aes(looking.time))+
+  geom_histogram(aes(y = ..density..),fill="black")+
+  geom_density(color="red",fill="red",alpha=0.4)+
+  facet_wrap(~looking.type+study)+
+  ggtitle("Raw Looking Times")
+
+d_long <- d_long %>%
+  mutate(log.looking.time=log(looking.time))
+
+p2 <- ggplot(d_long,aes(log.looking.time))+
+  geom_histogram(aes(y = ..density..),fill="black")+
+  geom_density(color="red",fill="red",alpha=0.4)+
+  facet_wrap(~looking.type+study)+
+  ggtitle("Log-Transformed Looking Times")
+
+plot_grid(p1,p2)
+```
+
+In this simulation, we regenerate a new dataset repeatedly from scratch, assuming no systematic familiarity/ novelty preference within each individual and that the looking time values are normally distributed with the same SD observed in the current study.
+
+One tweak in this simulation is that I account for systematic relationships between familiar and novel looking times within a given subject by - for each subject - sampling from a distribution of average overall looking times, and then shifting the distribution of the looking time values based on that mean. Note that the familiar and novel looking times are sampled from the same distribution for each infant, i.e. each simulated participant has no preference for familiar vs. novel stimuli.
+
+The plot below shows the distribution of average absolute NPS values for each study after 1000 simulations. As you can see, the level of average absolute NPS values observed in our dataset (plotted in black) would not be surprising in a situation where infants have **no preference** between novel and familiar stimuli.
+
+```{r, message=F, warning=F}
+#collapse across familiar/novel trials
+
+#mean and sd
+summarized_looking <- d_long %>%
+  group_by(study) %>%
+  summarize(N=sum(!is.na(novel_pref_corr)),
+            M_looking=mean(looking.time),
+            SD_looking=sd(looking.time),
+            M_log_looking=mean(log(looking.time)),
+            SD_log_looking=sd(log(looking.time)))
+
+average_looking_time_by_subject <- d %>%
+  group_by(study) %>%
+  summarize(mean_avg_log_looking=mean(log(avg_looking_time)),sd_avg_log_looking=sd(log(avg_looking_time)))
+
+
+#simulate a new data set by drawing repeatedly from a normal distribution 
+#based on log looking times in each study
+#draw mean of distribution for each subject from distribution of average looking times, to account for "long lookers" vs. "short lookers"
+
+num_repetitions=1000
+random_d <- data.frame()
+
+for (i in 1:num_repetitions) {
+  for (study_name in unique(summarized_looking$study)) {
+    n <- filter(summarized_looking,study==study_name)$N
+    cur_sd <- filter(summarized_looking,study==study_name)$SD_log_looking
+    avg_looking_mean=filter(average_looking_time_by_subject,study==study_name)$mean_avg_log_looking
+    avg_looking_sd=filter(average_looking_time_by_subject,study==study_name)$sd_avg_log_looking
+    for (j in 1:n) {
+      #sample mean from distribution of average looking times
+      cur_mean=rnorm(1,mean=avg_looking_mean,sd=avg_looking_sd)
+      temp <- data.frame(
+        study = study_name, 
+        repetition = i,
+        baby_id = paste("rep_",i,"_baby_",j,sep=""),
+        log.looking.time.novel = rnorm(1, mean = cur_mean, sd = cur_sd),
+        log.looking.time.familiar = rnorm(1, mean = cur_mean, sd = cur_sd)
+      )
+    }
+    
+    #convert back log looking times to novelty preference score on looking times
+    temp <- temp %>%
+      mutate(novel=exp(log.looking.time.novel),familiar=exp(log.looking.time.familiar)) %>%
+      mutate(
+        novel_pref=novel-familiar,
+        novel_pref_corr=(novel-familiar)/(familiar+novel))
+    
+    random_d <- bind_rows(random_d,temp)
+    
+  }
+}
+
+average_random_d <- random_d %>%
+  group_by(repetition,study) %>%
+  summarize(mean_novelty_pref=mean(novel_pref_corr),mean_abs_novelty_pref=mean(abs(novel_pref_corr)))
+
+average_abs_novelty_pref <- d %>%
+  group_by(study) %>%
+  summarize(N=sum(!is.na(novel_pref_corr)),mean_abs_novelty_pref=mean(abs(novel_pref_corr)),SD=sd(abs(novel_pref_corr))) %>%
+  mutate(CI_low=mean_abs_novelty_pref-qt(0.975,df=N-1)*SD/sqrt(N), CI_high=mean_abs_novelty_pref+qt(0.975,df=N-1)*SD/sqrt(N))
+
+
+ggplot(average_random_d,aes(study,mean_abs_novelty_pref,color=study))+
+  geom_violin()+
+  geom_boxplot(width=0.5)+
+  geom_jitter(width=0.01)+
+  scale_y_continuous(breaks=seq(0,0.6,0.1))+
+  geom_hline(yintercept=0)+
+  geom_point(data=average_abs_novelty_pref,color="black",size=4)+
+  geom_errorbar(data=average_abs_novelty_pref,aes(ymin=CI_low,ymax=CI_high),color="black",width=0)
+
+```
+
