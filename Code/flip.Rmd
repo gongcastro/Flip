@@ -7,16 +7,25 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-#install packages
-library(tidyverse) # tidyr packages
-library(lmSupport) # for linear model analysis
-library(lme4)
-library(car)
+knitr::opts_chunk$set(
+	message = FALSE,
+	warning = FALSE,
+	include = TRUE
+)
+options(knitr.kable.NA = '-')
+
+# load packages
+library(tidyverse)    # tidyr packages
+library(lmSupport)    # for linear model analysis
+library(lme4)         # for linear mixed effects models (LMM)
+library(car)          # for ANOVAs (computing Wald's p-values)
+library(predictmeans) # for checking LMM assumptions
+library(emmeans)      # for retrieving estimates
 library(psych)
-library(knitr)
-library(broom)
-library(ggthemes) # for nice plot colours
-library(patchwork) # for grouping plots
+library(knitr)        # for formatting tables
+library(broom)        # for tidy lm output
+library(broom.mixed)  # for tidy lmer output
+library(patchwork)    # for grouping plots
 ```
 
 First, we read in the data and compute both the novelty preference (total looking time to the novel stimuli minus total looking time to familiar stimuli), as well as the novelty preference **corrected for total looking time**, i.e. the "novelty preference score" described in the summary from 10 July 2019.
@@ -38,23 +47,23 @@ The first thing I think that it makes sense to do is just to look at the distrib
 ```{r format_data, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 # convert data to long format
 # also perform some centering transformations that will be useful in fitting models
-data_long <- gather(data, "looking.type", "looking.time", Familiar, Novel) %>%
+data_long <- gather(data, "trialType", "lookingTime", Familiar, Novel) %>%
   mutate(
-    looking.type.c = case_when(
-      looking.type == "Familiar" ~ -0.5,
-      looking.type == "Novel"    ~ 0.5
+    trialType_center = case_when(
+      trialType == "Familiar" ~ -0.5,
+      trialType == "Novel"    ~ 0.5
     ),
-    hpp.c=hpp-mean(hpp)
+    HPP_center = HPP - mean(HPP)
   )
 ```
 
 ```{r plot_timeTypeStudyLocation, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-ggplot(data_long, aes(looking.type, looking.time, fill = Study))+
+ggplot(data_long, aes(trialType, lookingTime, fill = Study))+
   facet_wrap(~ Study + Location) +
   geom_violin(size = 1, alpha = 0.5, colour = NA) +
   geom_point(width = 0.01, size = 2, alpha = 0.5)+
-  geom_line(aes(group = Baby), color = "black", alpha = 0.2, size = 0.25) +
+  geom_line(aes(group = Participant), color = "black", alpha = 0.2, size = 0.25) +
   stat_summary(fun.data = mean_se, geom = "crossbar", colour = "black", size = 0.75, fill = "transparent", width = 0.5) +
   labs(x = "Trial type", y = "Looking time (ms)") +
     scale_fill_brewer(palette = "Dark2") +
@@ -68,7 +77,7 @@ ggplot(data_long, aes(looking.type, looking.time, fill = Study))+
     axis.text          = element_text(colour = "black"),
     legend.position    = "none" 
   ) +
-  ggsave("../Figures/time_type-location-study.png")
+  ggsave("../Figures/lookingTimes.png")
 
 ```
 
@@ -88,19 +97,20 @@ Fit a linear model predicting novelty preference from number of HPP visits (equi
 
 ```{r model1, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, results="asis"}
 # novelty preference
-model1 <- lm(novel_pref ~ hpp, data = data)
+model1 <- lm(novel_pref ~ HPP, data = data)
 
 # model summary
 model1 %>%
   summary() %>%
   tidy() %>%
-  kable(digits = 3, col.names = c("", "Coefficient", "SEM", "F", "p-value"))
+  mutate(term = c("Intercept", "HPP")) %>%
+  kable(digits = 3, col.names = c("", "Coefficient", "SEM", "t", "p"), align = "c")
 ```
 
 ```{r plot_model1, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-ggplot(data, aes(hpp, novel_pref, colour = Study)) +
-  geom_point(size = 2, alpha = 0.5, position = position_jitter(width = 0.1)) +
+ggplot(data, aes(HPP, novel_pref, colour = Study)) +
+  geom_point(size = 3, alpha = 0.5, position = position_jitter(width = 0.1)) +
   stat_summary(fun.data = mean_se, geom = "pointrange", colour = "black", size = 0.75) +
   stat_summary(aes(y = fitted(model1)), fun.y = mean, geom = "line", colour = "black", size = 1) +
   geom_hline(yintercept = 0, linetype = "dotted") +
@@ -116,7 +126,7 @@ ggplot(data, aes(hpp, novel_pref, colour = Study)) +
     axis.text          = element_text(colour = "black"),
     legend.position    = "none" 
   ) +
-    ggsave("../Figures/diff_hpp.png")
+    ggsave("../Figures/model1.png")
 ```
 
 #### Corrected novelty preference
@@ -126,19 +136,20 @@ Fit a linear model predicting novelty preference from number of HPP visits (equi
 ```{r model2, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, results="asis"}
 
 # corrected novelty preference
-model2 <- lm(novel_pref_corr ~ hpp, data = data)
+model2 <- lm(novel_pref_corr ~ HPP, data = data)
 
 # model summary
 model2 %>%
   summary() %>%
   tidy() %>%
-  kable(digits = 3, col.names = c("", "Coefficient", "SEM", "F", "p-value"))
+  mutate(term = c("Intercept", "HPP")) %>%
+  kable(digits = 3, col.names = c("", "Coefficient", "SEM", "t", "p"), align = "c")
 ```
 
 ```{r plot_model2, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-ggplot(data, aes(hpp, novel_pref_corr, colour = Study)) +
-  geom_point(size = 2, alpha = 0.5, position = position_jitter(width = 0.1)) +
+ggplot(data, aes(HPP, novel_pref_corr, colour = Study)) +
+  geom_point(size = 3, alpha = 0.5, position = position_jitter(width = 0.1)) +
   stat_summary(fun.data = mean_se, geom = "pointrange", colour = "black", size = 0.75) +
   stat_summary(aes(y = fitted(model2)), fun.y = mean, geom = "line", colour = "black", size = 1) +
   geom_hline(yintercept = 0, linetype = "dotted") +
@@ -154,11 +165,11 @@ ggplot(data, aes(hpp, novel_pref_corr, colour = Study)) +
     axis.text          = element_text(colour = "black"),
     legend.position    = "none" 
   ) +
-  ggsave("../Figures/cnp_hpp.png")
+  ggsave("../Figures/model2.png")
 ```
 
 
-### Split the prediction by study/location {.tabset}
+### Split the prediction by study and location {.tabset}
 
 #### Split by study (Santolin vs. Saffran & Wilson)
 
@@ -166,9 +177,9 @@ ggplot(data, aes(hpp, novel_pref_corr, colour = Study)) +
 
 # split by study
 
-ggplot(data, aes(hpp, novel_pref_corr, colour = Study)) +
+ggplot(data, aes(HPP, novel_pref_corr, colour = Study)) +
   facet_wrap(~Study) + 
-  geom_point(size = 2, alpha = 0.5, position = position_jitter(width = 0.1)) +
+  geom_point(size = 3, alpha = 0.5, position = position_jitter(width = 0.1)) +
   stat_summary(fun.data = mean_se, geom = "pointrange", colour = "black", size = 0.75) +
   stat_summary(aes(y = fitted(model2)), fun.y = mean, geom = "line", colour = "black", size = 1) +
   geom_hline(yintercept = 0) +
@@ -184,17 +195,17 @@ ggplot(data, aes(hpp, novel_pref_corr, colour = Study)) +
     axis.text          = element_text(colour = "black"),
     legend.position    = "none" 
   ) +
-  ggsave("../Figures/cnp_hpp.png")
+  ggsave("../Figures/model2.png")
 ```
 
 
-####Split by study and location (Wisconsin vs. Barcelona)
+#### Split by study and location (Wisconsin vs. Barcelona)
 
 ```{r plot_cnpHppStudy, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-ggplot(data, aes(hpp, novel_pref_corr, colour = Study)) +
+ggplot(data, aes(HPP, novel_pref_corr, colour = Study)) +
   facet_wrap(~ Study + Location) +
-  geom_point(size = 2, alpha = 0.5, position = position_jitter(width = 0.01)) +
+  geom_point(size = 3, alpha = 0.5, position = position_jitter(width = 0.01)) +
   stat_summary(fun.data = mean_se, geom = "pointrange", colour = "black", size = 0.75) +
   stat_summary(aes(y = fitted(model2)), fun.y = mean, geom = "line", colour = "black", size = 1) +
   geom_hline(yintercept = 0, linetype = "dotted") +
@@ -209,7 +220,8 @@ ggplot(data, aes(hpp, novel_pref_corr, colour = Study)) +
     text               = element_text(colour = "black", size = 12),
     axis.text          = element_text(colour = "black"),
     legend.position    = "none"
-  )
+  ) +
+  ggsave("../Figures/model2_location.png")
 ```
 
 ### How robust is this analysis to reduced numbers of visits {.tabset}
@@ -220,17 +232,18 @@ Fit a linear model predicting novelty preference from number of HPP visits (equi
 
 ```{r model3, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, results="asis"}
 # novelty preference
-model3 <- lm(novel_pref_corr ~ hpp, data = data)
+model3 <- lm(novel_pref_corr ~ HPP, data = data)
 #modelSummary(m)
 model3 %>%
   summary() %>%
   tidy() %>%
-  kable(digits = 3, col.names = c("", "Coefficient", "SEM", "F", "p-value"))
+  mutate(term = c("Intercept", "HPP")) %>%
+  kable(digits = 3, col.names = c("", "Coefficient", "SEM", "t", "p"), align  = "c")
 ```
 
 ```{r plot_model3, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-ggplot(data, aes(hpp, novel_pref_corr, color = Study))+
+ggplot(data, aes(HPP, novel_pref_corr, color = Study)) +
   geom_point(size = 3, alpha = 0.7, position = position_jitter(width = 0.05)) +
   stat_summary(fun.data = mean_se, geom = "pointrange", colour = "black", size = 0.75) +
   stat_summary(aes(y = fitted(model3)), fun.y = mean, geom = "line", colour = "black", size = 1) +
@@ -247,7 +260,8 @@ theme(
     text               = element_text(colour = "black", size = 12),
     axis.text          = element_text(colour = "black"),
     legend.position    = "right"
-  )
+  ) +
+  ggsave("../Figures/model3.png")
 ```
 
 #### 1 - 4 visits
@@ -255,19 +269,22 @@ theme(
 Fit a linear model predicting novelty preference from number of HPP visits (equivalent to a correlation).
 
 ```{r model4, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, results="asis"}
-#novelty preference
-model4 <- lm(novel_pref_corr ~ hpp, data = filter(data, hpp < 5))
-#modelSummary(m)
+
+# novelty preference
+model4 <- lm(novel_pref_corr ~ HPP, data = filter(data, HPP < 5))
+
+# model summary
 model4 %>%
   summary() %>%
   tidy() %>%
-  kable(digits = 3, col.names = c("", "Coefficient", "SEM", "F", "p-value"))
+  mutate(term = c("Intercept", "HPP")) %>%
+  kable(digits = 3, col.names = c("", "Coefficient", "SEM", "t", "p"), align = "c")
 ```
 
 ```{r plot_model4, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 data %>%
-  filter(hpp < 5) %>%
-  ggplot(aes(hpp, novel_pref_corr, color = Study))+
+  filter(HPP < 5) %>%
+  ggplot(aes(HPP, novel_pref_corr, color = Study))+
   geom_point(size = 3, alpha = 0.7, position = position_jitter(width = 0.05)) +
   stat_summary(fun.data = mean_se, geom = "pointrange", colour = "black", size = 0.75) +
   stat_summary(aes(y = fitted(model4)), fun.y = mean, geom = "line", colour = "black", size = 1) +
@@ -284,7 +301,8 @@ theme(
     text               = element_text(colour = "black", size = 12),
     axis.text          = element_text(colour = "black"),
     legend.position    = "right"
-)
+) +
+  ggsave("../Figures/model4.png")
 ```
 
 ####1 - 3 visits
@@ -293,19 +311,20 @@ Fit a linear model predicting novelty preference from number of HPP visits (equi
 
 ```{r model5, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, results="asis"}
 # novelty preference
-model5 <- lm(novel_pref_corr ~ hpp, data = filter(data, hpp < 4))
+model5 <- lm(novel_pref_corr ~ HPP, data = filter(data, HPP < 4))
 
 # model summary
 model5 %>%
   summary() %>%
   tidy() %>%
-  kable(digits = 3, col.names = c("", "Coefficient", "SEM", "F", "p-value"))
+  mutate(term = c("Intercept", "HPP")) %>%
+  kable(digits = 3, col.names = c("", "Coefficient", "SEM", "t", "p"), align = "c")
 ```
 
 ```{r plot_model5, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 data %>%
-  filter(hpp < 4) %>%
-  ggplot(aes(hpp, novel_pref_corr, color = Study))+
+  filter(HPP < 4) %>%
+  ggplot(aes(HPP, novel_pref_corr, color = Study))+
   geom_point(size = 3, alpha = 0.7, position = position_jitter(width = 0.05)) +
   stat_summary(fun.data = mean_se, geom = "pointrange", colour = "black", size = 0.75) +
   stat_summary(aes(y = fitted(model5)), fun.y = mean, geom = "line", colour = "black", size = 1) +
@@ -322,7 +341,8 @@ theme(
     text               = element_text(colour = "black", size = 12),
     axis.text          = element_text(colour = "black"),
     legend.position    = "right"
-)
+) +
+  ggsave("../Figures/model5.png")
 ```
 
 #### 1 - 2 visits
@@ -331,18 +351,19 @@ Fit a linear model predicting novelty preference from number of HPP visits (equi
 
 ```{r model6, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, results="asis"}
 # novelty preference
-model6 <- lm(novel_pref_corr ~ hpp, data = filter(data, hpp < 3))
+model6 <- lm(novel_pref_corr ~ HPP, data = filter(data, HPP < 3))
 # model summary
 model6 %>%
   summary() %>%
   tidy() %>%
-  kable(digits = 3, col.names = c("", "Coefficient", "SEM", "F", "p-value"))
+  mutate(term = c("Intercept", "HPP")) %>%
+  kable(digits = 3, col.names = c("", "Coefficient", "SEM", "t", "p"), align = "c")
 ```
 
 ```{r plot_model6, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 data %>%
-  filter(hpp < 3) %>%
-  ggplot(aes(hpp, novel_pref_corr, color = Study))+
+  filter(HPP < 3) %>%
+  ggplot(aes(HPP, novel_pref_corr, color = Study))+
   geom_point(size = 3, alpha = 0.7, position = position_jitter(width = 0.05)) +
   stat_summary(fun.data = mean_se, geom = "pointrange", colour = "black", size = 0.75) +
   stat_summary(aes(y = fitted(model6)), fun.y = mean, geom = "line", colour = "black", size = 1) +
@@ -359,7 +380,8 @@ theme(
     text               = element_text(colour = "black", size = 12),
     axis.text          = element_text(colour = "black"),
     legend.position    = "right"
-)
+) +
+  ggsave("../Figures/model6.png")
 ```
 
 ## Linear mixed-effects analyses
@@ -370,42 +392,58 @@ Here we specify a model that tries to predict the corrected novelty preference s
 10 July 2019, with a few slight technical differences. For instance, I will simply fit the model with the maximal random effects structure here as the "default" and use Wald chi-squared tests to get p-values (not my preferred method, which is Kenward-Rogers approximantion, but this has some odd issues in this instance - see below).
 
 ```{r model7, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-data <- data %>% mutate(hpp.c = hpp - mean(hpp)) # center hpp (for easier model fitting)
+data7 <- data %>% mutate(HPP_center = HPP - mean(HPP)) # center hpp (for easier model fitting)
 
-model7 <- lmer(novel_pref_corr ~ hpp.c + (1 + hpp.c | Study), data = data)
-summary(model7)
-Anova(model7, type = "III")
+model7 <- lmer(novel_pref_corr ~ HPP_center + (1 + HPP_center | Study), data = data7, REML = FALSE)
+broom.mixed::tidy(model7) %>% 
+  select(term, group, effect, estimate, std.error) %>%
+  left_join(., tidy(Anova(model7, type = "III", test.statistic = "Chisq")), by = "term") %>%
+  mutate(
+    term = c("Intercept", "HPP", "Intercept SD", "HPP SD", "HPP Cor Intercept", "Observation SD"),
+    group = c(NA, NA, "Study", "Study", "Study", "Residual"),
+    effect = c(rep("Fixed", 2), rep("Random", 4)),
+    ) %>%
+  kable(digits = 3, col.names = c("", "Group", "Type", "Estimate", "SE", "Chi^2", "DF", "P-value"), align = "c")
 ```
 
-`lmer(novel_pref_corr ~ hpp.c + (1 + hpp.c | Study), data = data)`
+`lmer(novel_pref_corr ~ hpp_center + (1 + hpp_center | Study), data = data)`
 
-$$ CNPS_{ps} = \beta_{0} + Study_{0s} + (\beta_{1} + Study_{1s}) HPP_{i} + e_{i}$$
+$$ \begin{aligned}CNPS_{ps} = \beta_{0} + Study_{0s} + (\beta_{1} + Study_{1s}) HPP_{i} + e_{i}\end{aligned}$$
 
 ### Approach using long-format data & lme4
 
 The best (most powerful) analysis would involve fitting linear mixed-effects models to the trial-by-trial looking time data (*LT*). This model would look something like this, fit on the trial-level looking data:
 
-`lmer(looking.time ~ looking.type * hpp + (1 + looking.type | baby) + (1 | item) + (1 + looking.type * hpp | Study))`
+`lmer(lookingTime ~ trialType * hpp + (1 + trialType | baby) + (1 | item) + (1 + trialType * hpp | Study))`
 
-$$ LT_{ips} = \beta_{0} + Item{0i} + Participant_{0p} + Study_{0s} + (\beta_{1} + Participant_{1p}) HPP_{i} + (\beta_{2} + Study_{1s}) Condition_{i} + (\beta_{3} + Participant_{3p} + Study_{3s}) (Condition \times HPP)_{ips} + e_{ips} $$
+$$ \begin{aligned}LT_{ips} = \beta_{0} + Item{0i} + Participant_{0p} + Study_{0s} + \\ (\beta_{1} + Participant_{1p}) HPP_{i} + (\beta_{2} + Study_{1s}) Condition_{i} + (\beta_{3} + Participant_{3p} + Study_{3s}) (Condition \times HPP)_{ips} + e_{ips} \end{aligned}$$
 
 For now, let's consider a mixed-effects model fit to the average looking time data.
 
 I think the model that we want to test would involve predicting an interaction between item type (familiar vs. novel) and number of hpp visits on looking time - the effect of familiar vs. novel items on looking behavior **depends on** the number of headturn visits an infant has had.
 
-`lmer(looking.time ~ looking.type * hpp + (1 | baby) + (1 + hpp | Study))`
+`lmer(lookingTime ~ trialType * hpp + (1 | baby) + (1 + hpp | Study))`
 
-$$  LT_{is} = \beta_{0} + Participant_{0p} + Study_{0s} + (\beta_{1} + Participant_{1p} + Study_{1s}) HPP_{i} + Condition_{c} + e_{is} $$
+$$ \begin{aligned} LT_{is} = \beta_{0} + Participant_{0p} + Study_{0s} + \\ (\beta_{1} + Participant_{1p} + Study_{1s}) HPP_{i} + Condition_{c} + e_{is} \end{aligned}$$
 
 We include a by-participant random intercept, since we have multiple observations per baby. Since item type has only two levels, we fit the model without a by-participant random slope (since this overdetermines the model; my understanding is that it's OK to still force the model to accept the random slope, but it shouldn't much matter for the estimates.
 
 ```{r model8, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-model8 <- lmer(looking.time ~ looking.type.c * hpp.c + (1 | Baby)  + (1 + hpp.c | Study), data = data_long)
+model8 <- lmer(lookingTime ~ trialType_center * HPP_center + (1 | Participant)  + (1 + HPP_center | Study), data = data_long, REML = FALSE)
 
-summary(model8)
+broom.mixed::tidy(model8) %>% 
+  select(term, group, effect, estimate, std.error) %>%
+  left_join(., tidy(Anova(model8, type = "III", test.statistic= "Chisq")), by = "term") %>%
+  mutate(
+    term = c("Intercept", "Trial type", "HPP", "Trial type * HPP", "Intercept SD", "Intercept SD", "HPP SD", "HPP Cor Intercept", "Observation SD"),
+    group = c(NA, NA, NA, NA, "Participant", "Study", "Study", "Study", "Residual"),
+    effect = c(rep("Fixed", 4), rep("Random", 5))
+    ) %>%
+  kable(digits = 3, col.names = c("", "Group", "Type", "Estimate", "SE", "Chi^2", "DF", "p"), align = "c")
 
-Anova(model8, type = "III")
+model8.summary <- summary(model8)
+
 ```
 
 The significant interaction term suggests that the number of visits changes the relationship between item type and looking time, i.e. the nature of the familiarity/novelty preference.
@@ -413,17 +451,133 @@ The significant interaction term suggests that the number of visits changes the 
 The way to get appropriate p-values from lmer models is of course a matter of debate. Here, we used a Wald chi-squared test. Typically, the method I prefer is the Kenward-Rogers approximation which estimates the "correct" degrees of freedom. However, there's something a bit odd going on when adding the hpp by-study random slope with this method, which is probably because study only has two levels. The chi-squared method should be fine, but this is also something we could do a deeper dive on down the road (it might also be just another argument against including the hpp by-study random slope).
 
 
+```{r plot_coefs8, echo=FALSE, message=FALSE, warning=FALSE}
+broom.mixed::tidy(model8) %>% 
+  filter(effect == 'fixed', term != "(Intercept)") %>%
+  mutate(term = c("Trial type", "HPP", "Trial time * HPP")) %>%
+  ggplot(aes(estimate, term, colour = term)) +
+  geom_point(size = 5) +
+  geom_errorbarh(aes(xmax = estimate+std.error, xmin = estimate-std.error), height = 0, size = 1.5) +
+  geom_vline(xintercept = 0, linetype = "dotted") +
+  labs(x = "Estimate", y = "Term") +
+  scale_colour_brewer(palette = "Dark2") +
+theme(
+    panel.grid.major.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.background   = element_rect(fill = "white", colour = "grey"),
+    text               = element_text(colour = "black", size = 12),
+    axis.text          = element_text(colour = "black"),
+    legend.position    = "none"
+) +
+  ggsave("../Figures/model8_coefs.png")
+```
+
+Now we interpret the interaction:
+
+```{r plot_model8, echo=FALSE, message=FALSE, warning=FALSE}
+data_summary <- data_long %>%
+                  group_by(HPP, trialType) %>%
+                  summarise(mean = mean(lookingTime))
+data_long %>%
+  mutate(trialType = factor(trialType, c("Familiar", "Novel"))) %>%
+  ggplot(aes(x = trialType, y = lookingTime)) +
+  facet_wrap(~HPP, nrow = 1) +
+  geom_violin(aes(fill = trialType), colour = NA, alpha = 0.5) +
+  geom_line(aes(group = Participant), colour = "black", size = 0.25, alpha = 0.2) +
+  geom_line(data = data_summary, aes(x = trialType, y = mean), size = 1, colour = "black") +
+  stat_summary(fun.data = mean_se, geom = "pointrange", group = 1, size = 0.5) +
+  stat_summary(fun.y = mean, geom = "line", group = 1, size = 0.5) +
+  labs(x = "HPP", y = "Looking time (ms)") +
+  scale_colour_brewer(palette = "Dark2") +
+  scale_fill_brewer(palette = "Dark2") +
+  theme(
+    panel.grid.major.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.background   = element_rect(fill = "white", colour = "grey"),
+    text               = element_text(colour = "black", size = 12),
+    axis.text          = element_text(colour = "black"),
+    legend.position    = "none"
+) +
+  ggsave("../Figures/model8_interaction.png")
+
+```
+
 ### Is the effect robust when we remove babies with high numbers of visits (4 or 5)?
 
 Checking here that the effect still holds when we remove high leverage points - the handful of babies who had 4 or 5 visits.
 
 ```{r model9, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-model9 <- lmer(looking.time ~ looking.type.c * hpp.c + (1 | Baby) + (1 + hpp.c | Study), data = filter(data_long, hpp < 4))
+model9 <- lmer(lookingTime ~ trialType_center * HPP_center + (1 | Participant) + (1 + HPP_center | Study), data = filter(data_long, HPP < 4), REML = FALSE)
 
-summary(model9)
+broom.mixed::tidy(model9) %>% 
+  select(term, group, effect, estimate, std.error) %>%
+  left_join(., tidy(Anova(model8, type = "III", test.statistic= "Chisq")), by = "term") %>%
+  mutate(
+    term = c("Intercept", "Trial type", "HPP", "Trial type * HPP", "Intercept SD", "Intercept SD", "HPP SD", "HPP Cor Intercept", "Observation SD"),
+    group = c(NA, NA, NA, NA, "Participant", "Study", "Study", "Study", "Residual"),
+    effect = c(rep("Fixed", 4), rep("Random", 5))
+    ) %>%
+  kable(digits = 3, col.names = c("", "Group", "Type", "Estimate", "SE", "Chi^2", "df", "p"), align = "c")
 
-Anova(model9, type = "III")
+```
+
+```{r plot_coefs9, echo=FALSE, message=FALSE, warning=FALSE}
+broom.mixed::tidy(model9) %>% 
+  filter(effect == 'fixed', term != "(Intercept)") %>%
+  mutate(term = c("Trial type", "HPP", "Trial time * HPP")) %>%
+  ggplot(aes(estimate, term, colour = term)) +
+  geom_point(size = 5) +
+  geom_errorbarh(aes(xmax = estimate+std.error, xmin = estimate-std.error), height = 0, size = 1.5) +
+  geom_vline(xintercept = 0, linetype = "dotted") +
+  labs(x = "Estimate", y = "Term") +
+  scale_colour_brewer(palette = "Dark2") +
+theme(
+    panel.grid.major.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.background   = element_rect(fill = "white", colour = "grey"),
+    text               = element_text(colour = "black", size = 12),
+    axis.text          = element_text(colour = "black"),
+    legend.position    = "none"
+) +ggsave("../Figures/model9_coefs.png")
+```
+
+```{r plot_model9, echo=FALSE, message=FALSE, warning=FALSE}
+data_summary <- data_long %>%
+  filter(HPP < 4) %>%
+  group_by(HPP, trialType) %>%
+  summarise(mean = mean(lookingTime))
+data_long %>%
+  filter(HPP < 4) %>%
+  mutate(trialType = factor(trialType, c("Familiar", "Novel"))) %>%
+  ggplot(aes(x = trialType, y = lookingTime)) +
+  facet_wrap(~HPP, nrow = 1) +
+  geom_violin(aes(fill = trialType), colour = NA, alpha = 0.5) +
+  geom_line(aes(group = Participant), colour = "black", size = 0.25, alpha = 0.2) +
+  geom_line(data = data_summary, aes(x = trialType, y = mean), size = 1, colour = "black") +
+  stat_summary(fun.data = mean_se, geom = "pointrange", group = 1, size = 0.5) +
+  stat_summary(fun.y = mean, geom = "line", group = 1, size = 0.5) +
+  labs(x = "HPP", y = "Looking time (ms)") +
+  scale_colour_brewer(palette = "Dark2") +
+  scale_fill_brewer(palette = "Dark2") +
+  theme(
+    panel.grid.major.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.background   = element_rect(fill = "white", colour = "grey"),
+    text               = element_text(colour = "black", size = 12),
+    axis.text          = element_text(colour = "black"),
+    legend.position    = "none"
+) +
+  ggsave("../Figures/model9_interaction.png")
+
 ```
 
 ## How to interpret the distribution of absolute values of novelty preference scores?
@@ -452,21 +606,21 @@ for (i in 1:num_reps) {
   d_long_shuffled <- data.frame()
   
   for (study_name in unique(data_long$Study)) {
-    #break apart long data into a familiar and novel looking data frame
-    familiar <- filter(data_long, looking.type == "Familiar" & Study == study_name)
-    novel    <- filter(data_long, looking.type == "Novel" & Study == study_name)
+    # break apart long data into a familiar and novel looking data frame
+    familiar <- filter(data_long, trialType == "Familiar" & Study == study_name)
+    novel    <- filter(data_long, trialType == "Novel"    & Study == study_name)
     
-    #shuffle subject ids within each of these data frames
-    #in other words, each subject becomes randomly associated with another looking time
+    # shuffle subject ids within each of these data frames
+    # in other words, each subject becomes randomly associated with another looking time
     familiar_shuffled_order <- sample(1:nrow(familiar))
-    familiar$baby_shuffled  <- familiar$Baby[familiar_shuffled_order]
-    familiar$hpp_shuffled   <- familiar$hpp[familiar_shuffled_order]
+    familiar$baby_shuffled  <- familiar$Participant[familiar_shuffled_order]
+    familiar$hpp_shuffled   <- familiar$HPP[familiar_shuffled_order]
     
     novel_shuffled_order <- sample(1:nrow(novel))
-    novel$baby_shuffled  <- novel$Baby[novel_shuffled_order]
-    novel$hpp_shuffled   <- novel$hpp[novel_shuffled_order]
+    novel$baby_shuffled  <- novel$Participant[novel_shuffled_order]
+    novel$hpp_shuffled   <- novel$HPP[novel_shuffled_order]
     
-    #recombine the two data sets
+    # recombine the two data sets
     temp            <- bind_rows(familiar, novel)
     d_long_shuffled <- bind_rows(d_long_shuffled, temp)
     
@@ -475,8 +629,8 @@ for (i in 1:num_reps) {
   data_shuffled <- d_long_shuffled %>%
     group_by(baby_shuffled, hpp_shuffled, Study) %>%
     summarize(
-      novelty_pref          = looking.time[looking.type == "Novel"] - looking.time[looking.type == "Familiar"],
-      novelty_pref_corr     = novelty_pref /(looking.time[looking.type == "Novel"] + looking.time[looking.type == "Familiar"]),
+      novelty_pref          = lookingTime[trialType == "Novel"] - lookingTime[trialType == "Familiar"],
+      novelty_pref_corr     = novelty_pref / (lookingTime[trialType == "Novel"] + lookingTime[trialType == "Familiar"]),
       novelty_pref_corr_abs = abs(novelty_pref_corr)
     )
   
@@ -500,7 +654,7 @@ for (i in 1:num_reps) {
 
 summary_absolute_preference <- data %>%
   mutate(novelty_pref_corr_abs = abs(novel_pref_corr)) %>%
-  group_by(Study, hpp) %>%
+  group_by(Study, HPP) %>%
   summarize(
     N                       = sum(!is.na(novelty_pref_corr_abs)),
     M_abs_novelty_pref_corr = mean(novelty_pref_corr_abs),
@@ -519,9 +673,9 @@ ggplot(summary_stats_shuffling, aes(hpp_shuffled, M_abs_novelty_pref_corr))+
   facet_wrap(~Study) +
   geom_violin(aes(group = hpp_shuffled, fill = Study, colour = Study), alpha = 0.5, colour = NA) +
   geom_boxplot(aes(group = hpp_shuffled), width = 0.5, fill = "transparent", colour = "black") +
-  geom_point(data = summary_absolute_preference, aes(x = hpp), color = "black", size = 4)+
+  geom_point(data = summary_absolute_preference, aes(x = HPP), color = "black", size = 4)+
   geom_errorbar(data = filter(summary_absolute_preference, N > 3),
-                aes(x = hpp, ymin = CI_low, ymax = CI_high),
+                aes(x = HPP, ymin = CI_low, ymax = CI_high),
                 color = "black", width = 0, size = 1) +
   scale_y_continuous(breaks = seq(0, 0.6, 0.1)) +
   scale_fill_brewer(palette = "Dark2") +
@@ -537,7 +691,7 @@ ggplot(summary_stats_shuffling, aes(hpp_shuffled, M_abs_novelty_pref_corr))+
     axis.text          = element_text(colour = "black"),
     legend.position    = "none"
   ) +
-  ggsave("../Figures/nps_HppStudy.png")
+  ggsave("../Figures/simulation1.png")
 
 ```
 
@@ -552,8 +706,8 @@ Empirically, it appears from the plot below that the looking times themselves ar
 ```{r plot2_sim1, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, message=F}
 
 # analyze general mean and sd of the total data set, on corrected looking time values.
-ggplot(data_long, aes(looking.time, fill = looking.type)) +
-  facet_wrap(~ looking.type + Study) +
+ggplot(data_long, aes(lookingTime, fill = trialType)) +
+  facet_wrap(~ trialType + Study) +
   geom_histogram(aes(y = ..density..), binwidth = 500) +
   geom_density(color = "black", fill = "black", alpha = 0.4) +
   labs(x = "Looking time (ms)", y = "Density", title = "Raw looking time") +
@@ -565,8 +719,8 @@ ggplot(data_long, aes(looking.time, fill = looking.type)) +
     axis.text        = element_text(colour = "black"),
     legend.position  = "none"
   ) +
-  ggplot(data_long, aes(log(looking.time), fill = looking.type)) +
-  facet_wrap(~ looking.type + Study) +
+  ggplot(data_long, aes(log(lookingTime), fill = trialType)) +
+  facet_wrap(~ trialType + Study) +
   geom_histogram(aes(y = ..density..), binwidth = 0.10) +
   geom_density(color = "black", fill = "black", alpha = 0.4) +
   labs(x = "Looking time", y = "Density", title = "Log-transformed looking time") +
@@ -596,10 +750,10 @@ The plot below shows the distribution of average absolute NPS values for each st
 summarized_looking <- data_long %>%
   group_by(Study) %>%
   summarize(N              = sum(!is.na(novel_pref_corr)),
-            M_looking      = mean(looking.time),
-            SD_looking     = sd(looking.time),
-            M_log_looking  = mean(log(looking.time)),
-            SD_log_looking = sd(log(looking.time)))
+            M_looking      = mean(lookingTime),
+            SD_looking     = sd(lookingTime),
+            M_log_looking  = mean(log(lookingTime)),
+            SD_log_looking = sd(log(lookingTime)))
 
 average_looking_time_by_subject <- data %>%
   group_by(Study) %>%
@@ -631,17 +785,17 @@ for (i in 1:num_repetitions) {
         Study                     = study_name, 
         repetition                = i,
         baby_id                   = paste("rep_", i, "_baby_", j, sep=""),
-        log.looking.time.novel    = rnorm(1, mean = cur_mean, sd = cur_sd),
-        log.looking.time.familiar = rnorm(1, mean = cur_mean, sd = cur_sd)
+        log.lookingTime.novel    = rnorm(1, mean = cur_mean, sd = cur_sd),
+        log.lookingTime.familiar = rnorm(1, mean = cur_mean, sd = cur_sd)
       )
     }
     
     # convert back log looking times to novelty preference score on looking times
     temp <- temp %>%
-      mutate(novel = exp(log.looking.time.novel), familiar = exp(log.looking.time.familiar)) %>%
+      mutate(novel = exp(log.lookingTime.novel), familiar = exp(log.lookingTime.familiar)) %>%
       mutate(
-        novel_pref      = novel-familiar,
-        novel_pref_corr = novel_pref/(familiar+novel))
+        novel_pref      = novel - familiar,
+        novel_pref_corr = novel_pref / (familiar+novel))
     
     random_d <- bind_rows(random_d, temp)
     
@@ -686,7 +840,8 @@ ggplot(average_random_d, aes(Study, mean_abs_novelty_pref, fill = Study)) +
     text             = element_text(colour = "black", size = 12),
     axis.text        = element_text(colour = "black"),
     legend.position  = "none"
-  ) 
+  ) +
+  ggsave("../Figures/simulation2.png")
 
 ```
 
