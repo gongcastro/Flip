@@ -1,0 +1,141 @@
+
+@article{lme4,
+	title = {Fitting linear mixed-effects models using lme4},
+	volume = {67},
+	doi = {10.18637/jss.v067.i01},
+	number = {1},
+	journal = {Journal of Statistical Software},
+	author = {Bates, Douglas and Mächler, Martin and Bolker, Ben and Walker, Steve},
+	year = {2015},
+	pages = {1--48}
+}
+
+@article{lmerTest,
+	title = {{lmerTest} package: tests in linear mixed effects models},
+	volume = {82},
+	doi = {10.18637/jss.v082.i13},
+	number = {13},
+	journal = {Journal of Statistical Software},
+	author = {Kuznetsova, Alexandra and Brockhoff, Per B. and Christensen, Rune H. B.},
+	year = {2017},
+	pages = {1--26}
+}
+
+@article{luke2017,
+	title = {Evaluating significance in linear mixed-effects models in {R}},
+	volume = {49},
+	issn = {1554-3528},
+	url = {https://doi.org/10.3758/s13428-016-0809-y},
+	doi = {10.3758/s13428-016-0809-y},
+	abstract = {Mixed-effects models are being used ever more frequently in the analysis of experimental data. However, in the lme4 package in R the standards for evaluating significance of fixed effects in these models (i.e., obtaining p-values) are somewhat vague. There are good reasons for this, but as researchers who are using these models are required in many cases to report p-values, some method for evaluating the significance of the model output is needed. This paper reports the results of simulations showing that the two most common methods for evaluating significance, using likelihood ratio tests and applying the z distribution to the Wald t values from the model output (t-as-z), are somewhat anti-conservative, especially for smaller sample sizes. Other methods for evaluating significance, including parametric bootstrapping and the Kenward-Roger and Satterthwaite approximations for degrees of freedom, were also evaluated. The results of these simulations suggest that Type 1 error rates are closest to .05 when models are fitted using REML and p-values are derived using the Kenward-Roger or Satterthwaite approximations, as these approximations both produced acceptable Type 1 error rates even for smaller samples.},
+	language = {en},
+	number = {4},
+	urldate = {2019-09-22},
+	journal = {Behavior Research Methods},
+	author = {Luke, Steven G.},
+	month = aug,
+	year = {2017},
+	keywords = {methods, Linear mixed-effects models, lme4, p-values, Statistics, Type 1 error},
+	pages = {1494--1502}
+}
+
+@article{kenward1997,
+	title = {Small {Sample} {Inference} for {Fixed} {Effects} from {Restricted} {Maximum} {Likelihood}},
+	volume = {53},
+	issn = {0006-341X},
+	url = {https://www.jstor.org/stable/2533558},
+	doi = {10.2307/2533558},
+	abstract = {Restricted maximum likelihood (REML) is now well established as a method for estimating the parameters of the general Gaussian linear model with a structured covariance matrix, in particular for mixed linear models. Conventionally, estimates of precision and inference for fixed effects are based on their asymptotic distribution, which is known to be inadequate for some small-sample problems. In this paper, we present a scaled Wald statistic, together with an F approximation to its sampling distribution, that is shown to perform well in a range of small sample settings. The statistic uses an adjusted estimator of the covariance matrix that has reduced small sample bias. This approach has the advantage that it reproduces both the statistics and F distributions in those settings where the latter is exact, namely for Hotelling T2 type statistics and for analysis of variance F-ratios. The performance of the modified statistics is assessed through simulation studies of four different REML analyses and the methods are illustrated using three examples.},
+	number = {3},
+	urldate = {2019-09-22},
+	journal = {Biometrics},
+	author = {Kenward, Michael G. and Roger, James H.},
+	year = {1997},
+	keywords = {methods},
+	pages = {983--997}
+}
+
+@article{satterthwaite1946a,
+	title = {An {Approximate} {Distribution} of {Estimates} of {Variance} {Components}},
+	volume = {2},
+	issn = {0099-4987},
+	url = {https://www.jstor.org/stable/3002019},
+	doi = {10.2307/3002019},
+	number = {6},
+	urldate = {2019-09-23},
+	journal = {Biometrics Bulletin},
+	author = {Satterthwaite, F. E.},
+	year = {1946},
+	keywords = {methods},
+	pages = {110--114}
+}
+
+@article{barr2013,
+	title = {Random effects structure for confirmatory hypothesis testing: {Keep} it maximal},
+	volume = {68},
+	issn = {0749-596X},
+	shorttitle = {Random effects structure for confirmatory hypothesis testing},
+	url = {http://www.sciencedirect.com/science/article/pii/S0749596X12001180},
+	doi = {10.1016/j.jml.2012.11.001},
+	abstract = {Linear mixed-effects models (LMEMs) have become increasingly prominent in psycholinguistics and related areas. However, many researchers do not seem to appreciate how random effects structures affect the generalizability of an analysis. Here, we argue that researchers using LMEMs for confirmatory hypothesis testing should minimally adhere to the standards that have been in place for many decades. Through theoretical arguments and Monte Carlo simulation, we show that LMEMs generalize best when they include the maximal random effects structure justified by the design. The generalization performance of LMEMs including data-driven random effects structures strongly depends upon modeling criteria and sample size, yielding reasonable results on moderately-sized samples when conservative criteria are used, but with little or no power advantage over maximal models. Finally, random-intercepts-only LMEMs used on within-subjects and/or within-items data from populations where subjects and/or items vary in their sensitivity to experimental manipulations always generalize worse than separate F1 and F2 tests, and in many cases, even worse than F1 alone. Maximal LMEMs should be the ‘gold standard’ for confirmatory hypothesis testing in psycholinguistics and beyond.},
+	number = {3},
+	urldate = {2019-09-23},
+	journal = {Journal of Memory and Language},
+	author = {Barr, Dale J. and Levy, Roger and Scheepers, Christoph and Tily, Harry J.},
+	month = apr,
+	year = {2013},
+	keywords = {Generalization, methods, Linear mixed-effects models, Statistics, Monte Carlo simulation},
+	pages = {255--278}
+}
+
+@article{saffran2009,
+	title = {From {Syllables} to {Syntax}: {Multilevel} {Statistical} {Learning} by 12-{Month}-{Old} {Infants}},
+	volume = {4},
+	issn = {1525-0008},
+	shorttitle = {From {Syllables} to {Syntax}},
+	url = {https://www.tandfonline.com/doi/abs/10.1207/S15327078IN0402_07},
+	doi = {10.1207/S15327078IN0402_07},
+	abstract = {To successfully acquire language, infants must be able to track multiple levels of regularities in the input. In many cases, regularities only emerge after some learning has already occurred. For example, the grammatical relationships between words are only evident once the words have been segmented from continuous speech. To ask whether infants can engage in this type of learning process, 12-month-old infants in 2 experiments were familiarized with multiword utterances synthesized as continuous speech. The words in the utterances were ordered based on a simple finite-state grammar. Following exposure, infants were tested on novel grammatical and ungrammatical sentences. The results indicate that the infants were able to perform 2 statistical learning tasks in sequence: first segmenting the words from continuous speech, and subsequently discovering the permissible orderings of the words. Given a single set of input, infants were able to acquire multiple levels of structure, suggesting that multiple levels of representation (initially syllable-level combinations, subsequently word-level combinations)can emerge during the course of learning.},
+	number = {2},
+	urldate = {2019-09-23},
+	journal = {Infancy},
+	author = {Saffran, Jenny R. and Wilson, Diana P.},
+	month = may,
+	year = {2009},
+	pages = {273--284}
+}
+
+@article{santolin2019,
+	title = {Non-{Linguistic} {Grammar} {Learning} by 12-{Month}-{Old} {Infants}: {Evidence} for {Constraints} on {Learning}},
+	volume = {20},
+	issn = {1524-8372},
+	shorttitle = {Non-{Linguistic} {Grammar} {Learning} by 12-{Month}-{Old} {Infants}},
+	url = {https://doi.org/10.1080/15248372.2019.1604525},
+	doi = {10.1080/15248372.2019.1604525},
+	abstract = {Infants acquiring their native language are adept at discovering grammatical patterns. However, it remains unknown whether these learning abilities are limited to language, or available more generally for sequenced input. The current study is a conceptual replication of a prior language study, and was designed to ask whether infants can track phrase structure-like patterns from nonlinguistic auditory materials (sequences of computer alert sounds). One group of 12-month-olds was familiarized with an artificial grammar including predictive dependencies between sounds concatenated into strings, simulating the basic structure of phrases in natural languages. A second group of infants was familiarized with a grammar that lacked predictive dependencies. All infants were tested on the same set of familiar strings vs. novel (grammar-inconsistent) strings. Only infants exposed to the materials containing predictive dependencies showed successful discrimination between the test sentences, replicating the results from linguistic materials, and suggesting that predictive dependencies facilitate learning from nonlinguistic input.},
+	number = {3},
+	urldate = {2019-09-23},
+	journal = {Journal of Cognition and Development},
+	author = {Santolin, Chiara and Saffran, Jenny R.},
+	month = may,
+	year = {2019},
+	pages = {433--441}
+}
+
+@inproceedings{santolin2019b,
+	address = {Potsdam, Germany},
+	title = {Non-linguistic artificial grammar learning in 12-month-old infants: {A} cross-lab replication study},
+	author = {Santolin, Chiara and Saffran, Jenny R. and Sebastian-Galles, Núria},
+	month = jun,
+	year = {2019}
+}
+
+@book{gelman2006,
+	series = {Analytical methods for social research},
+	title = {Data analysis using regression and {Multilevel}/{Hierarchical} models},
+	isbn = {978-1-139-46093-4},
+	url = {https://books.google.es/books?id=c9xLKzZWoZ4C},
+	publisher = {Cambridge University Press},
+	author = {Gelman, A. and Hill, J.},
+	year = {2006}
+}

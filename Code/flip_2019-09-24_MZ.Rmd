@@ -1,0 +1,378 @@
+---
+title: "Flip - Further Preliminary Analyses"
+output:
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 4
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+#install packages
+library(tidyverse) #tidyr packages
+library(cowplot) #nice plot defaults
+theme_set(theme_cowplot())
+library(lmSupport) #for linear model analysis
+library(lme4)
+library(car)
+library(psych)
+library(knitr)
+library(broom)
+source("vif.mer.R")
+```
+
+First, we read in the data and compute both the novelty preference (total looking time to the novel stimuli minus total looking time to familiar stimuli), as well as the novelty preference **corrected for total looking time**, i.e. the "novelty preference score" described in the summary from 10 July 2019.
+
+```{r, message=F, warning=F}
+#read in data
+d <- read_csv("data/flip_updated.csv")
+
+#novelty preference measures
+d <- d %>%
+  mutate(
+    novel_pref=novel-familiar,
+    novel_pref_corr=(novel-familiar)/(familiar+novel),
+    avg_looking_time=(novel+familiar)/2)
+```
+
+## Compare distributions of Syntax and Saffran & Wilson
+
+The first thing I think that it makes sense to do is just to look at the distribution of (average) looking time for familiar and novel stimuli in the two studies. This seems like a good first step before combining the data from the two studies.
+
+```{r}
+##convert data to long format
+#also perform some centering transformations that will be useful in fitting models
+d_long <- gather(d,"looking.type","looking.time",familiar,novel)  %>%
+  mutate(
+    looking.type.c=case_when(
+      looking.type == "familiar" ~ -0.5,
+      looking.type == "novel" ~ 0.5
+      ),
+    hpp.c=hpp-mean(hpp),
+    total_studies.c=total_studies-mean(total_studies)
+  )
+
+ggplot(d_long,aes(looking.type,looking.time,color=looking.type))+
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))+
+  geom_jitter(width=0.01, height=0.01)+
+  geom_line(aes(group=baby),color="black",alpha=0.2)+
+  facet_wrap(~study+location)
+```
+
+Looking at the average looking times, it seems from visual inspection that the distributions look somewhat similar. Perhaps the looking times for Syntax in Wisconsin are somewhat shorter, mainly because the looking times to familiar items look substantially shorter in Wisconsin compared to Barcelona. 
+
+In general, there's nothing that looks too dramatic here to me suggesting that one distribution looks radically different than the others (in shape or in the range of values).
+
+## Linear (Correlational) Analyses
+
+As a first step, I'm just going to look at the linear relationship between visit number and headturn preference, not accounting for non-independence due to other factors (e.g., study). This helps for getting a sense of the simple effect and how robust it is to different sources of non-independence/ analytical decisions. I'll also look at how much the effect relies on high leverage points (children with higher visit numbers) and visualize the effect for each study and location.
+
+### Visit number predicts magnitude of novelty/ familiarity preference {.tabset}
+
+#### Uncorrected novelty preference
+```{r}
+ggplot(d, aes(hpp, novel_pref,color=as.factor(hpp)))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75))+
+  geom_jitter(width=0.01, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position="none")+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(not corrected for total looking time")
+```
+
+Fit a linear model predicting novelty preference from number of HPP visits (equivalent to a correlation).
+
+```{r results="asis"}
+#novelty preference
+m <- lm(novel_pref~hpp,data=d)
+#modelSummary(m)
+m %>%
+  summary() %>%
+  tidy() %>%
+  kable(digits=5)
+```
+
+
+#### Corrected novelty preference
+```{r}
+ggplot(d, aes(hpp, novel_pref_corr,color=as.factor(hpp)))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75))+
+  geom_jitter(width=0.01, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position="none")+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(corrected for total looking time")
+```
+
+Fit a linear model predicting novelty preference from number of HPP visits (equivalent to a correlation).
+
+```{r results="asis"}
+#novelty preference
+m <- lm(novel_pref_corr~hpp,data=d)
+#modelSummary(m)
+m %>%
+  summary() %>%
+  tidy() %>%
+  kable(digits=5)
+```
+
+### Split the prediction by study/location {.tabset}
+
+#### Split by study (Santolin vs. Saffran & Wilson)
+```{r}
+#split by study
+ggplot(d, aes(hpp, novel_pref_corr,color=study))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75))+
+  geom_jitter(width=0.01, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position="none")+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(corrected for total looking time")+
+  facet_wrap(~study)
+```
+
+
+#### Split by study and location (Wisconsin vs. Barcelona)
+```{r}
+ggplot(d, aes(hpp, novel_pref_corr,color=study))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75))+
+  geom_jitter(width=0.01, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position="none")+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(corrected for total looking time")+
+  facet_wrap(~study+location)
+```
+
+### How robust is this analysis to reduced numbers of visits {.tabset}
+
+#### 1 - 5 visits
+```{r}
+ggplot(d, aes(hpp, novel_pref_corr,color=study))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75),color="black")+
+  geom_jitter(width=0.05, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position=c(0.65,0.3))+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(corrected for total looking time")
+```
+
+Fit a linear model predicting novelty preference from number of HPP visits (equivalent to a correlation).
+
+```{r results="asis"}
+#novelty preference
+m <- lm(novel_pref_corr~hpp,data=d)
+#modelSummary(m)
+m %>%
+  summary() %>%
+  tidy() %>%
+  kable(digits=5)
+```
+
+#### 1 - 4 visits
+```{r}
+ggplot(filter(d,hpp<5), aes(hpp, novel_pref_corr,color=study))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75),color="black")+
+  geom_jitter(width=0.05, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position=c(0.7,0.3))+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(corrected for total looking time")
+```
+
+Fit a linear model predicting novelty preference from number of HPP visits (equivalent to a correlation).
+
+```{r results="asis"}
+#novelty preference
+m <- lm(novel_pref_corr~hpp,data=filter(d,hpp<5))
+#modelSummary(m)
+m %>%
+  summary() %>%
+  tidy() %>%
+  kable(digits=5)
+```
+
+#### 1 - 3 visits
+
+```{r}
+ggplot(filter(d,hpp<4), aes(hpp, novel_pref_corr,color=study))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75),color="black")+
+  geom_jitter(width=0.05, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position=c(0.7,0.2))+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(corrected for total looking time")
+```
+
+Fit a linear model predicting novelty preference from number of HPP visits (equivalent to a correlation).
+
+```{r}
+#novelty preference
+m <- lm(novel_pref_corr~hpp,data=filter(d,hpp<4))
+#modelSummary(m)
+m %>%
+  summary() %>%
+  tidy() %>%
+  kable(digits=5)
+```
+
+#### 1 - 2 visits
+```{r}
+ggplot(filter(d,hpp<3), aes(hpp, novel_pref_corr,color=study))+
+  geom_violin(aes(group=hpp),draw_quantiles = c(0.25, 0.5, 0.75),color="black")+
+  geom_jitter(width=0.05, height=0.01)+
+  geom_smooth(aes(color=NULL),method="lm")+
+  geom_hline(yintercept=0)+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position=c(0.35,0.8))+
+  xlab("Number of HPP visits")+
+  ylab("Novelty Preference\n(corrected for total looking time")+
+  scale_x_continuous(breaks=c(1,2))
+```
+
+Fit a linear model predicting novelty preference from number of HPP visits (equivalent to a correlation).
+
+```{r, message=F}
+#novelty preference
+m <- lm(novel_pref_corr~hpp,data=filter(d,hpp<3))
+#modelSummary(m)
+m %>%
+  summary() %>%
+  tidy() %>%
+  kable(digits=5)
+```
+
+## Linear mixed-effects analyses
+
+### Reproducing analysis with summarized difference score
+
+This essentially reproduces the model reported in the shared analysis script from
+10 July 2019, with a few slight technical differences. For instance, I will simply fit the model with the maximal random effects structure here as the "default" and use Wald chi-squared tests to get p-values (not my preferred method, which is Kenward-Rogers approximantion, but this has some odd issues in this instance - see below).
+
+```{r, message=F}
+#center hpp
+d <- d%>%
+  mutate(
+    hpp.c=hpp - mean(hpp)
+)
+m <- lmer(novel_pref_corr~hpp.c+(1+hpp.c|study),data=d)
+summary(m)
+Anova(m,type="III")
+```
+
+
+### Approach using long-format data & lme4
+
+The best (most powerful) analysis would involve fitting linear mixed-effects models to the trial-by-trial looking data. This model would look something like this, fit on the trial-level looking data:
+
+**lmer(looking.time ~ looking.type x hpp + (1 + looking.type| baby) + (1 | item)+ (1+looking.typexhpp|study))**
+
+For now, let's consider a mixed-effects model fit to the average looking time data.
+
+I think the model that we want to test would involve predicting an interaction between item type (familiar vs. novel) and number of hpp visits on looking time - the effect of familiar vs. novel items on looking behavior **depends on** the number of headturn visits an infant has had.
+
+**lmer(looking.time ~ looking.type x hpp + (1 | baby) + (1+hpp|study))**
+
+We include a by-participant random intercept, since we have multiple observations per baby. Since item type has only two levels, we fit the model without a by-participant random slope (since this overdetermines the model; my understanding is that it's OK to still force the model to accept the random slope, but it shouldn't much matter for the estimates).
+
+```{r, message=F}
+m <- lmer(looking.time~looking.type.c*hpp.c+(1|baby)+(1+hpp.c|study),data=d_long)
+summary(m)
+Anova(m,type="III")
+```
+
+The significant interaction term suggests that the number of visits changes the relationship between item type and looking time, i.e. the nature of the familiarity/novelty preference.
+
+The way to get appropriate p-values from lmer models is of course a matter of debate. Here, we used a Wald chi-squared test. Typically, the method I prefer is the Kenward-Rogers approximation which estimates the "correct" degrees of freedom. However, there's something a bit odd going on when adding the hpp by-study random slope with this method, which is probably because study only has two levels. The chi-squared method should be fine, but this is also something we could do a deeper dive on down the road (it might also be just another argument against including the hpp by-study random slope).
+
+
+### Is the effect robust when we remove babies with high numbers of visits (4 or 5)?
+
+Checking here that the effect still holds when we remove high leverage points - the handful of babies who had 4 or 5 visits.
+
+```{r, message=F}
+m <- lmer(looking.time~looking.type.c*hpp.c+(1|baby)+(1+hpp.c|study),data=filter(d_long,hpp<4))
+summary(m)
+Anova(m,type="III")
+```
+
+## Total number of visits and hpp
+
+What happens when we attempt to predict preferential looking from both total number of studies and hpp?
+
+In principle, this works, but the issue here is that total number of studies and hpp studies is highly, highly correlated/ almost indistinguishable
+
+```{r}
+ggplot(d,aes(hpp,total_studies))+
+  geom_jitter(size=1.5, height=0.1,width=0.1)+
+  #geom_smooth(method="lm")+
+  stat_function(fun=function(x)x, geom="line", size=1.5,color="darkgreen")
+```
+
+Almost all participants have only completed HPP studies. Just on face value, it doesn't make a lot of sense to me to fit a model when the two predictors would be virtually identical.
+
+
+A likely consequence is that a model including both values will not be able to estimate the effect of both simultaneously/ will yield inaccurate estimates for these predictors. The standard way to check this is using the variance inflation factor (VIF). We will check the VIF of the main linear model and the main linear mixed-effects model below.
+
+### Linear model
+
+```{r}
+m <- lm(novel_pref_corr~hpp+total_studies,data=d)
+summary(m)
+vif(m)
+```
+
+The VIF is quite high for the two predictors, ~4.6, which means that the SEs are increased by a factor of `r round(sqrt(vif(m)[1]),2)` (square root of the inflation factor). A typical cut-off is a factor of 5 or more, so we would be right on the border of that cutoff. Bottom line: I would not trust these values.
+
+### Linear mixed-effects model
+
+#### Summarized difference score
+
+```{r}
+#center hpp
+d <- d%>%
+  mutate(
+    total_studies.c=total_studies - mean(total_studies)
+)
+#most complex model without convergence issues
+m <- lmer(novel_pref_corr~hpp.c+total_studies.c+(1+total_studies.c|study),data=d)
+summary(m)
+Anova(m,type="III")
+vif.mer(m) #check for multicollinearity
+```
+
+The news might be slightly better here. The VIF is still pretty high (~3.5), but perhaps acceptable? If we take these values as somewhat interpretable, then HPP predicts preferential looking, controlling for total number of studies. The one caveat here is that the model with the maximal random effects structure has some convergence issues (as well as  having super high VIF), so this would be simplifying the model by removing the random slope for hpp number.
+
+#### Long format
+
+``` {r}
+m <- lmer(looking.time~looking.type.c*hpp.c+looking.type.c*total_studies.c+(1|baby)+(1|study),data=d_long)
+summary(m)
+vif.mer(m)
+Anova(m,type="III")
+```
+
+Similar situation to the linear model - VIF that is right on the threshold to being really too high to allow interpretation of the model (~4.6). We are simplifying the model again here to avoid convergence warnings.
+
+The rough summary, to me, would be:
+
+1. Total number of studies and total HPP studies are virtually identical in our dataset. Basically, we don't have the right dataset to disentangle these two factors.
+
+2. Models including both total study number and total hpp study number are right on the border to being uninterpretable, in principle, due to the fact that these predictors are virtually identical.
+
+3. If one really wants to look at these (probably uninterpretable) models, if anything, it looks like HPP is the better predictor. But I would take any conclusion along those lines with a MASSIVE grain of salt.

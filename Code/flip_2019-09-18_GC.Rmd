@@ -25,6 +25,7 @@ library(psych)
 library(knitr)        # for formatting tables
 library(broom)        # for tidy lm output
 library(broom.mixed)  # for tidy lmer output
+library(lattice)      # for zero margins in plots
 library(patchwork)    # for grouping plots
 ```
 
@@ -51,9 +52,9 @@ data_long <- gather(data, "trialType", "lookingTime", Familiar, Novel) %>%
   mutate(
     trialType_center = case_when(
       trialType == "Familiar" ~ -0.5,
-      trialType == "Novel"    ~ 0.5
-    ),
-    HPP_center = HPP - mean(HPP)
+      trialType == "Novel"    ~ 0.5),
+      HPP = as.factor(HPP),
+      HPP_center = HPP - mean(HPP)
   )
 ```
 
@@ -305,7 +306,7 @@ theme(
   ggsave("../Figures/model4.png")
 ```
 
-####1 - 3 visits
+#### 1 - 3 visits
 
 Fit a linear model predicting novelty preference from number of HPP visits (equivalent to a correlation).
 
@@ -484,6 +485,7 @@ data_long %>%
   mutate(trialType = factor(trialType, c("Familiar", "Novel"))) %>%
   ggplot(aes(x = trialType, y = lookingTime)) +
   facet_wrap(~HPP, nrow = 1) +
+  zero_margin + 
   geom_violin(aes(fill = trialType), colour = NA, alpha = 0.5) +
   geom_line(aes(group = Participant), colour = "black", size = 0.25, alpha = 0.2) +
   geom_line(data = data_summary, aes(x = trialType, y = mean), size = 1, colour = "black") +
@@ -558,6 +560,7 @@ data_long %>%
   mutate(trialType = factor(trialType, c("Familiar", "Novel"))) %>%
   ggplot(aes(x = trialType, y = lookingTime)) +
   facet_wrap(~HPP, nrow = 1) +
+  zero_margin +
   geom_violin(aes(fill = trialType), colour = NA, alpha = 0.5) +
   geom_line(aes(group = Participant), colour = "black", size = 0.25, alpha = 0.2) +
   geom_line(data = data_summary, aes(x = trialType, y = mean), size = 1, colour = "black") +
