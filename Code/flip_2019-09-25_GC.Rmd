@@ -39,7 +39,7 @@ data <- read.csv("../Data/flip2.csv") %>%                                      #
   gather("trialType", "lookingTime", Familiar, Novel) %>%                      # make long format
   mutate(
     trialType       = factor(trialType, levels = c("Familiar", "Novel")),      # set "familiar" as baseline
-    Study           = factor(Study, levels = c("Syntax", "Saffran & Wilson")), # make "Study" a factor
+    Study           = factor(Study, levels = c("Santolin", "Saffran & Wilson")), # make "Study" a factor
     HPP_center      = (HPP - mean(HPP))                                        # center the HPP  
   )
 
@@ -53,7 +53,7 @@ n              <- data %>% summarise(n = n())                                  #
 n_participants <- data %>% filter(trialType == "Novel") %>% summarise(n = n()) # number of participants
 n_study <- data %>%                                                            # number of participants by study
   filter(trialType == "Novel") %>%
-  group_by(Study) %>%
+  group_by(Study, Location) %>%
   summarise(n = n())
 n_studyLocation <- data %>%                                                    # number of participants by study and location
   filter(trialType == "Novel") %>%
@@ -62,7 +62,7 @@ n_studyLocation <- data %>%                                                    #
 
 ```
 
-We retrieved data from `r n_participants$n` participants: `r n_study$n[1]` from @santolin2019 (`r n_studyLocation$n[1]` tested in Barcelona and `r n_studyLocation$n[2]` tested in Wisconsin, and `r n_study$n[2]` from @saffran2009. Two datapoints were available for each participant: one for the mean looking time in "familiar" trials, and one for the mean looking time in "novel" trials. A total of `r n$n` datapoints were included in the analysis. Participants included in our analysis were those included in the final version of both studies.
+We retrieved data from `r n_participants$n` participants: `r n_study$n[1]` from @santolin2019a (`r n_studyLocation$n[2]` tested in Wisconsin, the replication study [@santolin2019b; `r n_studyLocation$n[1]`] tested in Barcelona, and `r n_studyLocation$n[3]` from @saffran2003, tested in Wisconsin. Two datapoints were available for each participant: one for the mean looking time in "familiar" trials, and one for the mean looking time in "novel" trials. A total of `r n$n` datapoints were included in the analysis. Participants included in our analysis were those included in the final version of both studies.
 
 ## Studies
 
@@ -101,7 +101,7 @@ model <- lmer(
     (1 | Participant) +      # by-participant random intercept
     (1 + HPP_center|Study),  # by-study random intercept and HPP random slope
   data = data,               # indicate dataset
-  REML = FALSE               # fit using Maximum Lielihood criterion (and not the by-default REML criterion)
+  REML = FALSE               # fit using Maximum Likelihood criterion (and not the by-default REML criterion)
 ) 
 
 summary <- summary(model) %$% # extract coefficients from model
@@ -176,7 +176,7 @@ data %>%
 
 ```{r interaction, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.align="c", fig.cap=c("1) Coefficients of the fixed effects. Dots, whiskers, and shaded boxes represent the estimated coefficients, standard error, and 95% Wald confidence intervals, respectively. 2) Predicted looking times plotted against HPP, split by study. The HPP variable was centered before being fed to the model (we substrsacted the overall mean looking time from each HPP score for making the model fit easier), thus the shifted X-axis.")}
 
-coefficients <- tidy(model) %>%                         # extract coefficients
+coefficients <- tidy(model) %>%                        # extract coefficients
   filter(effect == 'fixed', term != "(Intercept)") %>% # get coefficients of interest
   mutate(term = c("trialType",                         # rename terms to join datasets
                   "HPP_center",
@@ -268,7 +268,7 @@ Posterior predicted simulations [@gelman2006] indicated that the coefficients ob
 
 ### Appendix 2: Checking assumptions of the Linear Mixed Model
 
-Residuals seem to approximate a normal distribution, though the some scores in the @santolin2017 study seem to be somewhat shifted.
+Residuals seem to approximate a normal distribution, though the some scores in the @santolin2019a and @santolin2019b studies seem to be somewhat shifted.
 
 ```{r normality, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
