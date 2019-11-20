@@ -1,0 +1,379 @@
+---
+title: "Methods"
+output:
+  pdf_document:
+    fig_caption: yes
+bibliography: ../Flip.bib
+csl: ../apa.csl
+
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+	message = FALSE,
+	warning = FALSE,
+	include = TRUE
+)
+options(knitr.kable.NA = '-', big.mark = ',') # to replace "NA" with "-" in knitr::kable
+
+```
+
+```{r prepare, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+# load packages
+library(tidyverse)    # tidyverse packages
+library(magrittr)     # for using pipes
+library(lmerTest)     # for ANOVAs (computing Satterhwaite’s degrees of freedom)
+library(optimx)       # for specifying lm4::lmer optimiser
+library(predictmeans) # for checking LMM assumptions
+library(effects)      # for analysing the interaction
+library(car)          # for checking multicollinearity 
+library(knitr)        # for formatting tables
+library(broom.mixed)  # for tidy lm4::lmer output
+library(patchwork)    # for grouping plots
+library(english)      # to transform numbers to words
+
+# import data
+data <- read.csv("../Data/flip2.csv") %>%                                      # read in data
+  mutate(avg_looking_time = (Familiar+Novel)/2) %>%                            # compute average looking time
+  gather("trialType", "lookingTime", Familiar, Novel) %>%                      # make long format
+  mutate(
+    trialType       = factor(trialType, levels = c("Familiar", "Novel")),      # set "familiar" as baseline
+    Study           = factor(Study, levels = c("Santolin", "Saffran & Wilson")), # make "Study" a factor
+    HPP_center      = (HPP - mean(HPP))                                        # center the HPP  
+  )
+
+```
+
+## Participants
+
+```{r participants, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+
+n              <- data %>% summarise(n = n())                                  # number of observations
+n_participants <- data %>% filter(trialType == "Novel") %>% summarise(n = n()) # number of participants
+n_study <- data %>%                                                            # number of participants by study
+  filter(trialType == "Novel") %>%
+  group_by(Study, Location) %>%
+  summarise(n = n())
+n_studyLocation <- data %>%                                                    # number of participants by study and location
+  filter(trialType == "Novel") %>%
+  group_by(Study, Location) %>%
+  summarise(n = n())
+
+```
+
+We retrieved data from `r n_participants$n` participants: `r n_study$n[1]` from @santolin2019a (`r n_studyLocation$n[2]` tested in Wisconsin, the replication study [@santolin2019b; `r n_studyLocation$n[1]`] tested in Barcelona, and `r n_studyLocation$n[3]` from @saffran2003, tested in Wisconsin. Two datapoints were available for each participant: one for the mean looking time in "familiar" trials, and one for the mean looking time in "novel" trials. A total of `r n$n` datapoints were included in the analysis. Participants included in our analysis were those included in the final version of both studies.
+
+## Studies
+
+Both studies compared looking times in novel and familiar trials, and revealed that infants displayed a preference toward one of the trial types. The direction of the preference, however, was different.
+
+```{r plot_data, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.align="c", fig.cap="Looking time (ms) in familiar and novel trials split by Study and Location. Whiskers indicate the standard error of the mean, respectively. Grey lines indicate participant level mean looking times."}
+
+ggplot(data, aes(trialType, lookingTime, fill = Study))+
+  facet_wrap(~ Study + Location) +
+  stat_summary(fun.y = mean, geom = "bar", colour = NA) +
+  stat_summary(fun.data = "mean_se", geom = "errorbar", colour = "black", width = 0.25, size = 0.75) +
+  labs(x = "Trial type", y = "Looking time (ms)") +
+  scale_fill_brewer(palette = "Dark2") +
+  theme(
+    panel.grid.major.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.background   = element_rect(fill = "white", colour = "grey"),
+    text               = element_text(colour = "black", size = 12),
+    axis.text          = element_text(colour = "black"),
+    legend.position    = "none" 
+  )
+```
+
+## Data analysis
+
+This model included looking time ($LT$) as response variable, trial type ($TrialType$ = familiar/novel), the number of HeadTurn Preference Procedure experiments completed by infants ($HPP$), and their interaction ($TrialType \times HPP$) as fixed effects. *Familiar* trials were set as the baseline. Participant ($Participant$) and study ($Study$) were included as random effects. The model included a by-participant and by-study random intercepts, and a random slope of $HPP$ by $Study$.
+
+This model accounts for across-participants variability in overall looking time (i.e. some infants are long lookers, some are short lookers), and for across-studies differences in overall looking time, and allows the effect of $HPP$ to vary across studies. Although including data from only two studies is not an optimal practice when specifiying $Study$ as a random effect, there are two strong reasons to include the said by-study random intercept, and a random slope of $HPP$ by study. First, participants from different linguistic/cultural environments were included in both studies. This may have led to participants in one of the locations to looking longer in average than those from the other location. Second, in spite of their similarity both studies were not identical, which could also have led to differences in overall looking time.
+
+```{r model, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+model <- lmer(
+  lookingTime ~              # response variable
+    trialType * HPP_center + # fixed effects ("*" means "include the interaction")
+    (1 | Participant) +      # by-participant random intercept
+    (1 + HPP_center|Study),  # by-study random intercept and HPP random slope
+  data = data,               # indicate dataset
+  REML = FALSE               # fit using Maximum Likelihood criterion (and not the by-default REML criterion)
+) 
+
+summary <- summary(model) %$% # extract coefficients from model
+  coefficients %>%
+  as.data.frame() %>%
+  rownames_to_column("term") %>%
+  mutate(term = c("(Intercept)", # rename terms to join datasets 
+                  "trialType",
+                  "HPP_center",
+                  "trialType:HPP_center")) %>% 
+  select(., term, coefficient = Estimate)
+
+confidence.intervals <- confint.merMod( # calculate confidence intervals
+  model,  
+  method = "Wald",
+  level = 0.95
+) %>%
+  as.data.frame() %>%
+  rownames_to_column(var = "term") %>%
+  slice(6:9) %>%
+  mutate(term = c("(Intercept)" , # rename terms to join datasets 
+                  "trialType",
+                  "HPP_center",
+                  "trialType:HPP_center")) 
+
+anova <- anova(model, type = 3, ddf = "Satterthwaite") %>% # perform type III ANOVA using Satterthwaite's approximation to degrees of freedom
+  tidy() %>%
+  right_join(., summary, by = "term") %>% # join outcome with coefficients
+  left_join(., confidence.intervals, by = "term") %>% # join outcome with confidence intervals
+  mutate(ci1 = round(`2.5 %`, 2),
+         ci2 = round(`97.5 %`, 2)) %>%
+  unite(col = "ci", ci1, ci2, sep = "-") %>% # make a string with the lower and upper CI
+  select(-c(`2.5 %`, `97.5 %`)) %>%
+  select(term, coefficient, ci, statistic, DenDF, p.value)
+
+
+anova %>%
+  mutate(term = c("Intercept", "Trial type", "HPP", "Trial type * HPP")) %>%
+  kable(digits = 3, col.names = c("Term", "Coefficient", "95% CI", "t", "df", "p"), align = "c") 
+
+```
+
+We found a statistically significant interaction term, *t*(`r round(anova$DenDF[4], 2)`) = `r round(anova$statistic[4], 2)`, *p* = `r round(anova$p.value[4], 3)`, 95% CI = `r anova$ci[4]`, suggesting that the effect of trial type on looking time was influenced by the number of HPP experiments each participant participated in. The interaction shows that experience with a higher number of HPP experiments is associated with a stronger novelty preference.
+
+```{r plot_model, echo=FALSE, message=FALSE, warning=FALSE, fig.align='c', fig.cap="Looking times of familiar and novel trials, split by number of HeadTurn Preference Procedure experiments. Black points and whiskers represent the group-level mean looking time and SEM, respectively. Grey lines represent participant-level mean looking time."}
+sample_sizes <- data %>%              # calculate mean looking time by HPP and trialType
+  group_by(HPP, trialType) %>%
+  summarise(n = n()) %>%
+  mutate(n = paste0("n = ", n))
+data %>%
+  ggplot(aes(x = trialType, y = lookingTime, fill = trialType)) +
+  facet_wrap(~HPP, nrow = 1, switch = "x") +
+  stat_summary(fun.y = mean, geom = "bar", size = 0.5) +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.25, size = 0.75) +
+  geom_text(data = sample_sizes, aes(x = trialType, y = 250, label = n), colour = "white") +
+  labs(x = "HPP", y = "Looking time (ms)") +
+  scale_colour_brewer(palette = "Dark2") +
+  scale_fill_brewer(palette = "Dark2") +
+  theme(
+    panel.grid.major.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.background   = element_rect(fill = "white", colour = "grey"),
+    text               = element_text(colour = "black", size = 12),
+    axis.text          = element_text(colour = "black"),
+    legend.position    = "none",
+    strip.placement = "outside" 
+)
+```
+
+
+```{r interaction, echo=FALSE, message=FALSE, warning=FALSE, fig.align="c", fig.cap="(A) Coefficients of the fixed effects. Dots, whiskers, and shaded boxes represent the estimated coefficients, standard error, and 95 percent Wald confidence intervals, respectively. (B) Predicted looking times plotted against HPP, split by study. The HPP variable was centered."}
+
+coefficients <- tidy(model) %>%                        # extract coefficients
+  filter(effect == 'fixed', term != "(Intercept)") %>% # get coefficients of interest
+  mutate(term = c("trialType",                         # rename terms to join datasets
+                  "HPP_center",
+                  "trialType:HPP_center")) %>% 
+  left_join(., confidence.intervals, by = "term") %>%  # join outcome with confidence intervals         
+  mutate(term = c("Trial type",                        # rename terms for joining datasets
+                  "HPP",
+                  "Trial type * HPP"),
+         lower.se = estimate-std.error,
+         upper.se = estimate+std.error) %>%
+  rename(ci_lower = `2.5 %`, ci_upper = `97.5 %`)
+
+effects <- effect(term = "trialType*HPP_center", mod = model) %>%
+  as.data.frame()
+
+# plot coefficients
+ggplot(data = coefficients, aes(term, estimate, colour = term, fill = term)) +
+  geom_linerange(aes(x = term, ymin = ci_lower, ymax = ci_upper), alpha = 0.7, size = 10) +
+  geom_point(size = 5, colour = "black") +
+  geom_errorbar(aes(ymax = estimate+std.error, ymin = estimate-std.error), height = 0, size = 1.5, width = 0, colour = "black") +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  labs(x = "Term", y = "coefficient") +
+  scale_colour_brewer(palette = "Dark2") +
+  theme(
+    panel.grid.major.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.background   = element_rect(fill = "white", colour = "grey"),
+    text               = element_text(colour = "black", size = 12),
+    axis.text          = element_text(colour = "black"),
+    legend.position    = "none"
+  ) +
+  coord_flip() +
+  
+  # add interaction plot 
+  ggplot(effects, aes(x = HPP_center, y = fit, fill = trialType, colour = trialType)) +
+  geom_line(size = 1) +
+  labs(x = "HPP", y = "Looking time (ms)", colour = "Trial type", fill = "Trial type") +
+  scale_colour_brewer(palette = "Dark2") +
+  scale_fill_brewer(palette = "Dark2") +
+  theme(
+    panel.grid.major.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.background   = element_rect(fill = "white", colour = "grey"),
+    text               = element_text(colour = "black", size = 12),
+    axis.text          = element_text(colour = "black"),
+    legend.position    = "right"
+  ) +
+  plot_layout(nrow = 2) +
+  plot_annotation(tag_levels = "A")
+
+```
+
+
+# Appendices
+
+### Appendix 1: Linear Mixed Model
+
+Following @barr2013 guidelines, we initially specified a maximal random structure, including random intercepts for $Participant$ and $Study$, and random slopes for $TrialType$, $HPP$, and $TrialType \times HPP$, by $Participant$ and $Study$. Due to lack of convergence, the random structure was simplified until the model fit was no longer singular. The code and formula of the mode are presented below:
+
+<center>`lookingTime ~ TrialType * HPP + (1 | Participant) + (1 | Study) + (1 + HPP | Study)`</center>
+
+$$ \begin{aligned}LT_{ips} = \\ &\beta_{0} + Participant_{0p} + Study_{0s} + \\ &(\beta_{1} + Study_{s}) HPP_{i} + \\ &\beta_{2}TrialType_{i} + \\ &(\beta_{3} + Study_s) HPP \times TrialType_{i} + \\ &e_{ips},e_{ips} \sim N(0, \sigma^2), Participant_{0p} \sim N(0, \tau_{00}^2), Study_{0p} \sim N(0, &\omega_{00}^2)\end{aligned}$$
+
+Where:
+
+* $LT_{ips}$ is the looking time in trial $i$, in participant $p$ from study $s$.
+* $\beta_{0}$ is the fixed intercept (the grand mean of all looking times from all trials).
+* $Participant_{0p}$ is the by-participant random intercept (the overall looking time of participant $p$, assumed to have been sampled from a normal distribution with mean 0 and variance $\tau_{00}^2$.
+* $Study_{0s}$ is the by-study random intercept (the overall looking time in study $s$, assumed to have been sampled from a normal distribution with mean 0 and variance $\omega_{00}^2$.
+* $\beta_{1}$ is the coefficient of the fixed effect of the $HPP$ predictor.
+* $\beta_{2}$ is the coefficient of the fixed effect of the $TrialType$ predictor.
+* $\beta_{3}$ is the coefficient of the fixed effect of the $TrialType \times HPP$ interaction.
+* $e_{ips}$ is the error of the model in trial $i$, of participant $p$ from study $s$, assumed to be normally distributed with mean 0 and variance $\sigma^2$.
+
+Before fitting the model, we group mean-centered the $HPP$ predictor.The model was fitted using the `lme4` R package [@lme4]. We used Maximum Likelihood criterion to estimate the coefficients, assuming an unstructured variance-covariance structure. We used the `lmerTest` package [@lmerTest] to compute *p*-values using the Satterthwaite's approximation to degrees of freedom [@satterthwaite1946a]. 
+
+
+```{r posterior_predicted_simulation, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+iqrvec      <- sapply(simulate(model, 1000), IQR)
+obsval      <- IQR(data$lookingTime)
+post.pred.p <- mean(obsval >= c(obsval, iqrvec))
+
+```
+
+Posterior predicted simulations [@gelman2006] indicated that the coefficients obtained by our model are plausible: The observed inter-quartile range (IQR) of looking times lied within the IQR obtained from 1000 simulated datasets generated from the model in more than 95% of the simulations (*p* = `r round(post.pred.p, 3)`).
+
+### Appendix 2: Checking assumptions of the Linear Mixed Model
+
+Residuals seem to approximate a normal distribution, though the some scores in the @santolin2019a and @santolin2019b studies seem to be somewhat shifted.
+
+```{r normality, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+ggplot(data = fortify(model), aes(sample = .resid)) +
+  geom_qq(alpha = 0.3) +
+  geom_qq_line(colour = "black", size = 1) +
+  labs(x = "Theoretical", y = "Sample", colour = "Trial") +
+  theme(
+    panel.grid.major.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.major.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.background   = element_rect(fill = "white", colour = "grey"),
+    text               = element_text(colour = "black", size = 12),
+    axis.text          = element_text(colour = "black"),
+    legend.position    = "right"
+  ) +
+  ggplot(data = fortify(model), aes(sample = .resid, colour = Study)) +
+  facet_wrap(~Study) +
+  geom_qq(alpha = 0.3) +
+  geom_qq_line(size = 1) +
+  labs(x = "Theoretical", y = "Sample", colour = "Study") +
+  scale_colour_brewer(palette = "Dark2") +
+  theme(
+    panel.grid.major.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.major.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.background   = element_rect(fill = "white", colour = "grey"),
+    text               = element_text(colour = "black", size = 12),
+    axis.text          = element_text(colour = "black"),
+    legend.position    = "none"
+  ) +
+  ggplot(data = fortify(model), aes(x = .resid)) +
+  geom_density(alpha = 0.5, fill = "black") +
+  labs(x = "Residuals", y = "Density", colour = "Study") +
+  scale_fill_brewer(palette = "Dark2") +
+  theme(
+    panel.grid.major.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.major.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.background   = element_rect(fill = "white", colour = "grey"),
+    text               = element_text(colour = "black", size = 12),
+    axis.text          = element_text(colour = "black"),
+    legend.position    = "none"
+  ) +
+  ggplot(data = fortify(model), aes(x = .resid, fill = Study)) +
+  facet_wrap(~Study) +
+  geom_density(alpha = 0.5) +
+  labs(x = "Residuals", y = "Density", colour = "Study") +
+  scale_fill_brewer(palette = "Dark2") +
+  theme(
+    panel.grid.major.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.major.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.background   = element_rect(fill = "white", colour = "grey"),
+    text               = element_text(colour = "black", size = 12),
+    axis.text          = element_text(colour = "black"),
+    legend.position    = "none"
+  ) +
+  plot_layout(nrow = 2, ncol = 2)
+  
+
+```
+
+
+```{r linearity_homoskedasticity, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+data.frame(
+  studentised_residual = rstudent(model),
+  fitted = fitted(model),
+  study = data$Study
+) %>%
+ggplot(aes(fitted, studentised_residual, colour = study, fill = study)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  geom_smooth(method = "lm", fullrange = TRUE) +
+  labs(x = "Predicted", y = "Studentised residuals", colour = "Study", fill = "Study") +
+  scale_colour_brewer(palette = "Dark2") +
+  scale_fill_brewer(palette = "Dark2") +
+  theme(
+    panel.grid.major.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.minor.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.background   = element_rect(fill = "white", colour = "grey"),
+    text               = element_text(colour = "black", size = 12),
+    axis.text          = element_text(colour = "black"),
+    legend.position    = "right"
+  )
+  
+```
+
+We observed little evidence of multicollinearity in the predictors we included in the model:
+
+```{r multicollinearity, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+vif(model) %>%
+  as.data.frame() %>%
+  rownames_to_column("term") %>%
+  rename(vif = ".") %>%
+  mutate(term = c("Trial type", "HPP", "Trial type * HPP"),
+         tolerance = 1/vif) %>%
+  kable(digits = 2, col.names = c("", "VIF", "Tolerance"), align = "c")
+``` 
+
+## References

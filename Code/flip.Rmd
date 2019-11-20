@@ -3,8 +3,8 @@ title: "Methods"
 output:
   pdf_document:
     fig_caption: yes
-bibliography: /Users/GonzaloGGC/projects/Flip/Flip.bib
-csl: /Users/GonzaloGGC/projects/Flip/apa.csl
+bibliography: ../Flip.bib
+csl: ../apa.csl
 
 ---
 
@@ -174,7 +174,7 @@ data %>%
 ```
 
 
-```{r interaction, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.align="c", fig.cap=c("1) Coefficients of the fixed effects. Dots, whiskers, and shaded boxes represent the estimated coefficients, standard error, and 95% Wald confidence intervals, respectively. 2) Predicted looking times plotted against HPP, split by study. The HPP variable was centered before being fed to the model (we substrsacted the overall mean looking time from each HPP score for making the model fit easier), thus the shifted X-axis.")}
+```{r interaction, echo=FALSE, message=FALSE, warning=FALSE, fig.align="c", fig.cap="(A) Coefficients of the fixed effects. Dots, whiskers, and shaded boxes represent the estimated coefficients, standard error, and 95 percent Wald confidence intervals, respectively. (B) Predicted looking times plotted against HPP, split by study. The HPP variable was centered."}
 
 coefficients <- tidy(model) %>%                        # extract coefficients
   filter(effect == 'fixed', term != "(Intercept)") %>% # get coefficients of interest
@@ -228,7 +228,8 @@ ggplot(data = coefficients, aes(term, estimate, colour = term, fill = term)) +
     axis.text          = element_text(colour = "black"),
     legend.position    = "right"
   ) +
-  plot_layout(nrow = 2) 
+  plot_layout(nrow = 2) +
+  plot_annotation(tag_levels = "A")
 
 ```
 
