@@ -40,7 +40,8 @@ data <- read.csv("../Data/flip2.csv") %>%                                      #
   mutate(
     trialType       = factor(trialType, levels = c("Familiar", "Novel")),      # set "familiar" as baseline
     Study           = factor(Study, levels = c("Santolin", "Saffran & Wilson")), # make "Study" a factor
-    HPP_center      = (HPP - mean(HPP))                                        # center the HPP  
+    HPP_center      = (HPP - mean(HPP)),                                        # center the HPP  
+    trialType_center = ifelse(trialType=="Familiar",-0.5,0.5)
   )
 
 ```
@@ -66,9 +67,9 @@ We retrieved data from `r n_participants$n` participants: `r n_study$n[1]` from 
 
 ## Studies
 
-Both studies compared looking times in novel and familiar trials, and revealed that infants displayed a preference toward one of the trial types. The direction of the preference, however, was different.
+The two studies conducted by Santolin and colleages compared looking times in novel and familiar trials, and revealed that infants displayed a preference toward one of the trial types. The direction of the preference, however, was different for the two studies.
 
-```{r plot_data, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.align="c", fig.cap="Looking time (ms) in familiar and novel trials split by Study and Location. Whiskers indicate the standard error of the mean, respectively. Grey lines indicate participant level mean looking times."}
+```{r plot_data, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.align="c", fig.cap="Looking time (ms) in familiar and novel trials split by Study and Location. Error bars indicate the standard error of the mean, respectively. Grey lines indicate participant level mean looking times."}
 
 ggplot(data, aes(trialType, lookingTime, fill = Study))+
   facet_wrap(~ Study + Location) +
@@ -90,18 +91,30 @@ ggplot(data, aes(trialType, lookingTime, fill = Study))+
 
 ## Data analysis
 
-This model included looking time ($LT$) as response variable, trial type ($TrialType$ = familiar/novel), the number of HeadTurn Preference Procedure experiments completed by infants ($HPP$), and their interaction ($TrialType \times HPP$) as fixed effects. *Familiar* trials were set as the baseline. Participant ($Participant$) and study ($Study$) were included as random effects. The model included a by-participant and by-study random intercepts, and a random slope of $HPP$ by $Study$.
+We fit a model predicting looking time ($LT$) from the fixed effects trial type ($TrialType$, centered; Familiar = -0.5 and Novel = 0.5), the number of HeadTurn Preference Procedure experiments completed by infants ($HPP$), and their interaction ($TrialType \times HPP$) as fixed effects. *Familiar* trials were set as the baseline. Participant ($Participant$) and study ($Study$) were included as random effects. Following Barr et al. (2013), we fit a model with the maximal random effects structure that allowed the model to converge. The maximal random effects structure included a by-participant and by-study random intercepts, and a random slope of $HPP$ by $Study$. We subsequently pruned the random effects structure until convergence was achieved. The final model included by-participant and by-study random intercepts. The particular random effects structure chosen does not qualitatively impact the estimates and conclusions from the model
 
-This model accounts for across-participants variability in overall looking time (i.e. some infants are long lookers, some are short lookers), and for across-studies differences in overall looking time, and allows the effect of $HPP$ to vary across studies. Although including data from only two studies is not an optimal practice when specifiying $Study$ as a random effect, there are two strong reasons to include the said by-study random intercept, and a random slope of $HPP$ by study. First, participants from different linguistic/cultural environments were included in both studies. This may have led to participants in one of the locations to looking longer in average than those from the other location. Second, in spite of their similarity both studies were not identical, which could also have led to differences in overall looking time.
+This model accounts for across-participants variability in overall looking time (i.e. some infants are long lookers, some are short lookers), and for across-studies differences in overall looking time, and allows the effect of $HPP$ to vary across studies. We specifiyied by-study random effects for two strong reasons. First, participants from different linguistic/cultural environments were included in both studies. This may have led to participants in one of the locations to looking longer in average than those from the other location. Second, in spite of their similarity both studies were not identical, which could also have led to differences in overall looking time.
 
 ```{r model, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 model <- lmer(
   lookingTime ~              # response variable
-    trialType * HPP_center + # fixed effects ("*" means "include the interaction")
+    trialType_center * HPP_center + # fixed effects ("*" means "include the interaction")
     (1 | Participant) +      # by-participant random intercept
     (1 + HPP_center|Study),  # by-study random intercept and HPP random slope
   data = data,               # indicate dataset
-  REML = FALSE               # fit using Maximum Likelihood criterion (and not the by-default REML criterion)
+  REML = TRUE               # fit using REML
+) 
+
+#does not converge (singular boundary fit due to high correlation between by-study random intercept and by-study random slope for HPP)
+#prune the random effects structure by removing the by-study random slope for HPP (similar results)
+
+model <- lmer(
+  lookingTime ~              # response variable
+    trialType_center * HPP_center + # fixed effects ("*" means "include the interaction")
+    (1 | Participant) +      # by-participant random intercept
+    (1|Study),  # by-study random intercept and HPP random slope
+  data = data,               # indicate dataset
+  REML = TRUE               # fit using REML
 ) 
 
 summary <- summary(model) %$% # extract coefficients from model
@@ -109,9 +122,9 @@ summary <- summary(model) %$% # extract coefficients from model
   as.data.frame() %>%
   rownames_to_column("term") %>%
   mutate(term = c("(Intercept)", # rename terms to join datasets 
-                  "trialType",
+                  "trialType_center",
                   "HPP_center",
-                  "trialType:HPP_center")) %>% 
+                  "trialType_center:HPP_center")) %>% 
   select(., term, coefficient = Estimate)
 
 confidence.intervals <- confint.merMod( # calculate confidence intervals
@@ -121,11 +134,11 @@ confidence.intervals <- confint.merMod( # calculate confidence intervals
 ) %>%
   as.data.frame() %>%
   rownames_to_column(var = "term") %>%
-  slice(6:9) %>%
+  slice(4:7) %>%
   mutate(term = c("(Intercept)" , # rename terms to join datasets 
-                  "trialType",
+                  "trialType_center",
                   "HPP_center",
-                  "trialType:HPP_center")) 
+                  "trialType_center:HPP_center")) 
 
 anova <- anova(model, type = 3, ddf = "Satterthwaite") %>% # perform type III ANOVA using Satterthwaite's approximation to degrees of freedom
   tidy() %>%
@@ -133,9 +146,20 @@ anova <- anova(model, type = 3, ddf = "Satterthwaite") %>% # perform type III AN
   left_join(., confidence.intervals, by = "term") %>% # join outcome with confidence intervals
   mutate(ci1 = round(`2.5 %`, 2),
          ci2 = round(`97.5 %`, 2)) %>%
-  unite(col = "ci", ci1, ci2, sep = "-") %>% # make a string with the lower and upper CI
+  unite(col = "ci", ci1, ci2, sep = ", ") %>% # make a string with the lower and upper CI
   select(-c(`2.5 %`, `97.5 %`)) %>%
   select(term, coefficient, ci, statistic, DenDF, p.value)
+
+#alternative with Kenward Rogers degrees of freedom (virtually identical, some odd outcomes with intercept)
+# anova <- Anova(model, type="III",test="F") %>% # perform type III ANOVA using Kenward Rogers approximation to degrees of freedom
+#   tidy() %>%
+#   right_join(., summary, by = "term") %>% # join outcome with coefficients
+#   left_join(., confidence.intervals, by = "term") %>% # join outcome with confidence intervals
+#   mutate(ci1 = round(`2.5 %`, 2),
+#          ci2 = round(`97.5 %`, 2)) %>%
+#   unite(col = "ci", ci1, ci2, sep = ", ") %>% # make a string with the lower and upper CI
+#   select(-c(`2.5 %`, `97.5 %`)) %>%
+#   select(term, coefficient, ci, statistic, Df.res, p.value)
 
 
 anova %>%
@@ -144,9 +168,9 @@ anova %>%
 
 ```
 
-We found a statistically significant interaction term, *t*(`r round(anova$DenDF[4], 2)`) = `r round(anova$statistic[4], 2)`, *p* = `r round(anova$p.value[4], 3)`, 95% CI = `r anova$ci[4]`, suggesting that the effect of trial type on looking time was influenced by the number of HPP experiments each participant participated in. The interaction shows that experience with a higher number of HPP experiments is associated with a stronger novelty preference.
+We found a statistically significant interaction term, *t*(`r round(anova$DenDF[4], 2)`) = `r round(anova$statistic[4], 2)`, *p* = `r round(anova$p.value[4], 3)`, 95% CI = [`r anova$ci[4]`], suggesting that the effect of trial type on looking time was influenced by the number of HPP experiments each participant participated in. The interaction shows that experience with a higher number of HPP experiments is associated with a stronger novelty preference.
 
-```{r plot_model, echo=FALSE, message=FALSE, warning=FALSE, fig.align='c', fig.cap="Looking times of familiar and novel trials, split by number of HeadTurn Preference Procedure experiments. Black points and whiskers represent the group-level mean looking time and SEM, respectively. Grey lines represent participant-level mean looking time."}
+```{r plot_model, echo=FALSE, message=FALSE, warning=FALSE, fig.align='c', fig.cap="Looking times of familiar and novel trials, split by number of HeadTurn Preference Procedure experiments. Black points and error bars represent the group-level mean looking time and SEM, respectively. Grey lines represent participant-level mean looking time."}
 sample_sizes <- data %>%              # calculate mean looking time by HPP and trialType
   group_by(HPP, trialType) %>%
   summarise(n = n()) %>%
@@ -174,13 +198,13 @@ data %>%
 ```
 
 
-```{r interaction, echo=FALSE, message=FALSE, warning=FALSE, fig.align="c", fig.cap="(A) Coefficients of the fixed effects. Dots, whiskers, and shaded boxes represent the estimated coefficients, standard error, and 95 percent Wald confidence intervals, respectively. (B) Predicted looking times plotted against HPP, split by study. The HPP variable was centered."}
+```{r interaction, echo=FALSE, message=FALSE, warning=FALSE, fig.align="c", fig.cap="(A) Coefficients of the fixed effects. Dots, whiskers, and shaded boxes represent the estimated coefficients, standard error, and 95 percent Wald confidence intervals, respectively. (B) Predicted looking times plotted against HPP, split by study."}
 
 coefficients <- tidy(model) %>%                        # extract coefficients
   filter(effect == 'fixed', term != "(Intercept)") %>% # get coefficients of interest
-  mutate(term = c("trialType",                         # rename terms to join datasets
+  mutate(term = c("trialType_center",                         # rename terms to join datasets
                   "HPP_center",
-                  "trialType:HPP_center")) %>% 
+                  "trialType_center:HPP_center")) %>% 
   left_join(., confidence.intervals, by = "term") %>%  # join outcome with confidence intervals         
   mutate(term = c("Trial type",                        # rename terms for joining datasets
                   "HPP",
@@ -189,8 +213,17 @@ coefficients <- tidy(model) %>%                        # extract coefficients
          upper.se = estimate+std.error) %>%
   rename(ci_lower = `2.5 %`, ci_upper = `97.5 %`)
 
-effects <- effect(term = "trialType*HPP_center", mod = model) %>%
+effects <- effect(term = "trialType_center*HPP_center", mod = model) %>%
   as.data.frame()
+
+#uncenter x-variables in model predictions to create a more interpretable plot
+effects_uncentered <- effect(term = "trialType_center*HPP_center", mod = model) %>%
+  as.data.frame() %>%
+  filter(trialType_center %in% c(-0.5, 0.5)) %>%
+  mutate(
+    trialType = ifelse(trialType_center==0.5,"Novel","Familiar"),
+    HPP = HPP_center + mean(data$HPP)
+  )
 
 # plot coefficients
 ggplot(data = coefficients, aes(term, estimate, colour = term, fill = term)) +
@@ -213,8 +246,8 @@ ggplot(data = coefficients, aes(term, estimate, colour = term, fill = term)) +
   coord_flip() +
   
   # add interaction plot 
-  ggplot(effects, aes(x = HPP_center, y = fit, fill = trialType, colour = trialType)) +
-  geom_line(size = 1) +
+  ggplot(effects_uncentered, aes(x = HPP, y = fit, fill = trialType, colour = trialType)) +
+  geom_smooth(method="lm",size = 1,fullrange=T) +
   labs(x = "HPP", y = "Looking time (ms)", colour = "Trial type", fill = "Trial type") +
   scale_colour_brewer(palette = "Dark2") +
   scale_fill_brewer(palette = "Dark2") +
@@ -229,7 +262,9 @@ ggplot(data = coefficients, aes(term, estimate, colour = term, fill = term)) +
     legend.position    = "right"
   ) +
   plot_layout(nrow = 2) +
-  plot_annotation(tag_levels = "A")
+  plot_annotation(tag_levels = "A")+
+  scale_x_continuous(breaks=seq(0,5,1), limits=c(1,5))+
+  scale_y_continuous(breaks=seq(5000,8000,500),limits=c(5000,7750))
 
 ```
 
@@ -255,7 +290,7 @@ Where:
 * $\beta_{3}$ is the coefficient of the fixed effect of the $TrialType \times HPP$ interaction.
 * $e_{ips}$ is the error of the model in trial $i$, of participant $p$ from study $s$, assumed to be normally distributed with mean 0 and variance $\sigma^2$.
 
-Before fitting the model, we group mean-centered the $HPP$ predictor.The model was fitted using the `lme4` R package [@lme4]. We used Maximum Likelihood criterion to estimate the coefficients, assuming an unstructured variance-covariance structure. We used the `lmerTest` package [@lmerTest] to compute *p*-values using the Satterthwaite's approximation to degrees of freedom [@satterthwaite1946a]. 
+Before fitting the model, we group mean-centered the $HPP$ predictor.The model was fit using the `lme4` R package [@lme4]. We used the `lmerTest` package [@lmerTest] to compute *p*-values using the Satterthwaite's approximation to degrees of freedom [@satterthwaite1946a]. 
 
 
 ```{r posterior_predicted_simulation, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
