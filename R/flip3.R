@@ -25,7 +25,8 @@ data <- read.csv(
   sep              = ",",
   dec              = ".",
   stringsAsFactors = TRUE
-  ) %>%
+) %>%
+  filter(HPP < 4) %>%
   as_tibble() %>%
   pivot_longer(
     cols      = c("Familiar", "Novel"),
@@ -35,11 +36,13 @@ data <- read.csv(
   mutate(
     Item = fct_relevel(Item, "Novel", after = 1), # make familiar items the baseline
     HPPCenter = (HPP - mean(HPP)),
-    Study = factor(Study, levels = c("Santolin", "Saffran & Wilson")),
     Study2 = case_when(Study == "Santolin" & Location == "Barcelona" ~ "Replication study",
                        Study == "Santolin" & Location == "Wisconsin" ~ "Santolin & Saffran (2019)",
-                       TRUE                                          ~ "Saffran & Wilson (2003)")
-  )
+                       TRUE                                          ~ "Saffran & Wilson (2003)"),
+    Study = case_when(Study=="Replication study"|Study=="Santolin" ~ "Santolin & Saffran (2019) and replication study",
+                                TRUE                                                ~ "Saffran & Wilson (2003)"),
+    Study = factor(Study, levels = c("Santolin & Saffran (2019) and replication study", "Saffran & Wilson (2003)")))
+
 
 #### Linear Mixed-Effects Model #####################################
 
@@ -99,8 +102,7 @@ confidence.intervals <- confint.merMod( # calculate confidence intervals
                   "Item:HPP"))
 
 #### null-hypothesis testing #######################################
-
-anova <- Anova(model3, type = "III", test.statistic = "F") %>% # perform type III ANOVA (KF F test) using Satterthwaite for df
+anova <- Anova(model3, type = "III", test.statistic = "F") %>% # perform type III ANOVA Kenward-Roger F-tests
   as.data.frame() %>%
   rownames_to_column("Term") %>%
   right_join(., summary, by = "Term") %>% # join outcome with coefficients
@@ -114,7 +116,7 @@ anova <- Anova(model3, type = "III", test.statistic = "F") %>% # perform type II
   select(Term, `F`, Df, Df.res, Coefficient, SEM, ci1, ci2, CI95, Coefficient, Df.res, p)
 
 # predictions for plotting interaction graph
-effects <- effect(term = "Item*HPP", mod = model2) %>%
+effects <- effect(term = "Item*HPP", mod = model3) %>%
   as.data.frame()
 
 # posterior predictive sampling
@@ -130,7 +132,7 @@ multicollinearity <- vif(model3) %>%
   as.data.frame() %>%
   rownames_to_column("term") %>%
   rename(vif = ".") %>%
-  mutate(term = c("Trial type", "HPP", "Trial type * HPP"),
+  mutate(term = c("Item", "HPP", "Item * HPP"),
          tolerance = 1/vif) 
 
 #### visualise data ########################################################
@@ -159,12 +161,12 @@ data %>%
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank(),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 15),
+    text               = element_text(colour = "black", size = 25),
     axis.text          = element_text(colour = "black"),
     legend.position    = "none",
     strip.background = element_rect(fill = "transparent", colour = "transparent")
   ) +
-  ggsave(here("Figures", "01_lookingtimes-study.png"))
+  ggsave(here("Figures/HPP3", "01_lookingtimes-study.png"), height = 5, width = 12)
 
 # looking times against HPP
 ggplot(data, aes(x = Item, y = LookingTime, fill = Item)) +
@@ -180,12 +182,12 @@ ggplot(data, aes(x = Item, y = LookingTime, fill = Item)) +
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank(),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 14),
+    text               = element_text(colour = "black", size = 25),
     axis.text          = element_text(colour = "black"),
     legend.position    = "none",
     strip.placement = "outside" 
   ) +
-  ggsave(here("Figures", "02_lookingtimes-hpp.png"))
+  ggsave(here("Figures/HPP3", "02_lookingtimes-hpp.png"), height = 5, width = 12)
 
 # coefficients
 ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
@@ -201,37 +203,33 @@ ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 14),
+    text               = element_text(colour = "black", size = 25),
     axis.text          = element_text(colour = "black"),
     legend.position    = "none"
   ) +
-  ggsave(here("Figures", "03_coefficients.png"))
+  ggsave(here("Figures/HPP3", "03_coefficients.png"), height = 4)
 
 # add interaction plot 
-ggplot(effects, aes(x = HPP, y = fit, colour = Item, fill = Item)) +
+ggplot(effects, aes(x = HPP, y = fit, linetype = Item)) +
   geom_line(size = 1.25) +
   labs(x = "HPP",
        y = "Looking time (ms)",
        colour = "Test item",
        fill = "Test item",
        shape = "Test item") +
-  scale_colour_grey(start = 0.25, end = 0.75) +
-  scale_fill_grey(start = 0.25, end = 0.75) +
-  scale_y_continuous(breaks = seq(5000, 8000, by = 500)) +
+  scale_linetype_discrete() +
+  scale_y_continuous(limits = c(6500, 7750), breaks = seq(6500, 7750, by = 250)) +
   scale_x_continuous(breaks = seq(1, 5, by = 1)) +
   theme(
-    panel.grid.major.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
-    panel.grid.minor.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor.x = element_blank(),
+    panel.grid = element_line(colour = "grey", linetype = "dotted"),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 14),
+    text               = element_text(colour = "black", size = 25),
     axis.text          = element_text(colour = "black"),
     legend.position    = c(0.25, 0.15),
     legend.direction = "horizontal",
     legend.background = element_rect(fill = "transparent")
   ) +
-  ggsave(here("Figures", "03_interaction.png"))
+  ggsave(here("Figures/HPP3", "03_interaction.png"), width = 10, height = 5)
 
 # model assumptions: normality
 ggplot(data = fortify(model3), aes(sample = .resid)) +
@@ -244,7 +242,7 @@ ggplot(data = fortify(model3), aes(sample = .resid)) +
     panel.grid.major.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
     panel.grid.minor.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 12),
+    text               = element_text(colour = "black", size = 25),
     axis.text          = element_text(colour = "black"),
     legend.position    = "right"
   ) +
@@ -259,7 +257,7 @@ ggplot(data = fortify(model3), aes(sample = .resid)) +
     panel.grid.major.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
     panel.grid.minor.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 12),
+    text               = element_text(colour = "black", size = 15),
     axis.text          = element_text(colour = "black"),
     legend.position    = "none"
   ) +
@@ -272,7 +270,7 @@ ggplot(data = fortify(model3), aes(sample = .resid)) +
     panel.grid.major.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
     panel.grid.minor.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 12),
+    text               = element_text(colour = "black", size = 15),
     axis.text          = element_text(colour = "black"),
     legend.position    = "none"
   ) +
@@ -286,12 +284,12 @@ ggplot(data = fortify(model3), aes(sample = .resid)) +
     panel.grid.major.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
     panel.grid.minor.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 12),
+    text               = element_text(colour = "black", size = 15),
     axis.text          = element_text(colour = "black"),
     legend.position    = "none"
   ) +
   plot_layout(nrow = 2, ncol = 2) +
-  ggsave(here("Figures", "04_model-assumptions-normality.png"))
+  ggsave(here("Figures/HPP3", "04_model-assumptions-normality.png"))
 
 # model assumptions: homoskedasticity
 data.frame(
@@ -311,17 +309,17 @@ data.frame(
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank(),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 12),
+    text               = element_text(colour = "black", size = 15),
     axis.text          = element_text(colour = "black"),
     legend.position    = "right"
   ) +
-  ggsave(here("Figures", "04_model-assumptions-homoskedasticity.png"))
+  ggsave(here("Figures/HPP3", "04_model-assumptions-homoskedasticity.png"))
 
 #### export results ########################################################
-write.table(data, here("Data", "01_data-processed-5.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(anova, here("Data", "02_results-lmem-5.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(effects, here("Data", "02_results-effects-5.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(multicollinearity, here("Data", "02_results-multicollinearity-5.csv"), sep = ",", dec = ".", row.names = FALSE)
-write(post.pred.p, here("Data", "02-results-posterior-5.txt"))
+write.table(data, here("Data/HPP3", "01_data-processed-3.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(anova, here("Data/HPP3", "02_results-lmem-3.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(effects, here("Data/HPP3", "02_results-effects-3.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(multicollinearity, here("Data/HPP3", "02_results-multicollinearity-3.csv"), sep = ",", dec = ".", row.names = FALSE)
+write(post.pred.p, here("Data/HPP3", "02_results-posterior-3.txt"))
 
 
