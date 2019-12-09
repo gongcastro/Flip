@@ -1,5 +1,5 @@
 #### Import, process, analyse, and export data #####################
-# 1-3 HPP version
+# 1-6 HPP version
 
 #### set up ########################################################
 
@@ -20,13 +20,12 @@ library(here)        # for locating files
 
 #### import and process data ##############################################
 data <- read.csv(
-  file             = here("Data", "00_data-raw.csv"),
+  file             = here("Data", "additional_data","00_data-raw_with_SaffranHauser.csv"),
   header           = TRUE,
   sep              = ",",
   dec              = ".",
   stringsAsFactors = TRUE
-) %>%
-  filter(HPP < 4) %>%
+  ) %>%
   as_tibble() %>%
   pivot_longer(
     cols      = c("Familiar", "Novel"),
@@ -36,13 +35,14 @@ data <- read.csv(
   mutate(
     Item = fct_relevel(Item, "Novel", after = 1), # make familiar items the baseline
     HPPCenter = (HPP - mean(HPP)),
+    Study = factor(Study, levels = c("Santolin", "Saffran & Wilson", "SaffranHauser1")),
     Study2 = case_when(Study == "Santolin" & Location == "Barcelona" ~ "Replication study",
                        Study == "Santolin" & Location == "Wisconsin" ~ "Santolin & Saffran (2019)",
-                       TRUE                                          ~ "Saffran & Wilson (2003)"),
-    Study = case_when(Study=="Replication study"|Study=="Santolin" ~ "Santolin & Saffran (2019) and replication study",
-                                TRUE                                                ~ "Saffran & Wilson (2003)"),
-    Study = factor(Study, levels = c("Santolin & Saffran (2019) and replication study", "Saffran & Wilson (2003)")))
-
+                       Study  ==  "Saffran & Wilson"                 ~ "Saffran & Wilson (2003)",
+                       Study == "SaffranHauser1"                     ~ "Saffran et al. (2008)",
+                       TRUE ~ ""
+                       )
+  )
 
 #### Linear Mixed-Effects Model #####################################
 
@@ -88,6 +88,8 @@ summary <- summary(model3) %$% # extract coefficients from model
   select(., Term = term, Coefficient = Estimate, SEM = `Std. Error`)
 
 # confidence intervals
+# set seed here for  confidence interval bootstrapping (otherwise will vary slightly from run to run)
+set.seed(100)
 confidence.intervals <- confint.merMod( # calculate confidence intervals
   model3,  
   method = "boot",
@@ -95,14 +97,14 @@ confidence.intervals <- confint.merMod( # calculate confidence intervals
 ) %>%
   as.data.frame() %>%
   rownames_to_column(var = "Term") %>%
-  slice(4:9) %>%
+  slice(4:7) %>%
   mutate(Term = c("(Intercept)" , # rename terms to join datasets 
                   "Item",
                   "HPP",
                   "Item:HPP"))
 
 #### null-hypothesis testing #######################################
-anova <- Anova(model3, type = "III", test.statistic = "F") %>% # perform type III ANOVA Kenward-Roger F-tests
+anova <- Anova(model3, type = "III", test.statistic = "F") %>% # perform type III ANOVA (KF F test) using Satterthwaite for df
   as.data.frame() %>%
   rownames_to_column("Term") %>%
   right_join(., summary, by = "Term") %>% # join outcome with coefficients
@@ -146,7 +148,7 @@ data %>%
             SEM = SD/sqrt(n)) %>%
   rename(LookingTime = Mean) %>%
   ggplot(aes(Item, LookingTime, fill = Item)) +
-  facet_wrap(~Study2) +
+  facet_wrap(~Study2,nrow=1) +
   geom_bar(stat = "identity") +
   geom_errorbar(aes(x = Item, ymin = LookingTime-SEM, ymax = LookingTime+SEM),
                 width = 0.40, size = 0.75) +
@@ -161,14 +163,14 @@ data %>%
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank(),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 25),
+    text               = element_text(colour = "black", size = 20),
     axis.text          = element_text(colour = "black"),
     legend.position    = "none",
     strip.background = element_rect(fill = "transparent", colour = "transparent")
   ) +
-  ggsave(here("Figures/HPP3", "01_lookingtimes-study.png"), height = 5, width = 12)
+  ggsave(here("Figures", "01_lookingtimes-study-wSaffranHauser.png"), height = 5, width = 12)
 
-# looking times against HPP
+ # looking times against HPP
 ggplot(data, aes(x = Item, y = LookingTime, fill = Item)) +
   facet_wrap(~HPP, nrow = 1, strip.position = "bottom") +
   stat_summary(fun.y = mean, geom = "bar", size = 0.5) +
@@ -182,12 +184,12 @@ ggplot(data, aes(x = Item, y = LookingTime, fill = Item)) +
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank(),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 25),
+    text               = element_text(colour = "black", size = 20),
     axis.text          = element_text(colour = "black"),
     legend.position    = "none",
     strip.placement = "outside" 
   ) +
-  ggsave(here("Figures/HPP3", "02_lookingtimes-hpp.png"), height = 5, width = 12)
+  ggsave(here("Figures", "02_lookingtimes-hpp-wSaffranHauser.png"), height = 5, width = 12)
 
 # coefficients
 ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
@@ -203,13 +205,13 @@ ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 25),
+    text               = element_text(colour = "black", size = 15),
     axis.text          = element_text(colour = "black"),
     legend.position    = "none"
   ) +
-  ggsave(here("Figures/HPP3", "03_coefficients.png"), height = 4)
+  ggsave(here("Figures", "03_coefficients-wSaffranHauser.png"), height = 4,width=10)
 
-# add interaction plot 
+ # add interaction plot 
 ggplot(effects, aes(x = HPP, y = fit, linetype = Item)) +
   geom_line(size = 1.25) +
   labs(x = "HPP",
@@ -218,10 +220,10 @@ ggplot(effects, aes(x = HPP, y = fit, linetype = Item)) +
        fill = "Test item",
        shape = "Test item") +
   scale_linetype_discrete() +
-  scale_y_continuous(limits = c(6500, 7750), breaks = seq(6500, 7750, by = 250)) +
-  scale_x_continuous(breaks = seq(1, 5, by = 1)) +
+  scale_y_continuous(limits = c(4000, 7750), breaks = seq(4000, 7750, by = 500)) +
+  scale_x_continuous(breaks = seq(1, 6, by = 1)) +
   theme(
-    panel.grid = element_line(colour = "grey", linetype = "dotted"),
+    panel.grid         = element_line(colour = "grey", linetype = "dotted"),
     panel.background   = element_rect(fill = "white", colour = "grey"),
     text               = element_text(colour = "black", size = 25),
     axis.text          = element_text(colour = "black"),
@@ -229,7 +231,7 @@ ggplot(effects, aes(x = HPP, y = fit, linetype = Item)) +
     legend.direction = "horizontal",
     legend.background = element_rect(fill = "transparent")
   ) +
-  ggsave(here("Figures/HPP3", "03_interaction.png"), width = 10, height = 5)
+  ggsave(here("Figures", "03_interaction-wSaffranHauser.png"), width = 10, height = 5)
 
 # model assumptions: normality
 ggplot(data = fortify(model3), aes(sample = .resid)) +
@@ -242,7 +244,7 @@ ggplot(data = fortify(model3), aes(sample = .resid)) +
     panel.grid.major.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
     panel.grid.minor.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 25),
+    text               = element_text(colour = "black", size = 15),
     axis.text          = element_text(colour = "black"),
     legend.position    = "right"
   ) +
@@ -270,7 +272,7 @@ ggplot(data = fortify(model3), aes(sample = .resid)) +
     panel.grid.major.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
     panel.grid.minor.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 15),
+    text               = element_text(colour = "black", size = 12),
     axis.text          = element_text(colour = "black"),
     legend.position    = "none"
   ) +
@@ -289,7 +291,7 @@ ggplot(data = fortify(model3), aes(sample = .resid)) +
     legend.position    = "none"
   ) +
   plot_layout(nrow = 2, ncol = 2) +
-  ggsave(here("Figures/HPP3", "04_model-assumptions-normality.png"))
+  ggsave(here("Figures", "04_model-assumptions-normality-wSaffranHauser.png"),width=10,height=5)
 
 # model assumptions: homoskedasticity
 data.frame(
@@ -313,13 +315,13 @@ data.frame(
     axis.text          = element_text(colour = "black"),
     legend.position    = "right"
   ) +
-  ggsave(here("Figures/HPP3", "04_model-assumptions-homoskedasticity.png"))
+  ggsave(here("Figures", "04_model-assumptions-homoskedasticity-wSaffranHauser.png"),width=10,height=5)
 
 #### export results ########################################################
-write.table(data, here("Data/HPP3", "01_data-processed-3.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(anova, here("Data/HPP3", "02_results-lmem-3.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(effects, here("Data/HPP3", "02_results-effects-3.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(multicollinearity, here("Data/HPP3", "02_results-multicollinearity-3.csv"), sep = ",", dec = ".", row.names = FALSE)
-write(post.pred.p, here("Data/HPP3", "02_results-posterior-3.txt"))
+write.table(data, here("Data", "01_data-processed-wSaffranHauser.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(anova, here("Data", "02_results-lmem-wSaffranHauser.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(effects, here("Data", "02_results-effects-wSaffranHauser.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(multicollinearity, here("Data", "02_results-multicollinearity-wSaffranHauser.csv"), sep = ",", dec = ".", row.names = FALSE)
+write(post.pred.p, here("Data", "02_results-posterior-wSaffranHauser.txt"))
 
 
