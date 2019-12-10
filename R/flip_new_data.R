@@ -109,6 +109,26 @@ summary <- summary(model3) %$% # extract coefficients from model
                   "Item:HPP")) %>% 
   select(., Term = term, Coefficient = Estimate, SEM = `Std. Error`)
 
+summary_3A <- summary(model3A) %$% # extract coefficients from model
+  coefficients %>%
+  as.data.frame() %>%
+  rownames_to_column("Term") %>%
+  mutate(term = c("(Intercept)", # rename terms to join datasets 
+                  "ItemC",
+                  "HPP",
+                  "ItemC:HPP")) %>% 
+  select(., Term = term, Coefficient = Estimate, SEM = `Std. Error`)
+
+summary_3B <- summary(model3B) %$% # extract coefficients from model
+  coefficients %>%
+  as.data.frame() %>%
+  rownames_to_column("Term") %>%
+  mutate(term = c("(Intercept)", # rename terms to join datasets 
+                  "Item_Novel",
+                  "HPP",
+                  "Item_Novel:HPP")) %>% 
+  select(., Term = term, Coefficient = Estimate, SEM = `Std. Error`)
+
 # confidence intervals
 # set seed here for  confidence interval bootstrapping (otherwise will vary slightly from run to run)
 set.seed(100)
@@ -125,12 +145,64 @@ confidence.intervals <- confint.merMod( # calculate confidence intervals
                   "HPP",
                   "Item:HPP"))
 
+confidence.intervals_3A <- confint.merMod( # calculate confidence intervals
+  model3A,  
+  method = "boot",
+  level = 0.95
+) %>%
+  as.data.frame() %>%
+  rownames_to_column(var = "Term") %>%
+  slice(4:7) %>%
+  mutate(Term = c("(Intercept)" , # rename terms to join datasets 
+                  "ItemC",
+                  "HPP",
+                  "ItemC:HPP"))
+
+confidence.intervals_3B <- confint.merMod( # calculate confidence intervals
+  model3A,  
+  method = "boot",
+  level = 0.95
+) %>%
+  as.data.frame() %>%
+  rownames_to_column(var = "Term") %>%
+  slice(4:7) %>%
+  mutate(Term = c("(Intercept)" , # rename terms to join datasets 
+                  "Item_Novel",
+                  "HPP",
+                  "Item_Novel:HPP"))
+
 #### null-hypothesis testing #######################################
 anova <- Anova(model3, type = "III", test.statistic = "F") %>% # perform type III ANOVA (KF F test) using Satterthwaite for df
   as.data.frame() %>%
   rownames_to_column("Term") %>%
   right_join(., summary, by = "Term") %>% # join outcome with coefficients
   left_join(., confidence.intervals, by = "Term") %>% # join outcome with confidence intervals
+  mutate(ci1 = round(`2.5 %`, 2),
+         ci2 = round(`97.5 %`, 2)) %>%
+  unite(col = "CI95", ci1, ci2, sep = ", ") %>% # make a string with the lower and upper CI
+  rename(ci1 = `2.5 %`,
+         ci2 = `97.5 %`,
+         p = `Pr(>F)`) %>%
+  select(Term, `F`, Df, Df.res, Coefficient, SEM, ci1, ci2, CI95, Coefficient, Df.res, p)
+
+anova_3A <- Anova(model3A, type = "III", test.statistic = "F") %>% # perform type III ANOVA (KF F test) using Satterthwaite for df
+  as.data.frame() %>%
+  rownames_to_column("Term") %>%
+  right_join(., summary_3A, by = "Term") %>% # join outcome with coefficients
+  left_join(., confidence.intervals_3A, by = "Term") %>% # join outcome with confidence intervals
+  mutate(ci1 = round(`2.5 %`, 2),
+         ci2 = round(`97.5 %`, 2)) %>%
+  unite(col = "CI95", ci1, ci2, sep = ", ") %>% # make a string with the lower and upper CI
+  rename(ci1 = `2.5 %`,
+         ci2 = `97.5 %`,
+         p = `Pr(>F)`) %>%
+  select(Term, `F`, Df, Df.res, Coefficient, SEM, ci1, ci2, CI95, Coefficient, Df.res, p)
+
+anova_3B <- Anova(model3B, type = "III", test.statistic = "F") %>% # perform type III ANOVA (KF F test) using Satterthwaite for df
+  as.data.frame() %>%
+  rownames_to_column("Term") %>%
+  right_join(., summary_3B, by = "Term") %>% # join outcome with coefficients
+  left_join(., confidence.intervals_3B, by = "Term") %>% # join outcome with confidence intervals
   mutate(ci1 = round(`2.5 %`, 2),
          ci2 = round(`97.5 %`, 2)) %>%
   unite(col = "CI95", ci1, ci2, sep = ", ") %>% # make a string with the lower and upper CI
@@ -342,6 +414,8 @@ data.frame(
 #### export results ########################################################
 write.table(data, here("Data", "01_data-processed-wSaffranHauser.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(anova, here("Data", "02_results-lmem-wSaffranHauser.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(anova_3A, here("Data", "02_results-lmem-wSaffranHauser-ItemCentered.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(anova_3B, here("Data", "02_results-lmem-wSaffranHauser-ItemNovel.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(effects, here("Data", "02_results-effects-wSaffranHauser.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(multicollinearity, here("Data", "02_results-multicollinearity-wSaffranHauser.csv"), sep = ",", dec = ".", row.names = FALSE)
 write(post.pred.p, here("Data", "02_results-posterior-wSaffranHauser.txt"))
