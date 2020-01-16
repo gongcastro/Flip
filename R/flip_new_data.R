@@ -67,7 +67,7 @@ model2 <- lmer(
     (1 + HPP | Study),  # by-study random intercept and HPP random slope
   data = data,                # indicate dataset
   REML = TRUE                 # fit using REML
-) 
+)
 
 # 3. random intercepts by participant and study (no random slopes)
 model3 <- lmer(
