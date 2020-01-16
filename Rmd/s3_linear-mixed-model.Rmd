@@ -134,7 +134,7 @@ anova %>%
 anova.novel %>%
   mutate(term = c("Intercept", "ItemNovel", "HPP", "ItemNovel*HPP"),
          CI95_bayesian = paste(round(ci.low_bayesian, 2), round(ci.upp_bayesian, 2), sep = ", "),
-         p = anova$p) %>%
+         p = anova.novel$p) %>%
   select(term, Coefficient, SEM, CI95, F, Df.res, p) %>%
   kable(digits = 4, col.names = c("Term", "Coefficient", "SEM", "95%CI", "F", "Den. df", "p"), align = "c",
         caption = "Estimates of the Item-dummy-coded linear mixed-effects model (with novel trials as baseline) and outcomes of the Kenward-Roger F-tests performed on fixed effects. 95% confidence intervals were bootstrapped.")
@@ -146,7 +146,7 @@ anova.novel %>%
 anova.effect %>%
   mutate(term = c("Intercept", "ItemCenter", "HPP", "ItemCenter*HPP"),
          CI95_bayesian = paste(round(ci.low_bayesian, 2), round(ci.upp_bayesian, 2), sep = ", "),
-         p = anova$p) %>%
+         p = anova.effect$p) %>%
   select(term, Coefficient, SEM, CI95, F, Df.res, p) %>%
   kable(digits = 4, col.names = c("Term", "Coefficient", "SEM", "95%CI", "F", "Den. df", "p"), align = "c",
         caption = "Estimates of the Item-effect-coded linear mixed-effects model and outcomes of the Kenward-Roger F-tests performed on fixed effects. 95% confidence intervals were bootstrapped.")
