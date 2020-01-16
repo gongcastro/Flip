@@ -36,6 +36,7 @@ data <- read.csv(
     Item = fct_relevel(Item, "Novel", after = 1), # make familiar items the baseline
     ItemC = ifelse(Item == "Novel",0.5,-0.5),
     Item_Novel = ifelse(Item=="Novel",0,-1),
+    #Item = ifelse(Item=="Familiar",0,1),
     HPPCenter = (HPP - mean(HPP)),
     Study = factor(Study, levels = c("Santolin", "Saffran & Wilson", "SaffranHauser1")),
     Study2 = case_when(Study == "Santolin" & Location == "Barcelona" ~ "Replication study",
@@ -52,11 +53,11 @@ data <- read.csv(
 model1 <- lmer(
   LookingTime ~                # response variable
     Item * HPP +               # fixed effects ("*" means "include the interaction")
-    (1 + HPP | Participant) +  # by-Participant random intercept and HPP random slope
-    (1 + HPP | Study),         # by-study random intercept and HPP random slope
+    (1 | Participant) +  # by-Participant random intercept and HPP random slope
+    (1 + HPP*Item | Study),         # by-study random intercept and HPP random slope
   data = data,                 # indicate dataset
   REML = TRUE                  # fit using REML
-) 
+)
 
 # 2. drop random slope of HPP on participants
 model2 <- lmer(
@@ -76,7 +77,7 @@ model3 <- lmer(
     (1 | Study),  # by-study random intercept and HPP random slope
   data = data,               # indicate dataset
   REML = TRUE               # fit using REML
-) 
+)
 
 # 3A. random intercepts by participant and study (no random slopes) - centered Item predictor
 model3A <- lmer(

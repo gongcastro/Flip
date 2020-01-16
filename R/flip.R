@@ -22,7 +22,8 @@ set.seed(100) # for reproducible confidence interval bootstrapping
 
 #### 2. Import and process data ##############################################
 data <- read.csv(
-  file             = here("Data","00_data-raw.csv"),
+ # file             = here("Data","00_data-raw.csv"),
+  file             = here("Data","additional_data","00_data-raw_with_SaffranHauser.csv"),
   header           = TRUE,
   sep              = ",",
   dec              = ".",
@@ -39,6 +40,7 @@ data <- read.csv(
     Item = fct_relevel(Item, "Novel", after = 1),     # Item dummy coding, familiar items as baseline
     ItemCenter = ifelse(Item=="Familiar", -0.5, 0.5), # Item effect coding
     ItemNovel = ifelse(Item=="Novel", 0, -1),         # Item dummy coding, novel items as baseline
+    #Item = ifelse(Item=="Familiar", 0, 1),  # Item dummy coding, familiar items as baseline
     Study = factor(case_when(Study == "Santolin" & Location == "Barcelona" ~ "Santolin, Saffran & Sebastian-Galles (2019)",
                       Study == "Santolin" & Location == "Wisconsin" ~ "Santolin & Saffran (2019)",
                       Study ==  "Saffran & Wilson"                  ~ "Saffran & Wilson (2003)",
@@ -72,11 +74,11 @@ model.log <- lmer(
   LogLookingTime ~       # response variable
     Item*HPP +           # fixed effects ("*" means "include the interaction")
     (1 | Participant) +  # by-Participant random intercept
-    (1 + HPP | Study),   # by-study random intercept and HPP random slope
+    (1 + HPP| Study),   # by-study random intercept and HPP random slope
   data = data,           # indicate dataset
   REML = TRUE            # fit using REML
 ) 
-# Cholesky factor on this model is singular, but this should not impact coefficients fixed effects
+# Cholesky factor on this model is singular, but this should not impact coefficients fixed effects (MZ: but does affect statistical inference!)
 summary(model.log)                               # model summary
 chf.log        <- getME(model.log,"Tlist")[[2]]  # Cholesky factor
 rowlengths.log <- sqrt(rowSums(chf.log*chf.log)) # unconditional correlation matrix
