@@ -75,16 +75,15 @@ Although the 95% credible intervals of the $Item$ and $HPP$ effects contain 0, i
 
 anova %>%
   mutate(term = c("Intercept", "Item", "HPP", "Item * HPP"),
-         CI95_bayesian = paste(round(ci.low_bayesian, 2), round(ci.upp_bayesian, 2), sep = ", "),
          p = anova$p) %>%
-  select(term, Coefficient, Estimate_bayesian, SEM, CI95, CI95_bayesian, F, Df.res, p) %>%
+  select(term, Coefficient, SEM, CI95, F, Df.res, p) %>%
   
-  kable(digits = 4, col.names = c("Term", "Coefficient", "Coefficient (Bayes)", "SEM", "95%CI", "95% Cred. Int", "F", "Den. df", "p"), align = "c",
+  kable(digits = 4, col.names = c("Term", "Coefficient", "SEM", "95%CI", "F", "Den. df", "p"), align = "c",
         caption = "Estimates of the linear mixed-effects model and outcomes of the Kenward-Roger F-tests performed on fixed effects. 95% confidence intervals were bootstrapped.") 
 
 ```
 
-```{r coefficients, echo=FALSE, fig.align="c", fig.cap="Predicted looking times plotted against HPP", message=FALSE, warning=FALSE, caption="Coefficients of the model. Black dots and error bars indicate the coefficient and SEM estimated by the frequentist model. Grey boxes indicate the 95% confidence intereval. Black diamonds and grey error bars indicate the coefficient and 95% credible intervals estimated by the bayesian model."}
+```{r coefficients, echo=FALSE, fig.align="c", fig.cap="Predicted looking times plotted against HPP", message=FALSE, warning=FALSE, caption="Coefficients of the model. Black dots and error bars indicate the coefficient and SEM estimated by the frequentist model. Grey boxes indicate the 95% confidence intereval."}
 
 include_graphics(here("Figures", "03_coefficients.png"))
 ```
@@ -121,7 +120,6 @@ kable(tolerance, digits = 2, col.names = c("Term", "VIF", "Tolerance"), align = 
 ```{r coding_dummy_familiar, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 anova %>%
   mutate(term = c("Intercept", "Item", "HPP", "Item*HPP"),
-         CI95_bayesian = paste(round(ci.low_bayesian, 2), round(ci.upp_bayesian, 2), sep = ", "),
          p = anova$p) %>%
   select(term, Coefficient, SEM, CI95, F, Df.res, p) %>%
   kable(digits = 4, col.names = c("Term", "Coefficient", "SEM", "95%CI", "F", "Den. df", "p"), align = "c",
@@ -133,7 +131,6 @@ anova %>%
 ```{r coding_dummy_novel, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 anova.novel %>%
   mutate(term = c("Intercept", "ItemNovel", "HPP", "ItemNovel*HPP"),
-         CI95_bayesian = paste(round(ci.low_bayesian, 2), round(ci.upp_bayesian, 2), sep = ", "),
          p = anova.novel$p) %>%
   select(term, Coefficient, SEM, CI95, F, Df.res, p) %>%
   kable(digits = 4, col.names = c("Term", "Coefficient", "SEM", "95%CI", "F", "Den. df", "p"), align = "c",
@@ -145,7 +142,6 @@ anova.novel %>%
 ```{r coding_effect, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 anova.effect %>%
   mutate(term = c("Intercept", "ItemCenter", "HPP", "ItemCenter*HPP"),
-         CI95_bayesian = paste(round(ci.low_bayesian, 2), round(ci.upp_bayesian, 2), sep = ", "),
          p = anova.effect$p) %>%
   select(term, Coefficient, SEM, CI95, F, Df.res, p) %>%
   kable(digits = 4, col.names = c("Term", "Coefficient", "SEM", "95%CI", "F", "Den. df", "p"), align = "c",
