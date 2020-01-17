@@ -84,7 +84,7 @@ anova %>%
 
 ```
 
-```{r coefficients, echo=FALSE, fig.align="c", fig.cap="Predicted looking times plotted against HPP", message=FALSE, warning=FALSE, caption="Coefficients of the model. Black dots and error bars indicate the coefficient and SEM estimated by the frequentist model. Grey boxes indicate the 95% confidence intereval. Black diamonds and grey error bars indicate the coefficient and 95% credible intervals estimated by the bayesian model."}
+```{r coefficients, echo=FALSE, fig.align="c", message=FALSE, warning=FALSE, fig.cap="Coefficients of the model. Black dots and error bars indicate the coefficient and SEM estimated by the frequentist model. Grey boxes indicate the 95% confidence intereval. Black diamonds and grey error bars indicate the coefficient and 95% credible intervals estimated by the bayesian model."}
 
 include_graphics(here("Figures", "03_coefficients.png"))
 ```

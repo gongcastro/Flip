@@ -41,12 +41,13 @@ data <- read.csv(
     LogLookingTime = log(LookingTime),
     Item = fct_relevel(Item, "Novel", after = 1), # make familiar items the baseline
     HPPCenter = (HPP - mean(HPP)),
-    Study = factor(case_when(Study == "Santolin" & Location == "Barcelona" ~ "Santolin, Saffran & Sebastian-Galles (2019)",
-                             Study == "Santolin" & Location == "Wisconsin" ~ "Santolin & Saffran (2019)",
-                             Study ==  "Saffran & Wilson"                  ~ "Saffran & Wilson (2003)",
-                             Study == "SaffranHauser1"                     ~ "Saffran et al. (2008)"))
+    Study = factor(case_when(
+      Study == "Santolin" & Location == "Barcelona" ~ "Santolin, Saffran & Sebastian-Galles (2019)",
+      Study == "Santolin" & Location == "Wisconsin" ~ "Santolin & Saffran (2019)",
+      Study ==  "Saffran & Wilson"                  ~ "Saffran & Wilson (2003)",
+      Study == "SaffranHauser1"                     ~ "Saffran et al. (2008)"))
   ) %>%
-  filter(HPP < 4) # get only participants with 1 to 3 HPP studies
+  filter(HPP < 5) # get only participants with 1 to 4 HPP studies
 
 # import results from Bayesian LMEM
 model.bayesian <- read.table(here("Data", "HPP3", "02_lmem-bayesian-3.txt"), header = TRUE, stringsAsFactors = FALSE) %>%
@@ -198,7 +199,7 @@ data %>%
     legend.position    = "none",
     strip.background = element_rect(fill = "transparent", colour = "transparent")
   ) +
-  ggsave(here("Figures", "HPP3", "01_lookingtimes-study-3.png"), height = 6, width = 12)
+  ggsave(here("Figures", "HPP4", "01_lookingtimes-study-4.png"), height = 6, width = 12)
 
 # looking times against HPP
 ggplot(data, aes(x = Item, y = LookingTime, fill = Item)) +
@@ -219,7 +220,7 @@ ggplot(data, aes(x = Item, y = LookingTime, fill = Item)) +
     legend.position    = "none",
     strip.placement = "outside" 
   ) +
-  ggsave(here("Figures", "HPP3", "02_lookingtimes-hpp-3.png"), height = 5, width = 12)
+  ggsave(here("Figures", "HPP4", "02_lookingtimes-hpp-4.png"), height = 5, width = 12)
 
 # coefficients
 ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
@@ -241,7 +242,7 @@ ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
     axis.text          = element_text(colour = "black"),
     legend.position    = "none"
   ) +
-  ggsave(here("Figures", "HPP3", "03_coefficients-3.png"), height = 4,width=10)
+  ggsave(here("Figures", "HPP4", "03_coefficients-4.png"), height = 4,width=10)
 
 # add interaction plot 
 ggplot(effects, aes(x = HPP, y = fit.exp, linetype = Item)) +
@@ -263,7 +264,7 @@ ggplot(effects, aes(x = HPP, y = fit.exp, linetype = Item)) +
     legend.direction = "horizontal",
     legend.background = element_rect(fill = "transparent")
   ) +
-  ggsave(here("Figures", "HPP3", "03_interaction-3.png"), width = 10, height = 5)
+  ggsave(here("Figures", "HPP4", "0_interaction-4.png"), width = 10, height = 5)
 
 # model assumptions: normality
 ggplot(filter(fitted, Model=="Log-transformed"), aes(sample = .resid)) +
@@ -324,7 +325,7 @@ ggplot(filter(fitted, Model=="Log-transformed"), aes(sample = .resid)) +
     legend.position    = "none"
   ) +
   plot_layout(nrow = 2, ncol = 2) +
-  ggsave(here("Figures", "HPP3", "04_model-assumptions-normality-3.png"),width = 10,height = 5)
+  ggsave(here("Figures", "HPP4", "04_model-assumptions-normality-4.png"),width = 10,height = 5)
 
 # model assumptions: normality (raw vs. log-transformed)
 ggplot(fitted, aes(sample = .resid)) +
@@ -357,7 +358,7 @@ ggplot(fitted, aes(sample = .resid)) +
     legend.position    = "none"
   ) +
   plot_layout(nrow = 2) +
-  ggsave(here("Figures", "HPP3", "04_model-assumptions-normality-rawlog-3.png"))
+  ggsave(here("Figures", "HPP4", "04_model-assumptions-normality-rawlog-4.png"))
 
 
 # model assumptions: homoskedasticity
@@ -387,12 +388,12 @@ data.frame(
     axis.text          = element_text(colour = "black"),
     legend.position    = "right"
   ) +
-  ggsave(here("Figures", "HPP3", "04_model-assumptions-homoskedasticity-3.png"),width=10,height=5)
+  ggsave(here("Figures", "HPP4", "04_model-assumptions-homoskedasticity-4.png"),width=10,height=5)
 
 #### export results ########################################################
-write.table(data, here("Data", "HPP3", "01_data-processed-3.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(anova, here("Data", "HPP3", "02_results-lmem-3.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(effects, here("Data", "HPP3", "02_results-effects-3.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(multicollinearity, here("Data", "HPP3", "02_results-multicollinearity-3.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(data, here("Data", "HPP4", "01_data-processed-4.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(anova, here("Data", "HPP4", "02_results-lmem-4.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(effects, here("Data", "HPP4", "02_results-effects-4.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(multicollinearity, here("Data", "HPP4", "02_results-multicollinearity-4.csv"), sep = ",", dec = ".", row.names = FALSE)
 
 
