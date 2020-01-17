@@ -1,0 +1,44 @@
+---
+title: "SI2. Studies"
+author:
+    - Chiara Santolin*
+    - Gonzalo García-Castro
+    - Martin Zettersten
+    - Nuria Sebastian-Galles
+    - Jenny R. Saffran
+date: "Updated: `r format(Sys.Date(), '%B %dth, %Y')`"
+output:
+  pdf_document:
+    fig_caption: yes
+  word_document:
+    reference_docx: flip_template.docx
+bibliography: "../Flip.bib"
+csl: "../apa.csl"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo    = TRUE,
+	message = FALSE,
+	warning = FALSE,
+	include = TRUE,
+	out.width = "100%"
+)
+options(knitr.kable.NA = '-', big.mark = ',') # to replace "NA" with "-" in knitr::kable
+```
+
+```{r prepare, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(tidyverse)
+library(knitr)
+library(here)    # for locating files
+```
+
+## Studies
+
+The two studies conducted by Santolin and colleages compared looking times in novel and familiar trials, and revealed that infants displayed a preference toward one of the trial types. The direction of the preference, however, was different for the two studies.
+
+```{r plot_data, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.align="c", fig.cap="Mean Looking time (ms) in familiar and novel trials, split by Study. Error bars indicate the standard error of the mean. Novel and familiar looking times differed significantly in all studies at .05 signficance criterion."}
+
+include_graphics(here("Figures", "01_lookingtimes-study.png"))
+
+```
