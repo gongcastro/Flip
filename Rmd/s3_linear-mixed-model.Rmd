@@ -42,34 +42,22 @@ data      <- read.csv(here("Data", "01_data-processed.csv"), header = TRUE)
 anova     <- read.csv(here("Data", "02_results-lmem.csv"), header = TRUE, sep = ",")
 effects   <- read.table(here("Data", "02_results-effects.csv"), header = TRUE, sep = ",")
 fitted    <- read.table(here("Data", "02_results-fitted.csv"), header = TRUE, sep = ",")
-tolerance <- read.table(here("Data", "02_results-multicollinearity.csv"), header = TRUE, sep = ",")
+# import HPP4 data
+anova4     <- read.csv(here("Data", "HPP3", "02_results-lmem-3.csv"), header = TRUE, sep = ",")
 # import data from Item-effect-coded and Item-dummy-coded (baseline on novel trials) models 
 anova.effect <- read.csv(here("Data", "Effect-coding", "02_results-lmem-effect.csv"), header = TRUE, sep = ",")
 anova.novel  <- read.csv(here("Data", "Dummy-coding-Novel", "02_results-lmem-novel.csv"), header = TRUE, sep = ",")
 ```
 
-We fit a Linear Mixed-Effects Model (LMEM) with looking time ($LT$) as response variable, that included test item ($Item$, Familiar vs. Novel),  number of HeadTurn Preference Procedure experiments completed by infants ($HPP$), and their interaction ($Item \times HPP$), as fixed effects. The $Item$ predictor was treatment-coded , with *Familiar* trials as the baseline. Participant ($Participant$) and study ($Study$) were included as random effects. Following @barr2013, we fit a model with a maximal random effects structure This maximal model included by-participant, by-study random intercepts, by-study $HPP$ random slopes, and all variance components of the variance-covariance matrix for the by-study random effects. By-participant $HPP$ random slopes were not included, as the sample was cross-sectional.
+We fit a Linear Mixed-Effects Model (LMEM) with looking time ($LT$) as response variable, that included test item ($Item$, Familiar vs. Novel),  number of HeadTurn Preference Procedure experiments completed by infants ($HPP$), and their interaction ($Item \times HPP$), as fixed effects. The $Item$ predictor was dummt-coded, with *Familiar* trials as the baseline. Participant ($Participant$) and study ($Study$) were included as random effects. Following @barr2013, we fit a model with that included all random effects our design could allow. Initially, this maximal model included by-participant, by-study random intercepts, by-study $HPP$ and $Item$ random slopes, and all variance components of the variance-covariance matrix for the by-study random effects. By-participant $HPP$ random slopes were not included, as the sample was cross-sectional. We specifiyied by-study random effects for two strong reasons. First, participants from different linguistic/cultural environments were included in both studies. This may have led to participants in one of the locations to looking longer in average than those from the other location. Second, in spite of their similarity both studies were not identical, which could also have led to differences in overall looking time. 
 
-This model accounts for cross-participants variability in overall looking time (i.e. some infants are long lookers, some are short lookers), and for cross-studies differences in overall looking time (i.e. infants from some studies may look longer overall than infants from other studies), and allows the effect of $HPP$ to vary across studies. We specifiyied by-study random effects for two strong reasons. First, participants from different linguistic/cultural environments were included in both studies. This may have led to participants in one of the locations to looking longer in average than those from the other location. Second, in spite of their similarity both studies were not identical, which could also have led to differences in overall looking time. We used the `lmer` function of the `lme4` R package [@bates2015] to fit the model. We used the following formula to specify the model:
+We used the `lmer` function of the `lme4` package [@bates2015] of the R environment [@rcoreteam2018] to fit the model. We simplified the random effects structure of the model until we obtained plausible values of the variance components of the variance-covariance matrix (i.e., correlation parameter was not near-boundary and variance components were not zero). The resulting model only included by-participant and by-study random intercepts. Its correspondent formula for being fitted in `lme4` was the following: 
 
-`LookingTime ~ Item * HPP + (1 | Participant) + (1 + HPP | Study)`
+`LookingTime ~ Item * HPP + (1 | Participant) + (1 | Study)`
 
-This model converged successfully. The correlation parameter (by-study intercepts and HPP slopes) was at boundary (-1). A closer look at the distribution of the residuals showed strong support against the normal distribution of the residuals (Shapiro-Wilk normality test: *W* = `r filter(fitted, Model=="Raw") %$% round(shapiro.test(.resid)$statistic, 2)`, *p* = `r filter(fitted, Model=="Raw") %$% round(shapiro.test(.resid)$p, 3)`). For this reason, we refit the model after log-transforming the looking times [@csibra2016]. We used the following formula to fit the log-transformed model:
+This model accounts for cross-participants variability in overall looking time (i.e., some infants are long lookers, some are short lookers), and for cross-studies differences in overall looking time (i.e., infants from some studies may look longer overall than infants from other studies). This model converged successfully. 
 
-`LogLookingTime ~ Item * HPP + (1 | Participant) + (1 + HPP | Study)`
-
-This model converged successfully as well. The Cholesky factor on this model was singular. Although near-boundary correlation parameters or singular Cholesky factors are sub-optimal, the interpretation of such parameters is not involved in our hypothesis [@bates2015; @bates2018]. For these reasons, we continued interpreting the model. We found no evidence of non-normality of residuals in this model, (Shapiro-Wilk normality test: *W* = `r filter(fitted, Model=="Log-transformed") %$% round(shapiro.test(.resid)$statistic, 2)`, *p* = `r filter(fitted, Model=="Log-transformed") %$% round(shapiro.test(.resid)$p, 3)`). Fig. 1 shows the distribution of the residuals in the model before and after log-transforming looking times.
-
-```{r normality, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.cap="Distribution of residuals in relation to the normal distribution."}
-
-include_graphics(here("Figures", "04_model-assumptions-normality-rawlog.png"))
-
-```
-
-Significance testing was conducted by performing an *F*-test with Kenward-Roger approximation to degrees of freedom [@kenward2009] on the coefficients of the fixed effects. We used the `Anova` function of the `car` R package [@fox2019] to do so. We found a statistically significant interaction term, *F*(`r round(anova$Df[4], 2)`, `r round(anova$Df.res[4], 2)`) = `r round(anova$F[4], 2)`, *p* = `r format(anova$p[4], scientific = TRUE)`, 95% CI = [`r anova$CI95[4]`], suggesting that the effect of trial type on looking time was influenced by the number of HPP experiments each participant participated in. The interaction shows that experience with a higher number of HPP experiments is associated with a stronger novelty preference. We also fit a Bayesian Linear-Mixed Model with the same formula using the `brm` function of the `brms` R package [@burkner2018]. We specified a normal prior for the three fixed effect coefficients with mean 0 and standard deviation 3.
-
-
-Although the 95% credible intervals of the $Item$ and $HPP$ effects contain 0, indicating that such main effects may be overstimated in the frequentist model, the 95% credible interval for coefficient for the interaction ($Item \times HPP$) does not contain 0, and overlaps almost entirely with the 95% frequentist confidence interval.
+Significance testing was conducted by performing an *F*-test with Kenward-Roger approximation to degrees of freedom [@kenward2009] on the coefficients of the fixed effects. We used the `Anova` function of the `car` R package [@fox2019] to do so. We found a statistically significant interaction, *F*(`r round(anova$Df[4], 2)`, `r round(anova$Df.res[4], 2)`) = `r round(anova$F[4], 2)`, *p* = `r format(round(anova$p[4], 4), scientific=FALSE)`, 95% CI = [`r anova$CI95[4]`], suggesting that the effect of trial type on looking time was influenced by the number of HPP experiments each participant participated in. The interaction shows that experience with a higher number of HPP experiments is associated with a stronger novelty preference.
 
 ```{r anova, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -83,34 +71,22 @@ anova %>%
 
 ```
 
+<<<<<<< HEAD
 ```{r coefficients, echo=FALSE, fig.align="c", fig.cap="Predicted looking times plotted against HPP", message=FALSE, warning=FALSE, caption="Coefficients of the model. Black dots and error bars indicate the coefficient and SEM estimated by the frequentist model. Grey boxes indicate the 95% confidence intereval."}
+=======
+
+```{r coefficients, echo=FALSE, fig.align="c", message=FALSE, warning=FALSE, fig.cap="Coefficients of the model. Black dots and error bars indicate the coefficient and SEM estimated by the model. Grey boxes indicate the 95% confidence interval."}
+>>>>>>> NoSlopes
 
 include_graphics(here("Figures", "03_coefficients.png"))
 ```
 
 
-```{r interaction, echo=FALSE, fig.align="c", fig.cap="Predicted looking times plotted against HPP", message=FALSE, warning=FALSE}
+```{r interaction, echo=FALSE, fig.align="c", fig.cap="Predicted looking times plotted against HPP.", message=FALSE, warning=FALSE}
 
 include_graphics(here("Figures", "03_interaction.png"))
 
 ```
-
-
-
-
-```{r linearity_homoskedasticity, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.cap = "Distribution of residuals across predicted looking times."}
-
-include_graphics(here("Figures", "04_model-assumptions-homoskedasticity.png"))
-
-```
-
-We observed little evidence of multicollinearity in the predictors we included in the model:
-
-```{r multicollinearity, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-
-kable(tolerance, digits = 2, col.names = c("Term", "VIF", "Tolerance"), align = "c")
-
-``` 
 
 
 ## Comparison between models with different coding for $Item$
@@ -146,6 +122,20 @@ anova.effect %>%
   select(term, Coefficient, SEM, CI95, F, Df.res, p) %>%
   kable(digits = 4, col.names = c("Term", "Coefficient", "SEM", "95%CI", "F", "Den. df", "p"), align = "c",
         caption = "Estimates of the Item-effect-coded linear mixed-effects model and outcomes of the Kenward-Roger F-tests performed on fixed effects. 95% confidence intervals were bootstrapped.")
+```
+
+## HPP4
+
+Given the reduced number of infants that had participated in the studies more than 4 times, we tested the robustness of the estimated coefficients by fitting a model that only included participants with experience in 1 up to 4 HPP studies. This model showed similar outcomes. We found a statistically significant interaction, *F*(`r round(anova4$Df[4], 2)`, `r round(anova4$Df.res[4], 2)`) = `r round(anova4$F[4], 2)`, *p* = `r format(round(anova4$p[4], 4), scientific=FALSE)`, 95% CI = [`r anova4$CI95[4]`], suggesting that the effect of trial type on looking time was influenced by the number of HPP experiments each participant participated in. The interaction shows that experience with a higher number of HPP experiments is associated with a stronger novelty preference. The main effect of HPP, however, was no longer statistically significant.
+
+```{r HPP4, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+anova4 %>% 
+  mutate(term = c("Intercept", "Item", "HPP", "Item * HPP"),
+         p = anova.novel$p) %>%
+  select(term, Coefficient, SEM, CI95, F, Df.res, p) %>%
+  kable(digits = 4, col.names = c("Term", "Coefficient", "SEM", "95%CI", "F", "Den. df", "p"), align = "c",
+        caption = "Estimates of the Item-dummy-coded linear mixed-effects model (with familiar trials as baseline) and outcomes of the Kenward-Roger F-tests performed on fixed effects. Participants with more than 3 HPP studies have been excluded. 95% confidence intervals were bootstrapped.")
+
 ```
 
 ## References

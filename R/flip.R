@@ -12,7 +12,6 @@ library(forcats)     # for recoding factors
 library(ggplot2)     # for visualising data
 library(lme4)        # for Linear-Mixed Effects Models (LMEM)
 library(car)         # for ANOVA
-library(purrr)       # for functional programming
 library(effects)     # for predicting
 library(patchwork)   # for arranging plots
 library(here)        # for locating files
@@ -23,12 +22,12 @@ set.seed(100) # for reproducible confidence interval bootstrapping
 #### 2. Import and process data ##############################################
 data <- read.csv(
  # file             = here("Data","00_data-raw.csv"),
-  file             = here("Data","additional_data","00_data-raw_with_SaffranHauser.csv"),
+  file             = here("Data","00_data-raw.csv"),
   header           = TRUE,
   sep              = ",",
   dec              = ".",
   stringsAsFactors = TRUE
-  ) %>%
+) %>%
   as_tibble() %>%
   pivot_longer(
     cols      = c("Familiar", "Novel"),
@@ -36,107 +35,90 @@ data <- read.csv(
     values_to = "LookingTime"
   ) %>%
   mutate(
-    LogLookingTime = log(LookingTime),
-    Item = fct_relevel(Item, "Novel", after = 1),     # Item dummy coding, familiar items as baseline
-    ItemCenter = ifelse(Item=="Familiar", -0.5, 0.5), # Item effect coding
-    ItemNovel = ifelse(Item=="Novel", 0, -1),         # Item dummy coding, novel items as baseline
-    #Item = ifelse(Item=="Familiar", 0, 1),  # Item dummy coding, familiar items as baseline
-    Study = factor(case_when(Study == "Santolin" & Location == "Barcelona" ~ "Santolin, Saffran & Sebastian-Galles (2019)",
-                      Study == "Santolin" & Location == "Wisconsin" ~ "Santolin & Saffran (2019)",
-                      Study ==  "Saffran & Wilson"                  ~ "Saffran & Wilson (2003)",
-                      Study == "SaffranHauser1"                     ~ "Saffran et al. (2008)",
-                      TRUE                                          ~ ""))
+    Item       = ifelse(Item=="Familiar", 0, 1), # Item dummy coding, familiar items as baseline
+    ItemCenter = ifelse(Item==0, -0.5, 0.5),     # Item effect coding
+    ItemNovel  = ifelse(Item==1, 0, -1),         # Item dummy coding, novel items as baseline
+    Study = factor(case_when(
+      Study == "Santolin" & Location == "Barcelona" ~ "Santolin, Saffran & Sebastian-Galles (2019)",
+      Study == "Santolin" & Location == "Wisconsin" ~ "Santolin & Saffran (2019)",
+      Study ==  "Saffran & Wilson"                  ~ "Saffran & Wilson (2003)",
+      Study == "SaffranHauser1"                     ~ "Saffran et al. (2008)",
+      TRUE                                          ~ ""))
   )
 
-# import results from Bayesian LMEM
-model.bayesian <- read.csv(here("Data", "02_lmem-bayesian.csv"), header = TRUE, stringsAsFactors = FALSE, sep = ",") %>%
-  select(1:5) %>%
-  mutate(Term = c("(Intercept)", "Item", "HPP", "Item:HPP"))
-colnames(model.bayesian) <- c("Term", "Estimate", "SE", "ci.low", "ci.upp")
-model.bayesian <- model.bayesian %>%
-  rename_at(2:5, ~paste0(., "_bayesian"))
-
 #### 3. Linear Mixed-Effects Model #####################################
-### 3.1. Fit maximal model: random by-participant and by-study intercepts and by-study HPP slope
+### 3.1. Fit maximal model: random by-participant and by-study intercepts and by-study HPP and Item slopes
 model <- lmer(
-  LookingTime ~         # response variable
-    Item * HPP +        # fixed effects ("*" means "include the interaction")
-    (1 | Participant) + # by-Participant random intercept
+  LookingTime ~              # response variable
+    Item * HPP +             # fixed effects ("*" means "include the interaction")
+    (1 | Participant) +      # by-Participant random intercept
     (1 + Item*HPP | Study),  # by-study random intercept and HPP random slope
-  data = data,          # indicate dataset
-  REML = TRUE           # fit using REML
+  data = data,               # indicate dataset
+  REML = TRUE                # fit using REML
 ) 
-summary(model)                 # model summary: correlation parameter (by-study intercepts and HPP slopes) is at boundary (-1)
-shapiro.test(residuals(model)) # check for non-normality: strong evidence against normality of residuals
-hist(residuals(model))         # histogram of residuals
-### 3.2.a. Fit the same LMEM on log-transformed looking times (Item dummy-coding, baseline on familiar trials)
-model.log <- lmer(
-  LogLookingTime ~       # response variable
+summary(model)              # model summary: correlation parameter (by-study intercepts and HPP slopes) is at boundary (-1)
+### 3.2.a. Drop Item-by-study random slopes (Item dummy-coding, baseline on familiar trials)
+model2 <- lmer(
+  LookingTime ~          # response variable
     Item*HPP +           # fixed effects ("*" means "include the interaction")
     (1 | Participant) +  # by-Participant random intercept
-    (1 + HPP| Study),   # by-study random intercept and HPP random slope
-  data = data,           # indicate dataset
-  REML = TRUE            # fit using REML
-) 
-# Cholesky factor on this model is singular, but this should not impact coefficients fixed effects (MZ: but does affect statistical inference!)
-summary(model.log)                               # model summary
-chf.log        <- getME(model.log,"Tlist")[[2]]  # Cholesky factor
-rowlengths.log <- sqrt(rowSums(chf.log*chf.log)) # unconditional correlation matrix
-svd.log        <- svd(chf.log, nv = 0)$u         # singular value decomposition - Near-singular matrix
-shapiro.test(residuals(model.log))               # check for non-normality: no evidence against normality of residuals
-hist(residuals(model.log))                       # histogram of residuals
-### 3.2.b. Fit the same LMEM on log-transformed looking times (Item effect-coding)
-model.log.effect <- lmer(
-  LogLookingTime ~       # response variable
-    ItemCenter*HPP +           # fixed effects ("*" means "include the interaction")
-    (1 | Participant) +  # by-Participant random intercept
     (1 + HPP | Study),   # by-study random intercept and HPP random slope
   data = data,           # indicate dataset
   REML = TRUE            # fit using REML
 ) 
-# Cholesky factor on this model is singular, but this should not impact coefficients fixed effects
-summary(model.log.effect)                                             # model summary
-chf.log.effect        <- getME(model.log.effect,"Tlist")[[2]]         # Cholesky factor
-rowlengths.log.effect <- sqrt(rowSums(chf.log.effect*chf.log.effect)) # unconditional correlation matrix
-svd.log.effect        <- svd(chf.log.effect, nv = 0)$u                # singular value decomposition - Near-singular matrix
-shapiro.test(residuals(model.log.effect))                             # check for non-normality: no evidence against normality of residuals
-hist(residuals(model.log.effect))                                     # histogram of residuals
-
-### 3.2.c. Fit the same LMEM on log-transformed looking times (Item dummy-coding, baseline on novel trials)
-model.log.novel <- lmer(
-  LogLookingTime ~       # response variable
-    ItemNovel*HPP +           # fixed effects ("*" means "include the interaction")
+summary(model2)                            # model summary:  # model summary: correlation parameter (by-study intercepts and HPP slopes) is at boundary (-1)
+chf2        <- getME(model2,"Tlist")[[2]]  # Cholesky factor
+rowlengths2 <- sqrt(rowSums(chf2*chf2))    # unconditional correlation matrix
+svd2       <- svd(chf2, nv = 0)$u          # singular value decomposition - Near-singular matrix
+### 3.3.a. We drop the random slopes term to avoid singular fit
+model3 <- lmer(
+  LookingTime ~          # response variable
+    Item*HPP +           # fixed effects ("*" means "include the interaction")
     (1 | Participant) +  # by-Participant random intercept
-    (1 + HPP | Study),   # by-study random intercept and HPP random slope
+    (1 | Study),         # by-study random intercept
+  data = data,           # indicate dataset
+  REML = TRUE            # fit using REML
+) 
+summary(model3)          # model summary
+### 3.3.b. Fit the same LMEM with effect-coding on Item
+model3.effect <- lmer(
+  LookingTime ~          # response variable
+    ItemCenter*HPP +     # fixed effects ("*" means "include the interaction")
+    (1 | Participant) +  # by-Participant random intercept
+    (1 | Study),         # by-study random intercept
+  data = data,           # indicate dataset
+  REML = TRUE            # fit using REML
+) 
+summary(model3.effect)   # model summary
+### 3.3.c. Fit the same LMEM on log-transformed looking times (Item dummy-coding, baseline on novel trials)
+model3.novel <- lmer(
+  LookingTime ~          # response variable
+    ItemNovel*HPP +      # fixed effects ("*" means "include the interaction")
+    (1 | Participant) +  # by-Participant random intercept
+    (1 | Study),         # by-study random intercept
   data = data,           # indicate dataset
   REML = TRUE            # fit using REML
 ) 
 # Cholesky factor on this model is singular, but this should not impact coefficients fixed effects
-summary(model.log.novel)                                           # model summary
-chf.log.novel        <- getME(model.log.novel,"Tlist")[[2]]        # Cholesky factor
-rowlengths.log.novel <- sqrt(rowSums(chf.log.novel*chf.log.novel)) # unconditional correlation matrix
-svd.log.novel        <- svd(chf.log.novel, nv = 0)$u               # singular value decomposition - Near-singular matrix
-shapiro.test(residuals(model.log.novel))                           # check for non-normality: no evidence against normality of residuals
-hist(residuals(model.log.novel))                                   # histogram of residuals
-
-##### 4. Extract coefficients ########################################
+summary(model3.novel)    # model summary
+.##### 4. Extract coefficients ########################################
 
 # 4.a. Extract coefficients from model (Item dummy-coded, baseline on familiar trials)
-coefs <- summary(model.log) %$% 
+coefs <- summary(model3) %$% 
   coefficients %>%
   as.data.frame() %>%
   rownames_to_column("Term") %>%
   mutate(term = c("(Intercept)", "Item", "HPP", "Item:HPP")) %>% 
   select(., Term = term, Coefficient = Estimate, SEM = `Std. Error`)
 # 4.b. Extract coefficients from model (Item effect coded)
-coefs.effect <- summary(model.log.effect) %$% 
+coefs.effect <- summary(model3.effect) %$% 
   coefficients %>%
   as.data.frame() %>%
   rownames_to_column("Term") %>%
   mutate(term = c("(Intercept)", "ItemCenter", "HPP", "ItemCenter:HPP")) %>% 
   select(., Term = term, Coefficient = Estimate, SEM = `Std. Error`)
 # 4.c. Extract coefficients from model (Item dummy-coded, baseline on novel trials)
-coefs.novel <- summary(model.log.novel) %$% 
+coefs.novel <- summary(model3.novel) %$% 
   coefficients %>%
   as.data.frame() %>%
   rownames_to_column("Term") %>%
@@ -144,41 +126,40 @@ coefs.novel <- summary(model.log.novel) %$%
   select(., Term = term, Coefficient = Estimate, SEM = `Std. Error`)
 
 #### 5. Compute bootstrapped confidence intervals ###############################
-
 # 5.a. Confidence intervals (Item dummy-coded, baseline on familiar trials)
 confints <- confint.merMod( # calculate confidence intervals
-  model.log,  
+  model3,  
   method = "boot",
   level = 0.95
 ) %>%
   as.data.frame() %>%
   rownames_to_column(var = "Term") %>%
-  slice(6:9) %>%
+  slice(4:7) %>%
   mutate(Term = c("(Intercept)", "Item", "HPP", "Item:HPP"))
 # 5.b. Confidence intervals (Item effect-coded)
 confints.effect <- confint.merMod( # calculate confidence intervals
-  model.log.effect,  
+  model3.effect,  
   method = "boot",
   level = 0.95
 ) %>%
   as.data.frame() %>%
   rownames_to_column(var = "Term") %>%
-  slice(6:9) %>%
+  slice(4:7) %>%
   mutate(Term = c("(Intercept)", "ItemCenter", "HPP", "ItemCenter:HPP"))
 # 5.c. Confidence intervals (Item dummy-coded, baseline on novel trials)
 confints.novel <- confint.merMod( # calculate confidence intervals
-  model.log.novel,  
+  model3.novel,  
   method = "boot",
   level = 0.95
 ) %>%
   as.data.frame() %>%
   rownames_to_column(var = "Term") %>% 
-  slice(6:9) %>%
+  slice(4:7) %>%
   mutate(Term = c("(Intercept)", "ItemNovel", "HPP", "ItemNovel:HPP"))
 
 #### 6. ANOVA ##########################################################################
 # 6.a. F-tests on fixed effects' coefficients (Item dummy-coded, baseline on familiar trials)
-anova <- Anova(model.log, type = "III", test.statistic = "F") %>% # perform type III ANOVA (KF F-test)
+anova <- Anova(model3, type = "III", test.statistic = "F") %>% # perform type III ANOVA (KF F-test)
   as.data.frame() %>%
   rownames_to_column("Term") %>%
   right_join(., coefs, by = "Term") %>% # join outcome with coefficients
@@ -189,10 +170,9 @@ anova <- Anova(model.log, type = "III", test.statistic = "F") %>% # perform type
   rename(ci1 = `2.5 %`,
          ci2 = `97.5 %`,
          p = `Pr(>F)`) %>%
-  select(Term, `F`, Df, Df.res, Coefficient, SEM, ci1, ci2, CI95, Coefficient, Df.res, p) %>%
-  left_join(., model.bayesian, by = "Term")
+  select(Term, `F`, Df, Df.res, Coefficient, SEM, ci1, ci2, CI95, Coefficient, Df.res, p)
 # 6.b. F-tests on fixed effects' coefficients (Item effect-coded)
-anova.effect <- Anova(model.log.effect, type = "III", test.statistic = "F") %>% # perform type III ANOVA (KF F-test)
+anova.effect <- Anova(model3.effect, type = "III", test.statistic = "F") %>% # perform type III ANOVA (KF F-test)
   as.data.frame() %>%
   rownames_to_column("Term") %>%
   right_join(., coefs.effect, by = "Term") %>% # join outcome with coefficients
@@ -203,10 +183,9 @@ anova.effect <- Anova(model.log.effect, type = "III", test.statistic = "F") %>% 
   rename(ci1 = `2.5 %`,
          ci2 = `97.5 %`,
          p = `Pr(>F)`) %>%
-  select(Term, `F`, Df, Df.res, Coefficient, SEM, ci1, ci2, CI95, Coefficient, Df.res, p) %>%
-  left_join(., model.bayesian, by = "Term")
+  select(Term, `F`, Df, Df.res, Coefficient, SEM, ci1, ci2, CI95, Coefficient, Df.res, p)
 # 6.c. F-tests on fixed effects' coefficients (Item dummy-coded, baseline on novel trials)
-anova.novel <- Anova(model.log.novel, type = "III", test.statistic = "F") %>% # perform type III ANOVA (KF F-test)
+anova.novel <- Anova(model3.novel, type = "III", test.statistic = "F") %>% # perform type III ANOVA (KF F-test)
   as.data.frame() %>%
   rownames_to_column("Term") %>%
   right_join(., coefs.novel, by = "Term") %>% # join outcome with coefficients
@@ -217,40 +196,41 @@ anova.novel <- Anova(model.log.novel, type = "III", test.statistic = "F") %>% # 
   rename(ci1 = `2.5 %`,
          ci2 = `97.5 %`,
          p = `Pr(>F)`) %>%
-  select(Term, `F`, Df, Df.res, Coefficient, SEM, ci1, ci2, CI95, Coefficient, Df.res, p) %>%
-  left_join(., model.bayesian, by = "Term")
-
+  select(Term, `F`, Df, Df.res, Coefficient, SEM, ci1, ci2, CI95, Coefficient, Df.res, p)
 #### 7. Get predicted values ###############################################################
 # 7.a. Predictions for plotting interaction graph (Item dummy-coded, baseline at familiar trials)
-effects <- effect(term = "Item*HPP", mod = model.log) %>%
+effects <- effect(term = "Item*HPP", mod = model3) %>%
   as.data.frame() %>%
-  mutate(fit.exp = exp(fit))
+  filter(Item==0 | Item==1) %>%
+  mutate(Item = ifelse(Item==0, "Familiar", "Novel"))
 # 7.b. Predictions for plotting interaction graph (Item effect-coded)
-effects.effect <- effect(term = "ItemCenter*HPP", mod = model.log.effect) %>%
+effects.effect <- effect(term = "ItemCenter*HPP", mod = model3.effect) %>%
   as.data.frame() %>%
-  mutate(fit.exp = exp(fit))
+  filter(ItemCenter==-0.5 | ItemCenter==0.5) %>%
+  mutate(ItemCenter = ifelse(ItemCenter==-0.5, "Familiar", "Novel"))
 # 7.c. Predictions for plotting interaction graph (Item dummy-coded, baseline at novel trials)
-effects.novel <- effect(term = "ItemNovel*HPP", mod = model.log.novel) %>%
+effects.novel <- effect(term = "ItemNovel*HPP", mod = model3.novel) %>%
   as.data.frame() %>%
-  mutate(fit.exp = exp(fit))
+  filter(ItemNovel==-1 | ItemNovel==0) %>%
+  mutate(ItemNovel = ifelse(ItemNovel==-1, "Familiar", "Novel"))
 
 #### 8. Check other assumptions ################################################################
 # 8.a. Check for multicollinearity (Item dummy-coded, baseline at familiar trials)
-multicollinearity <- vif(model.log) %>%
+multicollinearity <- vif(model3) %>%
   as.data.frame() %>%
   rownames_to_column("term") %>%
   rename(vif = ".") %>%
   mutate(term = c("Item", "HPP", "ItemCenter * HPP"),
          tolerance = 1/vif) 
 # 8.b. Check for multicollinearity (Item effect-coded)
-multicollinearity.effect <- vif(model.log.effect) %>%
+multicollinearity.effect <- vif(model3.effect) %>%
   as.data.frame() %>%
   rownames_to_column("term") %>%
   rename(vif = ".") %>%
   mutate(term = c("ItemCenter", "HPP", "ItemCenter * HPP"),
          tolerance = 1/vif)
 # 8.c. Check for multicollinearity (Item dummy-coded, baseline at novel trials)
-multicollinearity.novel <- vif(model.log.novel) %>%
+multicollinearity.novel <- vif(model3.novel) %>%
   as.data.frame() %>%
   rownames_to_column("term") %>%
   rename(vif = ".") %>%
@@ -258,32 +238,26 @@ multicollinearity.novel <- vif(model.log.novel) %>%
          tolerance = 1/vif) 
 
 #### 9. Gather info from model #######################################################
-# 9.a. Fitted model (predictions and residuals): raw and log-transformed looking times (Item dummy-coded, baseline on familiar trials)
-fitted <- map(list(model, model.log), ~fortify(.)) %>%
-  set_names(c("Raw", "Log-transformed")) %>%
-  bind_rows(.id = "Model") %>%
-  mutate(Model = fct_inorder(Model),
-         .fittedExp = exp(.fitted),
+# 9.a. Fitted model (predictions and residuals): looking times (Item effect-coded)
+fitted <- model3 %>%
+  fortify() %>%
+  mutate(Item = ifelse(Item==0, "Familiar", "Novel"),
          Study = as.character(Study),
          Study = ifelse(Study=="Santolin, Saffran & Sebastian-Galles (2019)",
                         "Santolin, Saffran &\nSebastian-Galles (2019)", Study)
   )
-# 9.b. Fitted model (predictions and residuals): raw and log-transformed looking times (Item effect-coded)
-fitted.effect <- map(list(model, model.log.effect), ~fortify(.)) %>%
-  set_names(c("Raw", "Log-transformed")) %>%
-  bind_rows(.id = "Model") %>%
-  mutate(Model = fct_inorder(Model),
-         .fittedExp = exp(.fitted),
+# 9.b. Fitted model (predictions and residuals): looking times (Item effect-coded)
+fitted.effect <- model3.effect %>%
+  fortify() %>%
+  mutate(Item = ifelse(Item==-0.5, "Familiar", "Novel"),
          Study = as.character(Study),
          Study = ifelse(Study=="Santolin, Saffran & Sebastian-Galles (2019)",
                         "Santolin, Saffran &\nSebastian-Galles (2019)", Study)
   )
-# 9.c. Fitted model (predictions and residuals): raw and log-transformed looking times (Item dummy-coded, baseline on novel trials)
-fitted.novel <- map(list(model, model.log.novel), ~fortify(.)) %>%
-  set_names(c("Raw", "Log-transformed")) %>%
-  bind_rows(.id = "Model") %>%
-  mutate(Model = fct_inorder(Model),
-         .fittedExp = exp(.fitted),
+# 9.c. Fitted model (predictions and residuals): looking times (Item dummy-coded, baseline on novel trials)
+fitted.novel <- model3.novel %>%
+  fortify() %>%
+  mutate(Item = ifelse(Item==0, "Novel", "Familiar"),
          Study = as.character(Study),
          Study = ifelse(Study=="Santolin, Saffran & Sebastian-Galles (2019)",
                         "Santolin, Saffran &\nSebastian-Galles (2019)", Study)
@@ -299,9 +273,11 @@ data %>%
             SEM = SD/sqrt(n)) %>%
   rename(LookingTime = Mean) %>%
   ungroup() %>%
-  mutate(Study = as.character(Study),
-         Study = ifelse(Study=="Santolin, Saffran & Sebastian-Galles (2019)",
-                        "Santolin, Saffran &\nSebastian-Galles (2019)", Study)) %>%
+  mutate(
+    Item = ifelse(Item==0, "Familiar", "Novel"),
+    Study = as.character(Study),
+    Study = ifelse(Study=="Santolin, Saffran & Sebastian-Galles (2019)",
+                   "Santolin, Saffran &\nSebastian-Galles (2019)", Study)) %>%
   ggplot(aes(Item, LookingTime, fill = Item)) +
   facet_wrap(~Study,nrow=1) +
   geom_bar(stat = "identity") +
@@ -326,7 +302,9 @@ data %>%
   ggsave(here("Figures", "01_lookingtimes-study.png"), height = 6, width = 12)
 
 # 10.2. Looking times against HPP
-ggplot(data, aes(x = Item, y = LookingTime, fill = Item)) +
+data %>%
+  mutate(Item = ifelse(Item==0, "Familiar", "Novel")) %>%
+  ggplot(aes(x = Item, y = LookingTime, fill = Item)) +
   facet_wrap(~HPP, nrow = 1, strip.position = "bottom") +
   stat_summary(fun.y = mean, geom = "bar", size = 0.5) +
   stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.25, size = 0.75) +
@@ -347,10 +325,12 @@ ggplot(data, aes(x = Item, y = LookingTime, fill = Item)) +
   ggsave(here("Figures", "02_lookingtimes-hpp.png"), height = 5, width = 12)
 
 # 10.3. Looking times against HPP
-data %>% group_by(Study, HPP, Participant) %>%
+data %>%
+  mutate(Item = ifelse(Item==0, "Familiar", "Novel")) %>%
+  group_by(Study, Item, HPP, Participant) %>%
   summarise(LookingTime = mean(LookingTime)) %>%
-  ggplot(aes(x = HPP, y = LookingTime)) +
-  stat_summary(fun.y = mean, geom = "line", size = 0.5) +
+  ggplot(aes(x = HPP, y = LookingTime, linetype = Item)) +
+  stat_summary(fun.y = "mean", geom = "line", size = 1) +
   labs(x = "HPP Visits", y = "Looking time (ms)") +
   scale_colour_grey(start = 0.25, end = 0.75) +
   scale_fill_grey(start = 0.25, end = 0.75) +
@@ -362,7 +342,8 @@ data %>% group_by(Study, HPP, Participant) %>%
     panel.background   = element_rect(fill = "white", colour = "grey"),
     text               = element_text(colour = "black", size = 20),
     axis.text          = element_text(colour = "black"),
-    legend.position    = "none",
+    legend.position    = c(0.25, 0.1),
+    legend.direction = "horizontal",
     strip.placement = "outside" 
   ) +
   ggsave(here("Figures", "02_lookingtimes-hpp.png"), height = 5, width = 12)
@@ -372,8 +353,6 @@ ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
   geom_linerange(aes(x = Term, ymin = ci1, ymax = ci2), alpha = 0.5, size = 10) +
   geom_point(size = 5, colour = "black") +
   geom_errorbar(aes(ymax = Coefficient+SEM, ymin = Coefficient-SEM), size = 1.5, width = 0, colour = "black") +
-  geom_errorbar(aes(ymax = ci.upp_bayesian, ymin = ci.low_bayesian), size = 1, width = 0, colour = "grey", position = position_nudge(x = 0.25)) +
-  geom_point(aes(y = Estimate_bayesian), size = 3, colour = "black", shape = 5, position = position_nudge(x = 0.25)) +
   geom_hline(yintercept = 0) +
   labs(x = "Term", y = "Coefficient") +
   coord_flip() +
@@ -387,10 +366,12 @@ ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
     axis.text          = element_text(colour = "black"),
     legend.position    = "none"
   ) +
-  ggsave(here("Figures", "03_coefficients.png"), height = 4,width=10)
+  ggsave(here("Figures", "03_coefficients.png"), height = 4,width = 10)
 
 # 10.5. Interaction plot 
-ggplot(effects, aes(x = HPP, y = fit.exp, linetype = Item)) +
+effects %>%
+  mutate(Item = as.character(Item)) %>%
+  ggplot(., aes(x = HPP, y = fit, linetype = Item)) +
   geom_line(size = 1.25) +
   labs(x = "HPP visits",
        y = "Looking time (ms)",
@@ -412,7 +393,7 @@ ggplot(effects, aes(x = HPP, y = fit.exp, linetype = Item)) +
   ggsave(here("Figures", "03_interaction.png"), width = 10, height = 5)
 
 # 10.6. Model assumptions: normality
-ggplot(filter(fitted, Model=="Log-transformed"), aes(sample = .resid)) +
+ggplot(fitted, aes(sample = .resid)) +
   geom_qq(colour = "grey") +
   geom_qq_line(colour = "black", size = 1) +
   labs(x = "Theoretical", y = "Sample", colour = "Trial") +
@@ -426,7 +407,7 @@ ggplot(filter(fitted, Model=="Log-transformed"), aes(sample = .resid)) +
     axis.text          = element_text(colour = "black"),
     legend.position    = "right"
   ) +
-  ggplot(filter(fitted, Model=="Log-transformed"), aes(sample = .resid)) +
+  ggplot(fitted, aes(sample = .resid)) +
   facet_wrap(~Study) +
   geom_qq(colour = "grey") +
   geom_qq_line(size = 1, colour = "black") +
@@ -441,7 +422,7 @@ ggplot(filter(fitted, Model=="Log-transformed"), aes(sample = .resid)) +
     axis.text          = element_text(colour = "black"),
     legend.position    = "none"
   ) +
-  ggplot(filter(fitted, Model=="Log-transformed"), aes(x = .resid)) +
+  ggplot(fitted, aes(x = .resid)) +
   geom_density(fill = "transparent") +
   labs(x = "Residuals", y = "Density") +
   theme(
@@ -454,7 +435,7 @@ ggplot(filter(fitted, Model=="Log-transformed"), aes(sample = .resid)) +
     axis.text          = element_text(colour = "black"),
     legend.position    = "none"
   ) +
-  ggplot(filter(fitted, Model=="Log-transformed"), aes(x = .resid)) +
+  ggplot(fitted, aes(x = .resid)) +
   facet_wrap(~Study) +
   geom_density(fill = "transparent") +
   labs(x = "Residuals", y = "Density", colour = "Study",
@@ -472,43 +453,10 @@ ggplot(filter(fitted, Model=="Log-transformed"), aes(sample = .resid)) +
   plot_layout(nrow = 2, ncol = 2) +
   ggsave(here("Figures", "04_model-assumptions-normality.png"),width = 10,height = 5)
 
-# 10.7. Model assumptions: normality (raw vs. log-transformed)
-ggplot(fitted, aes(sample = .resid)) +
-  facet_wrap(~Model, scales = "free_y") +
-  geom_qq(alpha = 0.7, colour = "grey") +
-  geom_qq_line(colour = "black", size = 1) +
-  labs(x = "Theoretical distribution", y = "Empirical distribution", colour = "Trial") +
-  theme(
-    panel.grid.major.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
-    panel.grid.minor.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
-    panel.grid.major.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
-    panel.grid.minor.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
-    panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 15),
-    axis.text          = element_text(colour = "black"),
-    legend.position    = "right"
-  ) +
-  ggplot(fitted, aes(x = .resid)) +
-  facet_wrap(~Model, scales = "free") +
-  geom_density(fill = "transparent") +
-  labs(x = "Residuals", y = "Density", colour = "Study") +
-  theme(
-    panel.grid.major.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
-    panel.grid.minor.y = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
-    panel.grid.major.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
-    panel.grid.minor.x = element_line(colour = "grey", size = 0.25, linetype = "dotted"),
-    panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 15),
-    axis.text          = element_text(colour = "black"),
-    legend.position    = "none"
-  ) +
-  plot_layout(nrow = 2) +
-  ggsave(here("Figures", "04_model-assumptions-normality-rawlog.png"))
-
 # 10.8. Model assumptions: homoskedasticity
 data.frame(
-  studentised_residual = rstudent(model.log),
-  fitted = fitted(model.log),
+  studentised_residual = rstudent(model3),
+  fitted = fitted(model3),
   study = data$Study
 ) %>%
   mutate(
@@ -547,7 +495,6 @@ write.table(anova.effect, here("Data", "Effect-coding", "02_results-lmem-effect.
 write.table(effects.effect, here("Data", "Effect-coding", "02_results-effects-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(fitted.effect, here("Data", "Effect-coding", "02_results-fitted-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(multicollinearity.effect, here("Data", "Effect-coding", "02_results-multicollinearity-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
-
 # 11.c. Export results from Item-dummy-coded model (baseline on novel trials)
 write.table(data, here("Data", "Dummy-coding-Novel", "01_data-processed-novel.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(anova.novel, here("Data", "Dummy-coding-Novel", "02_results-lmem-novel.csv"), sep = ",", dec = ".", row.names = FALSE)

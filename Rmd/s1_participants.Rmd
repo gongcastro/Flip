@@ -1,0 +1,75 @@
+---
+title: "SI2. Participants"
+author:
+    - Chiara Santolin*
+    - Gonzalo García-Castro
+    - Martin Zettersten
+    - Nuria Sebastian-Galles
+    - Jenny R. Saffran
+date: "Updated: `r format(Sys.Date(), '%B %dth, %Y')`"
+output:
+  pdf_document:
+    fig_caption: yes
+  word_document:
+    reference_docx: flip_template.docx
+bibliography: "../Flip.bib"
+csl: "../apa.csl"
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+  echo    = TRUE,
+	message = FALSE,
+	warning = FALSE,
+	include = TRUE,
+	out.width = "100%"
+)
+options(knitr.kable.NA = '-', big.mark = ',') # to replace "NA" with "-" in knitr::kable
+
+```
+
+```{r prepare, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+
+# load packages
+library(tidyverse)    # tidyverse packages
+library(magrittr)     # for using pipes
+library(knitr)        # for formatting tables
+library(english)      # for transforming numbers to words
+library(here)         # for locating files
+
+# import data
+data <- read.csv(here("Data", "01_data-processed.csv"), header = TRUE) %>%
+  mutate(Item = ifelse(Item==0, "Familiar", "Novel"))
+
+```
+
+# Participants
+
+```{r participants, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+
+# number of observations
+n <- data %>% summarise(n = n())                                  
+# number of participants
+n_participants <- data %>% filter(Item == "Novel") %>% summarise(n = n()) 
+# number of participants by study
+n_study <- data %>%                                                           
+  filter(Item == "Novel") %>%
+  group_by(Study, Location) %>%
+  summarise(n = n())
+# number of participants by study and location
+n_studyLocation <- data %>%
+  filter(Item == "Novel") %>%
+  group_by(Study, Location) %>%
+  summarise(n = n())
+
+```
+
+We retrieved data from `r n_participants$n` participants: `r n_studyLocation$n[1]` from @saffran2003 (tested in Wisconsin), `r n_studyLocation$n[2]` from @saffran2008 (tested in Wisconsin), `r n_study$n[3]` from @santolin2019a (tested in Wisconsin), and `r n_studyLocation$n[4]` from the resplication study (@santolin2019; tested in Barcelona). Two datapoints were available for each participant: one for the mean looking time in "familiar" trials, and one for the mean looking time in "novel" trials. A total of `r n$n` datapoints were included in the analysis. Participants included in our analysis were those included in the final version of both studies.
+
+## References
+
+\setlength{\parindent}{-0.2in}
+\setlength{\leftskip}{0.2in}
+\setlength{\parskip}{8pt}
+\noindent
