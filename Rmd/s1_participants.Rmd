@@ -39,7 +39,8 @@ library(english)      # for transforming numbers to words
 library(here)         # for locating files
 
 # import data
-data <- read.csv(here("Data", "01_data-processed.csv"), header = TRUE)
+data <- read.csv(here("Data", "01_data-processed.csv"), header = TRUE) %>%
+  mutate(Item = ifelse(Item==0, "Familiar", "Novel"))
 
 ```
 

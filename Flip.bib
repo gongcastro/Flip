@@ -10,7 +10,7 @@
 	pages = {1--48}
 }
 
-@article{lmerTest,
+@article{kuznetsova2017,
 	title = {{lmerTest} package: tests in linear mixed effects models},
 	volume = {82},
 	doi = {10.18637/jss.v082.i13},
@@ -21,13 +21,29 @@
 	pages = {1--26}
 }
 
+ @Article{bates2015,    title = {Fitting Linear Mixed-Effects Models Using {lme4}},    author = {Douglas Bates and Martin M{\"a}chler and Ben Bolker and Steve Walker},    journal = {Journal of Statistical Software},    year = {2015},    volume = {67},    number = {1},    pages = {1--48},    doi = {10.18637/jss.v067.i01},  }
+
+@manual{rcoreteam2018,    title = {R: A Language and Environment for Statistical Computing},    author = {{R Core Team}},    organization = {R Foundation for Statistical Computing},    address = {Vienna, Austria},    year = {2018},    url = {https://www.R-project.org/},  }
+
+@article{kenward2009,
+  title={An improved approximation to the precision of fixed effects from restricted maximum likelihood},
+  author={Kenward, Michael G and Roger, James H},
+  journal={Computational Statistics \& Data Analysis},
+  volume={53},
+  number={7},
+  pages={2583--2595},
+  year={2009},
+  publisher={Elsevier}
+}
+
+ @book{fox2019,    title = {An {R} Companion to Applied Regression},    edition = {Third},    author = {John Fox and Sanford Weisberg},    year = {2019},    publisher = {Sage},    address = {Thousand Oaks {CA}},    url = {https://socialsciences.mcmaster.ca/jfox/Books/Companion/},  }
+
 @article{luke2017,
 	title = {Evaluating significance in linear mixed-effects models in {R}},
 	volume = {49},
 	issn = {1554-3528},
 	url = {https://doi.org/10.3758/s13428-016-0809-y},
 	doi = {10.3758/s13428-016-0809-y},
-	abstract = {Mixed-effects models are being used ever more frequently in the analysis of experimental data. However, in the lme4 package in R the standards for evaluating significance of fixed effects in these models (i.e., obtaining p-values) are somewhat vague. There are good reasons for this, but as researchers who are using these models are required in many cases to report p-values, some method for evaluating the significance of the model output is needed. This paper reports the results of simulations showing that the two most common methods for evaluating significance, using likelihood ratio tests and applying the z distribution to the Wald t values from the model output (t-as-z), are somewhat anti-conservative, especially for smaller sample sizes. Other methods for evaluating significance, including parametric bootstrapping and the Kenward-Roger and Satterthwaite approximations for degrees of freedom, were also evaluated. The results of these simulations suggest that Type 1 error rates are closest to .05 when models are fitted using REML and p-values are derived using the Kenward-Roger or Satterthwaite approximations, as these approximations both produced acceptable Type 1 error rates even for smaller samples.},
 	language = {en},
 	number = {4},
 	urldate = {2019-09-22},
