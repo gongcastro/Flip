@@ -71,12 +71,7 @@ anova %>%
 
 ```
 
-<<<<<<< HEAD
-```{r coefficients, echo=FALSE, fig.align="c", fig.cap="Predicted looking times plotted against HPP", message=FALSE, warning=FALSE, caption="Coefficients of the model. Black dots and error bars indicate the coefficient and SEM estimated by the frequentist model. Grey boxes indicate the 95% confidence intereval."}
-=======
-
 ```{r coefficients, echo=FALSE, fig.align="c", message=FALSE, warning=FALSE, fig.cap="Coefficients of the model. Black dots and error bars indicate the coefficient and SEM estimated by the model. Grey boxes indicate the 95% confidence interval."}
->>>>>>> NoSlopes
 
 include_graphics(here("Figures", "03_coefficients.png"))
 ```
@@ -124,11 +119,11 @@ anova.effect %>%
         caption = "Estimates of the Item-effect-coded linear mixed-effects model and outcomes of the Kenward-Roger F-tests performed on fixed effects. 95% confidence intervals were bootstrapped.")
 ```
 
-## HPP4
+## HPP3
 
-Given the reduced number of infants that had participated in the studies more than 4 times, we tested the robustness of the estimated coefficients by fitting a model that only included participants with experience in 1 up to 4 HPP studies. This model showed similar outcomes. We found a statistically significant interaction, *F*(`r round(anova4$Df[4], 2)`, `r round(anova4$Df.res[4], 2)`) = `r round(anova4$F[4], 2)`, *p* = `r format(round(anova4$p[4], 4), scientific=FALSE)`, 95% CI = [`r anova4$CI95[4]`], suggesting that the effect of trial type on looking time was influenced by the number of HPP experiments each participant participated in. The interaction shows that experience with a higher number of HPP experiments is associated with a stronger novelty preference. The main effect of HPP, however, was no longer statistically significant.
+Given the reduced number of infants that had participated in the studies more than 3 times, we tested the robustness of the estimated coefficients by fitting a model that only included participants with experience in 1 up to 3 HPP studies. This model showed similar outcomes. We found a statistically significant interaction, *F*(`r round(anova4$Df[4], 2)`, `r round(anova4$Df.res[4], 2)`) = `r round(anova4$F[4], 2)`, *p* = `r format(round(anova4$p[4], 4), scientific=FALSE)`, 95% CI = [`r anova4$CI95[4]`], suggesting that the effect of trial type on looking time was influenced by the number of HPP experiments each participant participated in. The interaction shows that experience with a higher number of HPP experiments is associated with a stronger novelty preference. The main effect of HPP, however, was no longer statistically significant.
 
-```{r HPP4, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r HPP3, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 anova4 %>% 
   mutate(term = c("Intercept", "Item", "HPP", "Item * HPP"),
          p = anova.novel$p) %>%
