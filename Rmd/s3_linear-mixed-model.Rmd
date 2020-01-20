@@ -43,7 +43,7 @@ anova     <- read.csv(here("Data", "02_results-lmem.csv"), header = TRUE, sep = 
 effects   <- read.table(here("Data", "02_results-effects.csv"), header = TRUE, sep = ",")
 fitted    <- read.table(here("Data", "02_results-fitted.csv"), header = TRUE, sep = ",")
 # import HPP4 data
-anova4     <- read.csv(here("Data", "HPP3", "02_results-lmem-3.csv"), header = TRUE, sep = ",")
+anova4     <- read.csv(here("Data", "HPP4", "02_results-lmem-4.csv"), header = TRUE, sep = ",")
 # import data from Item-effect-coded and Item-dummy-coded (baseline on novel trials) models 
 anova.effect <- read.csv(here("Data", "Effect-coding", "02_results-lmem-effect.csv"), header = TRUE, sep = ",")
 anova.novel  <- read.csv(here("Data", "Dummy-coding-Novel", "02_results-lmem-novel.csv"), header = TRUE, sep = ",")
@@ -119,17 +119,23 @@ anova.effect %>%
         caption = "Estimates of the Item-effect-coded linear mixed-effects model and outcomes of the Kenward-Roger F-tests performed on fixed effects. 95% confidence intervals were bootstrapped.")
 ```
 
-## HPP3
+## HPP4
 
-Given the reduced number of infants that had participated in the studies more than 3 times, we tested the robustness of the estimated coefficients by fitting a model that only included participants with experience in 1 up to 3 HPP studies. This model showed similar outcomes. We found a statistically significant interaction, *F*(`r round(anova4$Df[4], 2)`, `r round(anova4$Df.res[4], 2)`) = `r round(anova4$F[4], 2)`, *p* = `r format(round(anova4$p[4], 4), scientific=FALSE)`, 95% CI = [`r anova4$CI95[4]`], suggesting that the effect of trial type on looking time was influenced by the number of HPP experiments each participant participated in. The interaction shows that experience with a higher number of HPP experiments is associated with a stronger novelty preference. The main effect of HPP, however, was no longer statistically significant.
+Given the reduced number of infants that had participated in the studies more than 3 times, we tested the robustness of the estimated coefficients by fitting a model that only included participants with experience in 1 up to 4 HPP studies. This model showed similar outcomes. We found a statistically significant interaction, *F*(`r round(anova4$Df[4], 2)`, `r round(anova4$Df.res[4], 2)`) = `r round(anova4$F[4], 2)`, *p* = `r format(round(anova4$p[4], 4), scientific=FALSE)`, 95% CI = [`r anova4$CI95[4]`], suggesting that the effect of trial type on looking time was influenced by the number of HPP experiments each participant participated in. The interaction shows that experience with a higher number of HPP experiments is associated with a stronger novelty preference. The main effect of HPP, however, was no longer statistically significant.
 
-```{r HPP3, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r HPP4, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 anova4 %>% 
   mutate(term = c("Intercept", "Item", "HPP", "Item * HPP"),
-         p = anova.novel$p) %>%
+         p = anova4$p) %>%
   select(term, Coefficient, SEM, CI95, F, Df.res, p) %>%
   kable(digits = 4, col.names = c("Term", "Coefficient", "SEM", "95%CI", "F", "Den. df", "p"), align = "c",
-        caption = "Estimates of the Item-dummy-coded linear mixed-effects model (with familiar trials as baseline) and outcomes of the Kenward-Roger F-tests performed on fixed effects. Participants with more than 3 HPP studies have been excluded. 95% confidence intervals were bootstrapped.")
+        caption = "Estimates of the Item-dummy-coded linear mixed-effects model (with familiar trials as baseline) and outcomes of the Kenward-Roger F-tests performed on fixed effects. Participants with more than 4 HPP studies have been excluded. 95% confidence intervals were bootstrapped.")
+
+```
+
+```{r interaction4, echo=FALSE, fig.align="c", fig.cap="Predicted looking times plotted against HPP.", message=FALSE, warning=FALSE}
+
+include_graphics(here("Figures", "HPP4", "03_interaction-4.png"))
 
 ```
 

@@ -1,5 +1,5 @@
 #### Import, process, analyse, and export data #####################
-# 1-3 HPP version
+# 1-4 HPP version
 
 #### set up ########################################################
 
@@ -43,7 +43,7 @@ data <- read.csv(
       Study ==  "Saffran & Wilson"                  ~ "Saffran & Wilson (2003)",
       Study == "SaffranHauser1"                     ~ "Saffran et al. (2008)"))
   ) %>%
-  filter(HPP < 4) # get only participants with 1 to 3 HPP studies
+  filter(HPP < 5) # get only participants with 1 to 4 HPP studies
 
 #### Linear Mixed-Effects Model #####################################
 
@@ -72,7 +72,7 @@ model2 <- lmer(
 summary(model2) # model summary
 ### 3. Drop by-study Item random slopes
 model3 <- lmer(
-  LogLookingTime ~      # response variable
+  LookingTime ~      # response variable
     Item * HPP +        # fixed effects ("*" means "include the interaction")
     (1 | Participant) + # by-Participant random intercept
     (1 + HPP | Study),  # by-study random intercept and HPP random slope
@@ -83,7 +83,7 @@ model3 <- lmer(
 summary(model3) # model summary
 ### 3. Drop by-study HPP random slopes
 model4 <- lmer(
-  LogLookingTime ~      # response variable
+  LookingTime ~      # response variable
     Item * HPP +        # fixed effects ("*" means "include the interaction")
     (1 | Participant) + # by-Participant random intercept
     (1 | Study),  # by-study random intercept and HPP random slope
@@ -184,7 +184,7 @@ data %>%
     legend.position    = "none",
     strip.background = element_rect(fill = "transparent", colour = "transparent")
   ) +
-  ggsave(here("Figures", "HPP3", "01_lookingtimes-study-3.png"), height = 6, width = 12)
+  ggsave(here("Figures", "HPP4", "01_lookingtimes-study-4.png"), height = 6, width = 12)
 
 # looking times against HPP
 ggplot(data, aes(x = Item, y = LookingTime, fill = Item)) +
@@ -205,7 +205,7 @@ ggplot(data, aes(x = Item, y = LookingTime, fill = Item)) +
     legend.position    = "none",
     strip.placement = "outside" 
   ) +
-  ggsave(here("Figures", "HPP3", "02_lookingtimes-hpp-3.png"), height = 5, width = 12)
+  ggsave(here("Figures", "HPP4", "02_lookingtimes-hpp-4.png"), height = 5, width = 12)
 
 # coefficients
 ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
@@ -225,7 +225,7 @@ ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
     axis.text          = element_text(colour = "black"),
     legend.position    = "none"
   ) +
-  ggsave(here("Figures", "HPP3", "03_coefficients-3.png"), height = 4,width=10)
+  ggsave(here("Figures", "HPP4", "03_coefficients-4.png"), height = 4,width=10)
 
 # add interaction plot 
 ggplot(effects, aes(x = HPP, y = fit, linetype = Item)) +
@@ -236,8 +236,8 @@ ggplot(effects, aes(x = HPP, y = fit, linetype = Item)) +
        fill = "Test item",
        shape = "Test item") +
   scale_linetype_discrete() +
-  scale_y_continuous() +
-  scale_x_continuous(breaks = seq(1, 3, by = 1)) +
+  scale_y_continuous(limits = c(4000, 8000)) +
+  scale_x_continuous(breaks = seq(1, 4, by = 1)) +
   theme(
     panel.grid         = element_line(colour = "grey", linetype = "dotted"),
     panel.background   = element_rect(fill = "white", colour = "grey"),
@@ -247,7 +247,7 @@ ggplot(effects, aes(x = HPP, y = fit, linetype = Item)) +
     legend.direction = "horizontal",
     legend.background = element_rect(fill = "transparent")
   ) +
-  ggsave(here("Figures", "HPP3", "0_interaction-3.png"), width = 10, height = 5)
+  ggsave(here("Figures", "HPP4", "03_interaction-4.png"), width = 10, height = 5)
 
 # model assumptions: normality
 ggplot(fitted, aes(sample = .resid)) +
@@ -308,7 +308,7 @@ ggplot(fitted, aes(sample = .resid)) +
     legend.position    = "none"
   ) +
   plot_layout(nrow = 2, ncol = 2) +
-  ggsave(here("Figures", "HPP3", "04_model-assumptions-normality-3.png"),width = 10,height = 5)
+  ggsave(here("Figures", "HPP4", "04_model-assumptions-normality-4.png"),width = 10,height = 5)
 
 # model assumptions: homoskedasticity
 data.frame(
@@ -337,12 +337,12 @@ data.frame(
     axis.text          = element_text(colour = "black"),
     legend.position    = "right"
   ) +
-  ggsave(here("Figures", "HPP3", "04_model-assumptions-homoskedasticity-3.png"), width=10, height=5)
+  ggsave(here("Figures", "HPP4", "04_model-assumptions-homoskedasticity-4.png"), width=10, height=5)
 
 #### export results ########################################################
-write.table(data, here("Data", "HPP3", "01_data-processed-3.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(anova, here("Data", "HPP3", "02_results-lmem-3.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(effects, here("Data", "HPP3", "02_results-effects-3.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(multicollinearity, here("Data", "HPP3", "02_results-multicollinearity-3.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(data, here("Data", "HPP4", "01_data-processed-4.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(anova, here("Data", "HPP4", "02_results-lmem-4.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(effects, here("Data", "HPP4", "02_results-effects-4.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(multicollinearity, here("Data", "HPP4", "02_results-multicollinearity-4.csv"), sep = ",", dec = ".", row.names = FALSE)
 
 

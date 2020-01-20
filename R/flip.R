@@ -379,7 +379,7 @@ effects %>%
        fill = "Test item",
        shape = "Test item") +
   scale_linetype_discrete() +
-  scale_y_continuous() +
+  scale_y_continuous(limits = c(4000, 8000)) +
   scale_x_continuous(breaks = seq(1, 6, by = 1)) +
   theme(
     panel.grid         = element_line(colour = "grey", linetype = "dotted"),
