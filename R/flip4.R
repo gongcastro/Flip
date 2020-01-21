@@ -12,7 +12,7 @@ library(forcats)     # for recoding factors
 library(ggplot2)     # for visualising data
 library(lme4)        # for Linear-Mixed Effects Models (LMEM)
 library(car)         # for ANOVA
-library(effects)     # for predicting
+library(effects)     # for predicting scores
 library(patchwork)   # for arranging plots
 library(here)        # for locating files
 
@@ -28,16 +28,15 @@ data <- read.csv(
   stringsAsFactors = TRUE
 ) %>%
   as_tibble() %>%
-  pivot_longer(
+  pivot_longer( # to long format
     cols      = c("Familiar", "Novel"),
     names_to  = "Item",
     values_to = "LookingTime"
   ) %>%
   mutate(
-    LogLookingTime = log(LookingTime),
-    Item = fct_relevel(Item, "Novel", after = 1), # make familiar items the baseline
-    HPPCenter = (HPP - mean(HPP)),
-    Study = factor(case_when(
+    Item           = ifelse(Item=="Familiar", 0, 1), # Item dummy coding, familiar items as baseline
+    HPPCenter      = (HPP - mean(HPP)),
+    Study          = factor(case_when(
       Study == "Santolin" & Location == "Barcelona" ~ "Santolin, Saffran & Sebastian-Galles (2019)",
       Study == "Santolin" & Location == "Wisconsin" ~ "Santolin & Saffran (2019)",
       Study ==  "Saffran & Wilson"                  ~ "Saffran & Wilson (2003)",
@@ -45,21 +44,21 @@ data <- read.csv(
   ) %>%
   filter(HPP < 5) # get only participants with 1 to 4 HPP studies
 
-#### Linear Mixed-Effects Model #####################################
+#### 3. Linear Mixed-Effects Model #####################################
 
-# 1. Fit maximal model: random by-participant and by-study intercepts and by-study HPP slope
+### 3.1. Fit maximal model: random by-participant and by-study intercepts and by-study HPP slope
 model <- lmer(
   LookingTime ~         # response variable
     Item * HPP +        # fixed effects ("*" means "include the interaction")
     (1 + Item | Participant) + # by-Participant random intercept
-    (1 + HPP*Item | Study),  # by-study random intercept and HPP random slope
+    (1 + Item*HPP | Study),  # by-study random intercept and HPP random slope
   data = data,          # indicate dataset
   REML = TRUE           # fit using REML
 ) 
-# model fails to converge
+# model is unidentifiable
 summary(model) # model summary
 
-### 2. Drop by-participant Item random slopes
+### 3.2. Drop by-participant Item random slopes
 model2 <- lmer(
   LookingTime ~      # response variable
     Item * HPP +        # fixed effects ("*" means "include the interaction")
@@ -68,9 +67,8 @@ model2 <- lmer(
   data = data,          # indicate dataset
   REML = TRUE           # fit using REML
 ) 
-# model fails to converge
-summary(model2) # model summary
-### 3. Drop by-study Item random slopes
+summary(model2) # model summary: model fit is singular
+### 3.3 Drop by-study Item random slopes
 model3 <- lmer(
   LookingTime ~      # response variable
     Item * HPP +        # fixed effects ("*" means "include the interaction")
@@ -79,9 +77,8 @@ model3 <- lmer(
   data = data,          # indicate dataset
   REML = TRUE           # fit using REML
 ) 
-# model fails to converge
-summary(model3) # model summary
-### 3. Drop by-study HPP random slopes
+summary(model3) # model summary: model fit is singular
+### 3.4 Drop by-study HPP random slopes
 model4 <- lmer(
   LookingTime ~      # response variable
     Item * HPP +        # fixed effects ("*" means "include the interaction")
@@ -93,7 +90,8 @@ model4 <- lmer(
 # model fails to converge
 summary(model4)    # model summary
 isSingular(model4) # no singular fit
-##### summary of the model ########################################
+
+##### 4. Summary of the model ########################################
 
 # extract coefficients from model
 coefs <- summary(model4) %$% 
@@ -114,7 +112,7 @@ confints <- confint.merMod( # calculate confidence intervals
   slice(4:7) %>%
   mutate(Term = c("(Intercept)", "Item", "HPP", "Item:HPP"))
 
-#### null-hypothesis testing #######################################
+#### 5. ANOVA #############################################
 anova <- Anova(model4, type = "III", test.statistic = "F") %>% # perform type III ANOVA (KF F test) using Satterthwaite for df
   as.data.frame() %>%
   rownames_to_column("Term") %>%
@@ -128,7 +126,7 @@ anova <- Anova(model4, type = "III", test.statistic = "F") %>% # perform type II
          p = `Pr(>F)`) %>%
   select(Term, `F`, Df, Df.res, Coefficient, SEM, ci1, ci2, CI95, Coefficient, Df.res, p)
 
-#### predictions for plotting interaction graph ###################
+#### 6. Predictions for plotting interaction graph ###################
 effects <- effect(term = "Item*HPP", mod = model4) %>%
   as.data.frame() %>%
   mutate(fit.exp = exp(fit))
@@ -149,7 +147,7 @@ fitted <- model4 %>%
                         "Santolin, Saffran &\nSebastian-Galles (2019)", Study)
   )
 
-#### visualise data ########################################################
+#### 7. Visualise data ########################################################
 
 # study-wise looking times by test item
 data %>%
@@ -339,7 +337,7 @@ data.frame(
   ) +
   ggsave(here("Figures", "HPP4", "04_model-assumptions-homoskedasticity-4.png"), width=10, height=5)
 
-#### export results ########################################################
+#### 8. Export results ########################################################
 write.table(data, here("Data", "HPP4", "01_data-processed-4.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(anova, here("Data", "HPP4", "02_results-lmem-4.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(effects, here("Data", "HPP4", "02_results-effects-4.csv"), sep = ",", dec = ".", row.names = FALSE)
