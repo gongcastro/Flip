@@ -1,0 +1,10 @@
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\includegraphics[width=\textwidth]{Figures/01_lookingtimes-study} \caption{Looking time for familiar and novel test stimuli of the original studies. Stimuli vary based on the experiment. Error bars indicate the standard error of the mean.}\label{fig:unnamed-chunk-1}
+\end{figure*}
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\includegraphics[width=\textwidth]{/Users/GonzaloGGC/projects/Flip/Figures/03_interaction} \caption{Predicted looking time plotted against number of HPP visits. Graph shows an increasing difference of looking time between familiar and novel test items, and a clear drop in looks for the familiar items.}\label{fig:unnamed-chunk-3}
+\end{figure*}
