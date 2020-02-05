@@ -27,7 +27,7 @@ abstract: |
   
   <!-- https://tinyurl.com/ybremelq -->
   
-keywords          : "preference, looking, paradigm, novelty, infants"
+keywords          : "preferential looking, familiarity preference, novelty preference, head-turn preference procedure, linear mixed-effects model"
 wordcount         : "3150"
 
 bibliography      : ["Flip.bib"]
