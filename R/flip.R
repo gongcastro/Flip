@@ -1,5 +1,4 @@
 #### Import, process, analyse, and export data #####################
-# 1-6 HPP version
 
 #### 1. Set up ########################################################
 
@@ -21,7 +20,6 @@ set.seed(100) # for reproducible confidence interval bootstrapping
 
 #### 2. Import and process data ##############################################
 data <- read.csv(
- # file             = here("Data","00_data-raw.csv"),
   file             = here("Data","00_data-raw.csv"),
   header           = TRUE,
   sep              = ",",
@@ -29,16 +27,16 @@ data <- read.csv(
   stringsAsFactors = TRUE
 ) %>%
   as_tibble() %>%
-  pivot_longer(
+  pivot_longer( # change to long format
     cols      = c("Familiar", "Novel"),
     names_to  = "Item",
     values_to = "LookingTime"
   ) %>%
   mutate(
-    Item       = ifelse(Item=="Familiar", 0, 1), # Item dummy coding, familiar items as baseline
-    ItemCenter = ifelse(Item==0, -0.5, 0.5),     # Item effect coding
-    ItemNovel  = ifelse(Item==1, 0, -1),         # Item dummy coding, novel items as baseline
-    Study = factor(case_when(
+    Item       = ifelse(Item=="Familiar", 0, 1), # item dummy coding, familiar items as baseline
+    ItemCenter = ifelse(Item==0, -0.5, 0.5),     # item effect coding
+    ItemNovel  = ifelse(Item==1, 0, -1),         # item dummy coding, novel items as baseline
+    Study = factor(case_when( # recode variable with more informative labels
       Study == "Santolin" & Location == "Barcelona" ~ "Santolin, Saffran & Sebastian-Galles (2019)",
       Study == "Santolin" & Location == "Wisconsin" ~ "Santolin & Saffran (2019)",
       Study ==  "Saffran & Wilson"                  ~ "Saffran & Wilson (2003)",
@@ -90,7 +88,7 @@ model3.effect <- lmer(
   REML = TRUE            # fit using REML
 ) 
 summary(model3.effect)   # model summary
-### 3.3.c. Fit the same LMEM on log-transformed looking times (Item dummy-coding, baseline on novel trials)
+### 3.3.c. Fit the same LMEM with dummy-coding Item on, baseline on novel trials
 model3.novel <- lmer(
   LookingTime ~          # response variable
     ItemNovel*HPP +      # fixed effects ("*" means "include the interaction")
@@ -101,7 +99,8 @@ model3.novel <- lmer(
 ) 
 # Cholesky factor on this model is singular, but this should not impact coefficients fixed effects
 summary(model3.novel)    # model summary
-.##### 4. Extract coefficients ########################################
+
+##### 4. Extract coefficients ########################################
 
 # 4.a. Extract coefficients from model (Item dummy-coded, baseline on familiar trials)
 coefs <- summary(model3) %$% 
