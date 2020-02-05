@@ -11,7 +11,7 @@ library(forcats)     # for recoding factors
 library(ggplot2)     # for visualising data
 library(lme4)        # for Linear-Mixed Effects Models (LMEM)
 library(car)         # for ANOVA
-library(effects)     # for predicting
+library(ggeffects)   # for predicting
 library(patchwork)   # for arranging plots
 library(here)        # for locating files
 
@@ -33,6 +33,7 @@ data <- read.csv(
     values_to = "LookingTime"
   ) %>%
   mutate(
+    HPP        = as.numeric(HPP), # make HPP an integer
     Item       = ifelse(Item=="Familiar", 0, 1), # item dummy coding, familiar items as baseline
     ItemCenter = ifelse(Item==0, -0.5, 0.5),     # item effect coding
     ItemNovel  = ifelse(Item==1, 0, -1),         # item dummy coding, novel items as baseline
@@ -196,22 +197,22 @@ anova.novel <- Anova(model3.novel, type = "III", test.statistic = "F") %>% # per
          ci2 = `97.5 %`,
          p = `Pr(>F)`) %>%
   select(Term, `F`, Df, Df.res, Coefficient, SEM, ci1, ci2, CI95, Coefficient, Df.res, p)
-#### 7. Get predicted values ###############################################################
+
+#### 7. Get predicted means ###############################################################
 # 7.a. Predictions for plotting interaction graph (Item dummy-coded, baseline at familiar trials)
-effects <- effect(term = "Item*HPP", mod = model3) %>%
-  as.data.frame() %>%
-  filter(Item==0 | Item==1) %>%
+effects <- ggpredict(model3, terms = c("HPP", "Item")) %>%
+  rename(Item = group, HPP = x) %>%
   mutate(Item = ifelse(Item==0, "Familiar", "Novel"))
+
 # 7.b. Predictions for plotting interaction graph (Item effect-coded)
-effects.effect <- effect(term = "ItemCenter*HPP", mod = model3.effect) %>%
-  as.data.frame() %>%
-  filter(ItemCenter==-0.5 | ItemCenter==0.5) %>%
-  mutate(ItemCenter = ifelse(ItemCenter==-0.5, "Familiar", "Novel"))
+effects.effect <- ggpredict(model3.effect, terms = c("HPP", "ItemCenter")) %>%
+  rename(Item = group, HPP = x) %>%
+  mutate(Item = ifelse(Item==-0.5, "Familiar", "Novel"))
+
 # 7.c. Predictions for plotting interaction graph (Item dummy-coded, baseline at novel trials)
-effects.novel <- effect(term = "ItemNovel*HPP", mod = model3.novel) %>%
-  as.data.frame() %>%
-  filter(ItemNovel==-1 | ItemNovel==0) %>%
-  mutate(ItemNovel = ifelse(ItemNovel==-1, "Familiar", "Novel"))
+effects.novel <- ggpredict(model3.novel, terms = c("HPP", "ItemNovel")) %>%
+  rename(ItemNovel = group, HPP = x) %>%
+  mutate(ItemNovel = ifelse(ItemNovel==0, "Novel", "Familiar"))
 
 #### 8. Check other assumptions ################################################################
 # 8.a. Check for multicollinearity (Item dummy-coded, baseline at familiar trials)
@@ -361,34 +362,38 @@ ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 15),
+    text               = element_text(colour = "black", size = 25),
     axis.text          = element_text(colour = "black"),
+    axis.title.y       = element_blank(),
+    axis.ticks.y = element_blank(),
     legend.position    = "none"
   ) +
-  ggsave(here("Figures", "03_coefficients.png"), height = 4,width = 10)
-
-# 10.5. Interaction plot 
-effects %>%
-  mutate(Item = as.character(Item)) %>%
-  ggplot(., aes(x = HPP, y = fit, linetype = Item)) +
-  geom_line(size = 1.25) +
+  ggsave(here("Figures", "03_coefficients.png"), height = 4, width = 10) +
+  # plot predictions
+  ggplot(effects, aes(x = HPP, y = predicted, shape = Item, fill = Item)) +
+  geom_ribbon(aes(x = HPP, ymin = conf.low, ymax = conf.high), colour = NA, alpha = 0.5) +
+  geom_line(size = 0.75) +
+  geom_point(size = 3) +
   labs(x = "HPP visits",
        y = "Looking time (ms)",
        colour = "Test item",
        fill = "Test item",
        shape = "Test item") +
-  scale_linetype_discrete() +
-  scale_y_continuous(limits = c(4000, 8000)) +
+  scale_fill_grey(start = 0.25, end = 0.75) +
   scale_x_continuous(breaks = seq(1, 6, by = 1)) +
   theme(
     panel.grid         = element_line(colour = "grey", linetype = "dotted"),
     panel.background   = element_rect(fill = "white", colour = "grey"),
     text               = element_text(colour = "black", size = 25),
     axis.text          = element_text(colour = "black"),
-    legend.position    = c(0.25, 0.15),
+    legend.position    = c(0.3, 0.05),
+    legend.text = element_text(size = 10),
+    legend.title = element_blank(),
     legend.direction = "horizontal",
     legend.background = element_rect(fill = "transparent")
   ) +
+  plot_layout(nrow = 1, guides = "keep", tag_level = "new") +
+  patchwork::plot_annotation(tag_levels = "A") +
   ggsave(here("Figures", "03_interaction.png"), width = 10, height = 5)
 
 # 10.6. Model assumptions: normality
