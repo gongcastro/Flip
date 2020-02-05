@@ -32,7 +32,7 @@ wordcount         : "3150"
 
 bibliography      : ["Flip.bib"]
 
-floatsintext      : no
+floatsintext      : yes
 figurelist        : no
 tablelist         : no
 footnotelist      : no
