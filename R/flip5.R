@@ -1,5 +1,5 @@
 #### Import, process, analyse, and export data #####################
-
+# HPP < 6 version
 #### 1. Set up ########################################################
 
 # load packages
@@ -43,7 +43,8 @@ data <- read.csv(
       Study ==  "Saffran & Wilson"                  ~ "Saffran & Wilson (2003)",
       Study == "SaffranHauser1"                     ~ "Saffran et al. (2008)",
       TRUE                                          ~ ""))
-  ) 
+  ) %>%
+  filter(HPP < 6)
 
 #### 3. Linear Mixed-Effects Model #####################################
 ### 3.1. Fit maximal model: random by-participant and by-study intercepts and by-study HPP and Item slopes
@@ -299,7 +300,7 @@ data %>%
     legend.position    = "none",
     strip.background = element_rect(fill = "transparent", colour = "transparent")
   ) +
-  ggsave(here("Figures", "01_lookingtimes-study.png"), height = 6, width = 12)
+  ggsave(here("Figures", "HPP5", "01_lookingtimes-study-5.png"), height = 6, width = 12)
 
 # 10.2. Looking times against HPP
 data %>%
@@ -322,7 +323,7 @@ data %>%
     legend.position    = "none",
     strip.placement = "outside" 
   ) +
-  ggsave(here("Figures", "02_lookingtimes-hpp.png"), height = 5, width = 12)
+  ggsave(here("Figures", "HPP5", "02_lookingtimes-hpp-5.png"), height = 5, width = 12)
 
 # 10.3. Looking times against HPP
 data %>%
@@ -346,7 +347,7 @@ data %>%
     legend.direction = "horizontal",
     strip.placement = "outside" 
   ) +
-  ggsave(here("Figures", "02_lookingtimes-hpp.png"), height = 5, width = 12)
+  ggsave(here("Figures", "HPP5", "02_lookingtimes-hpp-5.png"), height = 5, width = 12)
 
 # 10.4. Coefficients
 ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
@@ -368,7 +369,7 @@ ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
     axis.ticks.y = element_blank(),
     legend.position    = "none"
   ) +
-  ggsave(here("Figures", "03_coefficients.png"), height = 4, width = 10) +
+  ggsave(here("Figures", "HPP5", "03_coefficients-5.png"), height = 4, width = 10) +
   # plot predictions
   ggplot(effects, aes(x = HPP, y = predicted, shape = Item, fill = Item)) +
   geom_ribbon(aes(x = HPP, ymin = conf.low, ymax = conf.high), colour = NA, alpha = 0.5) +
@@ -394,7 +395,7 @@ ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
   ) +
   plot_layout(nrow = 1, guides = "keep", tag_level = "new") +
   plot_annotation(tag_levels = "A") +
-  ggsave(here("Figures", "03_interaction.png"), width = 10, height = 5)
+  ggsave(here("Figures", "HPP5", "03_interaction-5.png"), width = 10, height = 5)
 
 # 10.6. Model assumptions: normality
 ggplot(fitted, aes(sample = .resid)) +
@@ -455,7 +456,7 @@ ggplot(fitted, aes(sample = .resid)) +
     legend.position    = "none"
   ) +
   plot_layout(nrow = 2, ncol = 2) +
-  ggsave(here("Figures", "04_model-assumptions-normality.png"),width = 10,height = 5)
+  ggsave(here("Figures", "HPP5", "04_model-assumptions-normality-5.png"),width = 10,height = 5)
 
 # 10.8. Model assumptions: homoskedasticity
 data.frame(
@@ -484,25 +485,25 @@ data.frame(
     axis.text          = element_text(colour = "black"),
     legend.position    = "right"
   ) +
-  ggsave(here("Figures", "04_model-assumptions-homoskedasticity.png"),width=10,height=5)
+  ggsave(here("Figures", "HPP5", "04_model-assumptions-homoskedasticity-5.png"),width=10,height=5)
 
 #### 11. Export results ########################################################
 # 11.a. Export results from Item-dummy-coded model (baseline on familiar trials)
-write.table(data, here("Data", "01_data-processed.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(anova, here("Data", "02_results-lmem.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(effects, here("Data", "02_results-effects.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(fitted, here("Data", "02_results-fitted.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(multicollinearity, here("Data", "02_results-multicollinearity.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(data, here("Data", "HPP5", "01_data-processed-5.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(anova, here("Data", "HPP5", "02_results-lmem-5.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(effects, here("Data", "HPP5", "02_results-effects-5.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(fitted, here("Data", "HPP5", "02_results-fitted-5.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(multicollinearity, here("Data", "HPP5", "02_results-multicollinearity-5.csv"), sep = ",", dec = ".", row.names = FALSE)
 # 11.b. Export results from Item-effect-coded model
-write.table(data, here("Data", "Effect-coding", "01_data-processed-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(anova.effect, here("Data", "Effect-coding", "02_results-lmem-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(effects.effect, here("Data", "Effect-coding", "02_results-effects-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(fitted.effect, here("Data", "Effect-coding", "02_results-fitted-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(multicollinearity.effect, here("Data", "Effect-coding", "02_results-multicollinearity-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(data, here("Data", "HPP5", "Effect-coding", "01_data-processed-effect-5.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(anova.effect, here("Data", "HPP5", "Effect-coding", "02_results-lmem-effect-5.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(effects.effect, here("Data", "HPP5", "Effect-coding", "02_results-effects-effect-5.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(fitted.effect, here("Data", "HPP5", "Effect-coding", "02_results-fitted-effect-5.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(multicollinearity.effect, here("Data", "HPP5", "Effect-coding", "02_results-multicollinearity-effect-5.csv"), sep = ",", dec = ".", row.names = FALSE)
 # 11.c. Export results from Item-dummy-coded model (baseline on novel trials)
-write.table(data, here("Data", "Dummy-coding-Novel", "01_data-processed-novel.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(anova.novel, here("Data", "Dummy-coding-Novel", "02_results-lmem-novel.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(effects.novel, here("Data", "Dummy-coding-Novel", "02_results-effects-novel.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(fitted.novel, here("Data", "Dummy-coding-Novel", "02_results-fitted-novel.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(multicollinearity.novel, here("Data", "Dummy-coding-Novel", "02_results-multicollinearity-novel.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(data, here("Data", "HPP5", "Dummy-coding-Novel", "01_data-processed-novel-5.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(anova.novel, here("Data", "HPP5", "Dummy-coding-Novel", "02_results-lmem-novel-5.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(effects.novel, here("Data", "HPP5", "Dummy-coding-Novel", "02_results-effects-novel-5.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(fitted.novel, here("Data", "HPP5", "Dummy-coding-Novel", "02_results-fitted-novel-5.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(multicollinearity.novel, here("Data", "HPP5", "Dummy-coding-Novel", "02_results-multicollinearity-novel-5.csv"), sep = ",", dec = ".", row.names = FALSE)
 
