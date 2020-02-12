@@ -44,7 +44,7 @@ data <- read.csv(
       Study == "SaffranHauser1"                     ~ "Saffran et al. (2008)",
       TRUE                                          ~ ""))
   ) %>%
-  filter(HPP < 5)
+  filter(HPP < 4)
 
 #### 3. Linear Mixed-Effects Model #####################################
 ### 3.1. Fit maximal model: random by-participant and by-study intercepts and by-study HPP and Item slopes
