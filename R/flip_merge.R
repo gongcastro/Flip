@@ -21,7 +21,11 @@ anova <- list(anova2, anova3, anova4, anova5, anova6) %>%
 #### visualise data #############################################
 anova %>%
   filter(Term != "(Intercept)") %>%
-  mutate(Term = factor(Term, ordered = TRUE),
+  mutate(Term = case_when(Term == "Item" ~ "Item",
+                          Term=="HPP" ~ "HPP",
+                          Term=="Item:HPP" ~ "Item \U000D7 HPP",
+                          TRUE ~ ""),
+         Term = factor(Term, ordered = TRUE),
          is6 = Subset=="HPP6") %>%
   ggplot(aes(Subset, Coefficient, shape = is6)) +
   facet_wrap(~Term, ncol = 1) +
@@ -32,9 +36,9 @@ anova %>%
   labs(x = "Term", y = "Coefficient") +
   coord_flip() +
   theme(
-    text = element_text(size = 20, colour = "black"),
+    text = element_text(size = 15, colour = "black"),
     axis.text = element_text(colour = "black"),
-    axis.title = element_blank(),
+    axis.title.y = element_blank(),
     panel.grid = element_line(linetype = "dotted", colour = "grey"),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),

@@ -350,7 +350,13 @@ data %>%
   ggsave(here("Figures", "HPP5", "02_lookingtimes-hpp-5.png"), height = 5, width = 12)
 
 # 10.4. Coefficients
-ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
+anova %>%
+  filter(., Term != "(Intercept)") %>%
+  mutate(Term = case_when(Term == "Item" ~ "Item",
+                          Term=="HPP" ~ "HPP",
+                          Term=="Item:HPP" ~ "Item \U000D7 HPP",
+                          TRUE ~ "")) %>%
+  ggplot(data = ., aes(Term, Coefficient)) +
   geom_linerange(aes(x = Term, ymin = ci1, ymax = ci2), alpha = 0.5, size = 10) +
   geom_point(size = 5, colour = "black") +
   geom_errorbar(aes(ymax = Coefficient+SEM, ymin = Coefficient-SEM), size = 1.5, width = 0, colour = "black") +
@@ -363,7 +369,7 @@ ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 25),
+    text               = element_text(colour = "black", size = 20),
     axis.text          = element_text(colour = "black"),
     axis.title.y       = element_blank(),
     axis.ticks.y = element_blank(),
@@ -385,7 +391,7 @@ ggplot(data = filter(anova, Term != "(Intercept)"), aes(Term, Coefficient)) +
   theme(
     panel.grid         = element_line(colour = "grey", linetype = "dotted"),
     panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 25),
+    text               = element_text(colour = "black", size = 20),
     axis.text          = element_text(colour = "black"),
     legend.position    = c(0.3, 0.05),
     legend.text = element_text(size = 10),
