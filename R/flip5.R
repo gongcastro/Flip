@@ -356,8 +356,7 @@ anova %>%
                           Term=="HPP" ~ "HPP",
                           Term=="Item:HPP" ~ "Item \U000D7 HPP",
                           TRUE ~ "")) %>%
-  ggplot(data = ., aes(Term, Coefficient)) +
-  geom_linerange(aes(x = Term, ymin = ci1, ymax = ci2), alpha = 0.5, size = 10) +
+  ggplot(data = ., aes(Term, Coefficient)) +  geom_linerange(aes(x = Term, ymin = ci1, ymax = ci2), alpha = 0.5, size = 10) +
   geom_point(size = 5, colour = "black") +
   geom_errorbar(aes(ymax = Coefficient+SEM, ymin = Coefficient-SEM), size = 1.5, width = 0, colour = "black") +
   geom_hline(yintercept = 0) +
@@ -382,7 +381,7 @@ anova %>%
   geom_line(size = 0.75) +
   geom_point(size = 3) +
   labs(x = "HPP visits",
-       y = "Looking time (ms)",
+       y = "Looking time (ms)\n",
        colour = "Test item",
        fill = "Test item",
        shape = "Test item") +
@@ -393,6 +392,7 @@ anova %>%
     panel.background   = element_rect(fill = "white", colour = "grey"),
     text               = element_text(colour = "black", size = 20),
     axis.text          = element_text(colour = "black"),
+    axis.title         = element_text(size = 15), 
     legend.position    = c(0.3, 0.05),
     legend.text = element_text(size = 10),
     legend.title = element_blank(),

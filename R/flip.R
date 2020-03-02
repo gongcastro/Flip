@@ -359,7 +359,7 @@ anova %>%
   geom_point(size = 5, colour = "black") +
   geom_errorbar(aes(ymax = Coefficient+SEM, ymin = Coefficient-SEM), size = 1.5, width = 0, colour = "black") +
   geom_hline(yintercept = 0) +
-  labs(x = "Term", y = "Coefficient") +
+  labs(x = "Term", y = "Coefficient\n") +
   coord_flip() +
   theme(
     panel.grid.major.x = element_line(colour = "grey", linetype = "dotted"),
@@ -370,7 +370,8 @@ anova %>%
     text               = element_text(colour = "black", size = 20),
     axis.text          = element_text(colour = "black"),
     axis.title.y       = element_blank(),
-    axis.ticks.y = element_blank(),
+    axis.title.x       = element_text(size = 15), 
+    axis.ticks.y       = element_blank(),
     legend.position    = "none"
   ) +
   ggsave(here("Figures", "03_coefficients.png"), height = 4, width = 10) +
@@ -380,7 +381,7 @@ anova %>%
   geom_line(size = 0.75) +
   geom_point(size = 3) +
   labs(x = "HPP visits",
-       y = "Looking time (ms)",
+       y = "Looking time (ms)\n",
        colour = "Test item",
        fill = "Test item",
        shape = "Test item") +
@@ -391,6 +392,7 @@ anova %>%
     panel.background   = element_rect(fill = "white", colour = "grey"),
     text               = element_text(colour = "black", size = 20),
     axis.text          = element_text(colour = "black"),
+    axis.title         = element_text(size = 15), 
     legend.position    = c(0.3, 0.05),
     legend.text = element_text(size = 10),
     legend.title = element_blank(),
@@ -399,7 +401,9 @@ anova %>%
   ) +
   plot_layout(nrow = 1, guides = "keep", tag_level = "new") +
   plot_annotation(tag_levels = "A") +
-  ggsave(here("Figures", "03_interaction.png"), width = 10, height = 5)
+  ggsave(here("Figures", "03_interaction.png"), width = 10, height = 5) +
+  ggsave(here("Figures", "03_interaction.pdf"), width = 10, height = 5)
+
 
 # 10.6. Model assumptions: normality
 ggplot(fitted, aes(sample = .resid)) +

@@ -1,29 +1,41 @@
 ---
-output: pdf_document
-bibliography: "Flip.bib"
-csl: "apa.csl"
+appendix: "flip_manuscript_supplement.rmd"
 ---
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 library(papaja)
 library(dplyr)
 library(tibble)
+library(ggplot2)
 library(knitr)
+library(kableExtra)
+library(purrr)
 library(here)
 ```
 
-```{r analysis-preferences, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 # Seed for random number generation
-knitr::opts_chunk$set(cache.extra = knitr::rand_seed, out.width = "\\textwidth")
+knitr::opts_chunk$set(
+  cache.extra = knitr::rand_seed,
+  out.width = "\\textwidth",
+  results = "asis",
+  fig.cap = "Output of the Linear Mixed-Effects model on subsets of the data. Coefficients of each model are reported for each fixed effects. Standard error of the mean and 95\\% confidence intervals are represented as black whiskers and shaded boxes, respectively."
+)
 
 # import data
 data   <- read.csv(here("Data", "01_data-processed.csv")) # raw data
 
 # import LMEM results
-anova3 <- read.csv(here("Data", "HPP3", "02_results-lmem-3.csv"))      
-anova4 <- read.csv(here("Data", "HPP4", "02_results-lmem-4.csv"))      
-anova5 <- read.csv(here("Data", "HPP5", "02_results-lmem-5.csv"))  
+anova <- read.csv(here("Data", "03_anova-merged.csv"))
+anova6 <- read.csv(here("Data", "02_results-lmem.csv"))
+anova5 <- read.csv(here("Data", "HPP5", "02_results-lmem-5.csv"))
+anova4 <- read.csv(here("Data", "HPP4", "02_results-lmem-4.csv"))
+anova3 <- read.csv(here("Data", "HPP3", "02_results-lmem-3.csv"))
+anova2 <- read.csv(here("Data", "HPP2", "02_results-lmem-2.csv"))
 
+
+
+n_HPP2 <- data %>% filter(HPP<3) %>% distinct(Participant) %>% nrow()
 n_HPP3 <- data %>% filter(HPP<4) %>% distinct(Participant) %>% nrow()
 n_HPP4 <- data %>% filter(HPP<5) %>% distinct(Participant) %>% nrow()
 n_HPP5 <- data %>% filter(HPP<6) %>% distinct(Participant) %>% nrow()
@@ -31,11 +43,10 @@ n_HPP6 <- data %>% distinct(Participant) %>% nrow()
 
 ```
 
-# Supplementary Information
 
-## S1. Experiments included in the linear mixed-effects model. 
+## Experiments included in the linear mixed-effects model. 
 
-The selected experiments each consist of an artificial grammar learning task with 12-month-old infants. These experiments are characterized by variability in the number of infants’ prior HPP visits^[At the time of publication of @saffran2003, the first author noted that there appeared to be an association between the number of prior studies completed by the infants and the direction of preference. The analysis was included in the original manuscript submission but was removed from later revisions based on the manuscript reviews.]. They include all studies run in the two senior authors’ labs that included (a) 12-month-old participants; (b) HPP; (c) artificial grammar learning (linguistic or non-linguistic); (d) 2 - to - 5 minutes of exposure; (e) an a priori hypothesis that infants would show learning; (f) visit numbers recorded at the time of testing. The studies are thus as well matched as is possible given the retrospective nature of this analysis.
+The selected experiments consist of an artificial grammar learning task with 12-month-old infants. These experiments are characterized by variability in the number of infants’ prior HPP visits^[At the time of publication of @saffran2003, the first author noted that there appeared to be an association between the number of prior studies completed by the infants and the direction of preference. The analysis was included in the original manuscript submission but was removed from later revisions based on the manuscript reviews.]. They include all studies run in the two senior authors’ labs that included (a) 12- to 13-month-old participants; (b) HPP; (c) artificial grammar learning (linguistic or non-linguistic); (d) 2 to 5 minutes of exposure; (e) an *a priori* hypothesis that infants would show learning; (f) visit numbers recorded at the time of testing. The studies are thus as well matched as is possible given the retrospective nature of this analysis.
 
 *@saffran2003* demonstrated that 12-month-old infants can compute multiple regularities from a finite-state grammar. Infants were able to first segment words from running speech based on transitional probabilities, then detect permissible orderings of the segmented words. Test items consisted of grammatical and ungrammatical sentences that could only be discriminated based on word-level information (transitional probabilities between syllables were not informative about the “grammaticality” of test items). Infants showed a significant familiarity preference: *F*(`r printnum(1, digits = 0)`, `r printnum(38, digits = 0)`)= `r printnum(5.37, digits = 2)`, *p*<.05.
 
@@ -45,85 +56,52 @@ The selected experiments each consist of an artificial grammar learning task wit
 
 We replicated the Predictive Language condition of @santolin2019 at the University Pompeu Fabra, Barcelona [@santolin2019a], using identical stimuli and procedures. We found significant discrimination of the test stimuli but observed the opposite direction of preference: Infants listened longer to familiar than novel strings: *t*(`r printnum(23, digits = 0)`)=`r printnum(2.303, digits = 2)`, *p*=`r printp(0.03, digits = 3)`, *d*=`r printnum(0.47, digits = 2)`. All results are shown in Fig. 1 of the main manuscript. 
 
-## S2. Participants information
+## Participants information
 
-We retrieved data from `r printnum(n_HPP6)` 12-month-old infants who had participated in a range of 1-6 studies. Three of the studies were run in Madison, WI (University of Wisconsin-Madison): Saffran & Wilson, 2003 (Exp. 2): *N*=`r printnum(table(filter(data, Item=="1")$Study)[1])`, mean age: 11.5 months; Saffran et al., 2008 (Exp. 1, Condition P-Language): *N*=`r printnum(table(filter(data, Item=="1")$Study)[2])`), mean age: 12.8 months; Santolin & Saffran, 2019 (Condition 1); *N*=`r printnum(table(filter(data, Item=="1")$Study)[3])`, mean age: 12.9 months. One study was run in Barcelona, Spain (Universitat Pompeu Fabra): Santolin, Saffran & Sebastian-Galles, 2019: *N*=`r printnum(table(filter(data, Item=="1")$Study)[4])`, mean age: 13 months. Two data points (average looking time for familiar and novel test items) were available for each participant. Participants included in the current analysis are those included in the final version of the studies. In additional analyses, we included only the infants who participated in 1- to- 4 HPP studies overall (*n*=`r printnum(nrow(filter(data, HPP < 5))/2, digits = 0)`).
+We retrieved data from `r printnum(n_HPP6)` 12-month-old infants who had participated in a range of 1-6 studies. Three of the studies were run in Madison, WI (University of Wisconsin-Madison): Saffran & Wilson, 2003 (Exp. 2): *N*=`r printnum(table(filter(data, Item=="1")$Study)[1])`, mean age: 11.5 months; Saffran et al., 2008 (Exp. 1, Condition P-Language): *N*=`r printnum(table(filter(data, Item=="1")$Study)[2])`), mean age: 12.8 months; Santolin & Saffran, 2019 (Condition 1); *N*=`r printnum(table(filter(data, Item=="1")$Study)[3])`, mean age: 12.9 months. One study was run in Barcelona, Spain (Universitat Pompeu Fabra): Santolin, Saffran & Sebastian-Galles, 2019: *N*=`r printnum(table(filter(data, Item=="1")$Study)[4])`, mean age: 13 months. Two data points (average looking time for familiar and novel test items) were available for each participant. Participants included in the current analysis are those included in the final version of the studies.
 
-## S3. Linear mixed-effects model
+## Linear mixed-effects model - additional information
 
-We fit a model predicting looking time ($LT$) from the fixed effects of test item ($TestItem$, Familiar vs. Novel), the number of Head-turn Preference Procedure experiments completed by infants ($HPP$), and their interaction ($Item \times HPP$) as fixed effects. Participant and study (4 levels: @santolin2019, @santolin2019a, @saffran2003 as a third study, and @saffran2008 as a fourth study) were included as random effects. Following @barr2013, we fit a model with the maximal random effects structure including random intercepts by-participant and by-study, and random slopes of HPP by-participant and by-study. However, due to lack of convergence, we pruned the random effects structure until convergence was achieved [e.g., @brauer2018]. The final model included by-participant and by-study random intercepts only. The particular random effects structure chosen does not qualitatively impact the estimates and conclusions from the model. This model accounts for cross-participant variability in overall looking time (as some infants look longer than others), and for cross-studies differences in overall looking time. The model was fit using the `lme4` package [@bates2015] from the R environment [@rcoreteam2018]. We used the `Anova` function from the `car` R package [@fox2019] to perform F-tests on fixed effects using Kenward-Roger’s approximation to degrees of freedom [e.g., @judd2012]. 
+We fit a model predicting looking time ($LT$) including $TestItem$ (Familiar vs. Novel), number of Head-turn Preference Procedure experiments completed by infants ($HPP$), and their interaction ($Item \times HPP$) as fixed effects. Participant and study (4 levels: @santolin2019, @santolin2019a, @saffran2008, and @saffran2003) were included as random effects. Following @barr2013, we fit a model with a maximal random effects structure including random intercepts by-participant and by-study, and random slopes of HPP by-participant and by-study. However, due to lack of convergence, we pruned the random effects structure until convergence was achieved [e.g., @brauer2018]. The final model included by-participant and by-study random intercepts only. The particular random effects structure chosen does not qualitatively impact the estimates and conclusions from the model. This model accounts for cross-participant variability in overall looking time (as some infants look longer than others), and for cross-studies differences in overall looking time. The model was fit using the `lme4` package [@bates2015] from the R environment [@rcoreteam2018]. We used the `Anova` function from the `car` R package [@fox2019] to perform F-tests on fixed effects using Kenward-Roger’s approximation to degrees of freedom [e.g., @judd2012]. 
 
-## S4. Results sub-setting data to participants with less than 6, 5, and 4 HPP studies
+## Results sub-setting data to participants with less than 6, 5, 4, and 3 HPP studies
 
-### HPP 1-5
+Consistent with the results of the entire dataset, we found a statistically significant interaction of *Test Item* with the number of *HPP* visits when reducing the sample to the infants who participanted in less than 6, 5, 4, and 3 HPP experiments. Below, we report the output of the linear mixed-effects model fitted on the original and reduced samples (Table \@ref(tab:tabA1), Fig. \@ref(fig:figA1)).
 
-We fitted the model reported in the main text on data from prticipants with 1 to 5 HPP studies. This constratint led to the exclusion of `r printnum(n_HPP6-n_HPP5)` participant. Consistent with the results of the entire dataset (reported in the manuscript), we found a statistically significant interaction of Test item on the number of HPP visits (*F*(`r printnum(anova5$Df[4])`,  `r printnum(anova5$Df.res[4])`)=`r printnum(anova5$F[4])`, *p*= `r printp(anova5$p[4])`), indicating that the original effect was not driven by infants with a high number of visits only. 
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r tabA1, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, results="asis"}
 
-anova5 %>%
-  mutate(term = c("Intercept", "Test Item", "HPP", "Test Item * HPP"),
-         p = printp(anova5$p)) %>%
-  mutate_at(c(2, 4, 5, 6), printnum) %>%
-  select(term, Coefficient, SEM, CI95, F, Df.res, p) %>%
-  column_to_rownames("term") %>%
-  kable(col.names = c("Coefficient", "SEM", "95%CI", "F", "Den. df", "p"),
-        row.names = TRUE,
+anova %>%
+  mutate(Term = rep(c("*Intercept*", "*Test Item*", "*HPP*", "*Test Item $\\times$ HPP*"), 5),
+         p = printp(anova$p),
+         CI95 = paste0("[", CI95, "]")) %>%
+  mutate_at(c(3, 5, 6, 7), printnum) %>%
+  arrange(desc(Subset)) %>%
+  mutate(Subset = c("Original", "", "", "", "HPP 1-5", "", "", "","HPP 1-4", "", "", "","HPP1-3", "", "", "", "HPP 1-2", "", "", "")) %>%
+  select(Subset, Term, Coefficient, SEM, CI95, F, Df.res, p) %>%
+  kable(format = "pandoc",
+        col.names = c("**Subset**", "**Term**", "**Coefficient**", "***SEM***", "**95\\% CI**", "**F**", "**Den. *df***", "***p***"), 
         align = "c",
-        digits = 3,
-        caption = "Summary of the results of the linear mixed-effects model (subset to infants with 1-5 visits). Degrees of freedom were approximated using the Kenward-Rogers approach, thus sometimes result in non-integers.",
-        format = "pandoc")
+        caption = "Output of the Linear Mixed Effects-Model fitted on the subsetted data. Results are reported for the original analysis, and the HPP5, HPP4, HPP3, and HPP2 subsets. Degrees of freedom were approximated using the Kenward-Roger approach, this sometimes resulting in non integers."
+  )
 
 ```
 
-### HPP 1-4
+In all models, the $Item \times HPP$ interaction term was statistically significant [HPP 1-5: *F*(`r printnum(anova5$Df[4], digits=0)`, `r printnum(anova5$Df.res[4], digits=0)`) = `r printnum(anova5$F[4], digits=2)`, *p* = `r printp(anova5$p[4])`; HPP 1-4: *F*(`r printnum(anova4$Df[4], digits=0)`, `r printnum(anova4$Df.res[4], digits=0)`) = `r printnum(anova4$F[4], digits=2)`, *p* = `r printp(anova4$p[4])`; HPP 1-3: *F*(`r printnum(anova3$Df[4], digits=0)`, `r printnum(anova3$Df.res[4], digits=0)`) = `r printnum(anova3$F[4], digits=2)`, *p* = `r printp(anova3$p[4])`; HPP 1-2: *F*(`r printnum(anova2$Df[4], digits=0)`, `r printnum(anova2$Df.res[4], digits=0)`) = `r printnum(anova2$F[4], digits=2)`, *p* = `r printp(anova2$p[4])`] . These results provide evidence that the effect of HPP on the preference pattern we observed in our main analysis is not entirely dependent on any subsample of the HPP variable.
 
-We fitted the model reported in the main text on data from prticipants with 1 to 4 HPP studies. This constratint led to the exclusion of `r printnum(n_HPP6-n_HPP4)` participant. Consistent with the results of the entire dataset (reported in the manuscript), we found a statistically significant interaction of Test item on the number of HPP visits (*F*(`r printnum(anova4$Df[4])`,  `r printnum(anova4$Df.res[4])`)=`r printnum(anova4$F[4])`, *p*= `r printp(anova4$p[4])`), indicating that the original effect was not driven by infants with a high number of visits only. 
+```{r figA1, message=FALSE, warning=FALSE, paged.print=FALSE, echo=FALSE, fig.cap="Graphical representation of the coefficients of the Test Item by HPP visits interaction term of the model fitted on the complete data-set (reported in the main manuscript), and of the models fitted on the reduced data-sets. Black dots represent the point estimate of the coefficient, black whiskers represent the standard error of the mean, and grey boxes represent the bootstrapped 95\\% confidence interval around the point estimate."}
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-
-anova4 %>%
-  mutate(term = c("Intercept", "Test Item", "HPP", "Test Item * HPP"),
-         p = printp(anova4$p)) %>%
-  mutate_at(c(2, 4, 5, 6), printnum) %>%
-  select(term, Coefficient, SEM, CI95, F, Df.res, p) %>%
-  column_to_rownames("term") %>%
-  kable(col.names = c("Coefficient", "SEM", "95%CI", "F", "Den. df", "p"),
-        row.names = TRUE,
-        align = "c",
-        digits = 3,
-        caption = "Summary of the results of the linear mixed-effects model (subset to infants with 1-4 visits). Degrees of freedom were approximated using the Kenward-Rogers approach, thus sometimes result in non-integers.",
-        format = "pandoc")
+include_graphics(here("Figures", "05_anova-merged.png"))
 
 ```
 
-### HPP 1-3
+\newpage
 
-We fitted the model reported in the main text on data from prticipants with 1 to 3 HPP studies. This constratint led to the exclusion of `r printnum(n_HPP6-n_HPP3)` participant. Consistent with the results of the entire dataset (reported in the manuscript), we found a statistically significant interaction of Test item on the number of HPP visits (*F*(`r printnum(anova3$Df[4])`,  `r printnum(anova3$Df.res[4])`)=`r printnum(anova3$F[4])`, *p*= `r printp(anova3$p[4])`), indicating that the original effect was not driven by infants with a high number of visits only. 
-
-```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-
-anova3 %>%
-  mutate(term = c("Intercept", "Test Item", "HPP", "Test Item * HPP"),
-         p = printp(anova3$p)) %>%
-  mutate_at(c(2, 4, 5, 6), printnum) %>%
-  select(term, Coefficient, SEM, CI95, F, Df.res, p) %>%
-  column_to_rownames("term") %>%
-  kable(col.names = c("Coefficient", "SEM", "95%CI", "F", "Den. df", "p"),
-        row.names = TRUE,
-        align = "c",
-        digits = 3,
-        caption = "Summary of the results of the linear mixed-effects model (subset to infants with 1-3 visits). Degrees of freedom were approximated using the Kenward-Rogers approach, thus sometimes result in non-integers.",
-        format = "pandoc")
-
-```
-
-## References
+# References
 
 \begingroup
 \setlength{\parindent}{-0.5in}
 \setlength{\leftskip}{0.5in}
 
 <div id="refs" custom-style="Bibliography"></div>
-
 \endgroup
