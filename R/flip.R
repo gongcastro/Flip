@@ -382,7 +382,7 @@ anova %>%
   ggplot(effects, aes(x = HPP, y = predicted, shape = Item, fill = Item)) +
   geom_ribbon(aes(x = HPP, ymin = conf.low, ymax = conf.high), colour = NA, alpha = 0.5) +
   geom_line(size = 0.75) +
-  geom_point(size = 3) +
+  geom_point(size = 5) +
   labs(x = "HPP visits",
        y = "Looking time (ms)\n",
        colour = "Test item",

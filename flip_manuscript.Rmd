@@ -1,7 +1,6 @@
 ---
 title             : "Experience with research paradigms relates to infants’ direction of preference. "
-shorttitle        : "Direction of preference"
-
+shorttitle        : "Direction of preference in infancy"
 author: 
   - name          : "Chiara Santolin"
     affiliation   : "1"
@@ -18,7 +17,7 @@ author:
     affiliation   : "2"
 affiliation:
   - id            : "1"
-    institution   : "Centre for Brain and Cognition, Universitat Pompeu Fabra"
+    institution   : "Center for Brain and Cognition, Universitat Pompeu Fabra"
   - id            : "2"
     institution   : "Waisman Center & Department of Psychology, University of Wisconsin-Madison"
 
@@ -47,9 +46,8 @@ class             : "man"
 documentclass     : "apa6"
 classoption       : "man"
 output            :
-  papaja::apa6_pdf:
-    keep_tex: FALSE
-appendix: "flip_manuscript_appendix.rmd"
+  papaja::apa6_pdf
+appendix: "flip_manuscript_appendix.Rmd"
 
 params: 
   output_dir: "../Rmd/"
@@ -82,20 +80,19 @@ anova2 <- read.csv(here("Data", "HPP2", "02_results-lmem-2.csv")) # ANOVA with H
 
 # Introduction
 
-In infancy research, the importance of changes in preferential looking has been 9
-recognized since at least the 1960s, when @fantz1964 showed that young infants preferentially attend to novel visual stimuli. Subsequent studies extended this evidence to other domains, including acoustic perception and cognition, revealing differences in direction of preference. Theories intended to account for such differences suggest that novelty preferences arise when infants have completed the processing of a (familiar) stimulus (see @houston-price2004 and @aslin2007 for reviews).
+In infancy research, the importance of changes in preferential looking has been recognized since at least the 1960s, when @fantz1964 showed that young infants preferentially attend to novel visual stimuli. Subsequent studies extended this evidence to other domains, including acoustic perception and cognition, revealing differences in direction of preference. Theories intended to account for such differences suggest that novelty preferences arise when infants have completed the processing of a (familiar) stimulus [see @houston-price2004; and @aslin2007 for reviews].
 
-Rather than representing a binary distinction, direction of preference can be better described as a continuum from more familiar to more novel [e.g., @thiessen2005]. @hunter1988 provide the most comprehensive model of preferential looking with three central factors hypothesized to affect the strength and direction of preference: age, familiarization duration and task complexity. In a given task, younger infants tend to prefer the familiar stimulus whereas older infants are more likely to prefer the novel one [e.g., @colombo1983; though see @bergmann2016, for a meta-analysis suggesting that age does not predict shifts in preference]. A shorter exposure to familiar stimulus prior to testing also leads infants to subsequently prefer the familiar object [for reviews, see also @rose2004]. Task complexity refers to the stage of stimulus processing. For example, in a visual recognition task, 4-month-old infants revealed a systematic preference for the familiar object prior to showing a strong preference for the novel object [@roder2000]. Task complexity can also refer to the complexity of stimuli. For example, sequential stimuli put greater strain on memory resources than stimuli in which all components are simultaneously available [e.g., @ferguson2018]. A related dimension is the similarity across stimuli used at familiarization and test: when there is a close perceptual match such as same colors or sounds during training and test, infants are more likely to show a novelty preference [e.g., @hunter1988; @thiessen2003]. 
+Rather than representing a binary distinction, direction of preference can be construed as a continuum from more familiar to more novel [e.g., @thiessen2005]. @hunter1988 provide the most comprehensive model of preferential looking with three central factors hypothesized to affect the strength and direction of preference: age, familiarization duration and task complexity. In a given task, younger infants tend to prefer the familiar stimulus whereas older infants are more likely to prefer the novel one [e.g., @colombo1983; though see @bergmann2016, for a meta-analysis suggesting that age does not predict shifts in preference]. A shorter exposure to familiar stimulus prior to testing also leads infants to subsequently prefer the familiar object [for reviews, see also @rose2004]. Task complexity refers to the stage of stimulus processing. For example, in a visual recognition task, 4-month-old infants revealed a systematic preference for the familiar object prior to showing a strong preference for the novel object [@roder2000]. Task complexity can also refer to the complexity of stimuli. For example, sequential stimuli put greater strain on memory resources than stimuli in which all components are simultaneously available [e.g., @ferguson2018]. A related dimension is the similarity across stimuli used at familiarization and test: when there is a close perceptual match such as same colors or sounds during training and test, infants are more likely to show a novelty preference [e.g., @hunter1988; @thiessen2003]. 
 
-The combination of these factors informs predictions concerning direction of preference in  systematic ways. For example, @thiessen2005 manipulated length of exposure and observed a flip from familiarity to novelty preference after doubling the amount of familiarization received by the infants. Similarly, @ferguson2018 manipulated sequential vs. spatial presentation of visual patterns, and observed stronger novelty effects with (a) increasing age and (b) spatial presentation. That said, it is also frequently the case that the observed direction of preference does not conform with expectations based on the dimensions noted above; the infancy literature is rife with examples of counterintuitive patterns of preference [e.g., @fiser2001; @thiessen2012 for post-habituation familiarity preference; @bosch2001; @sebastian-galles2009; @dawson2009 for novelty preference in 4-month-olds; @jusczyk1995 for familiarity preference in 7-months-olds; @johnson2009 for both novelty and familiarity preference in 11-months-olds].
+The combination of these factors informs predictions concerning direction of preference in  systematic ways. For example, @thiessen2005 manipulated length of exposure and observed a flip from familiarity to novelty preference after doubling the amount of familiarization received by the infants. Similarly, @ferguson2018 manipulated sequential vs. spatial presentation of visual patterns, and observed stronger novelty effects with (a) increasing age and (b) spatial presentation. That said, it is also frequently the case that the observed direction of preference does not conform with expectations based on the dimensions noted above; the infancy literature is rife with examples of counterintuitive patterns of preference (e.g., @fiser2001; @thiessen2012 for post-habituation familiarity preference; @bosch2001; @sebastian-galles2009; @dawson2009 for novelty preference in 4-month-olds; @jusczyk1995 for familiarity preference in 7-months-olds; @johnson2009 for both novelty and familiarity preference in 11-months-olds).
 
 One factor that is frequently overlooked in considerations of infant data is that infants do not arrive at the lab as naïve participants. Like adults, they bring significant prior experience that may influence their performance in lab tasks. In many instances, researchers attempt to override or sidestep those experiences by using novel stimuli (e.g., unfamiliar languages, shapes or sounds), or by integrating those experiences into their experimental designs (e.g., monolingual vs. bilingual infants). But there may also be forms of experience that go unidentified by researchers. One such factor is that many infants participate in more than one experiment over the course of weeks or months. Testing the same participants in multiple (putatively unrelated) experiments is a common practice in infant research, reflecting the challenges of advancing a field of investigation that is based on a limited and hard-to-recruit population. Researchers are typically very careful to avoid stimulus contagion across unrelated studies, but it is possible that prior lab experience impacts infants’ performance. 
 
-The purpose of this article is to explore the effect of experience with experimental paradigms on direction of preference in learning tasks. This idea emerged from a puzzling pattern of results in a replication of a published study focused on non-linguistic artificial grammar learning in 12-month-olds [@santolin2019]. We observed a flip in preference from novelty to familiarity between the original study and its replication [@santolin2019a], despite the use of identical stimuli and procedures. While there were some differences between the studies (most notably, in the location in which the studies were run), one main factor jumped out at us: many of the infants in the study that elicited a novelty preference had participated in prior studies with Head-turn Preference Procedure (HPP), whereas most of the infants in the study that elicited a familiarity preference were first-time HPP participants. We reasoned that the more familiarity infants had with the lab apparatus and task demands, the more likely they would be to learn rapidly, leading to a novelty preference. To explore this question, we combined the data from these two experiments with the data from two other published artificial grammar learning tasks with similar designs that included 12-month-olds with a range in number of lab visits [@saffran2008, Exp. 1 Language P; and @saffran2003, Exp. 2]. Our hypothesis was that the amount of infants’ prior experience with HPP would affect direction of preference. 
+The purpose of this article is to explore the effect of experience with experimental paradigms on direction of preference in learning tasks. This idea emerged from a puzzling pattern of results in a replication of a published study focused on non-linguistic artificial grammar learning in 12-month-olds [@santolin2019]. We observed a flip in preference from novelty to familiarity between the original study and its replication [@santolin2019a], despite the use of identical stimuli and procedures. While there were some differences between the studies (most notably, in the location in which the studies were run), one main factor stood out to us: many of the infants in the study that elicited a novelty preference had participated in prior studies with Head-turn Preference Procedure (HPP), whereas most of the infants in the study that elicited a familiarity preference were first-time HPP participants. We reasoned that the more familiarity infants had with the lab apparatus and task demands, the more likely they would be to learn rapidly, leading to a novelty preference. To explore this question, we combined the data from these two experiments with the data from two other published artificial grammar learning tasks with similar designs that included 12-month-olds with a range in number of lab visits [@saffran2008, Exp. 1 Language P; and @saffran2003, Exp. 2]. Our hypothesis was that the amount of infants’ prior experience with HPP would affect direction of preference. 
 
 # Methods
 
-A brief description of the four experiments included in this analysis, and our rationale for selecting them, is provided in the Appendix, Section 1 (see Figure \@ref(fig:figA1) for a summary of the results). A fully reproducible repository hosting data and analyses is available at https://osf.io/g95ub/.
+A brief description of the four experiments included in this analysis, and our rationale for selecting them, is provided in the Appendix A, S1 (see Figure 1) for a summary of the results). A fully reproducible repository hosting data and analyses is available at https://osf.io/g95ub/.
 
 ```{r fig1, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.cap = "Looking time for familiar and novel test stimuli of the original studies. Stimuli vary based on the experiment. Error bars indicate the standard error of the mean."}
 
@@ -103,14 +100,14 @@ include_graphics("Figures/01_lookingtimes-study.png")
 
 ```
 
-We modeled results of all infants (*N*=`r printnum(nrow(data)/2, digits = 0) `) who participated in the four studies. Number of HPP visits varied from one to six total visits (including the current visit). We fit a linear mixed-effect model including *Looking time* as response variable, and *Test item* (Familiar vs. Novel), *HPP* (number of experiments completed by infants) and their interaction as fixed effects. We also included by-participant and by-study random intercepts [4 levels: @santolin2019; @santolin2019a; @saffran2008 and @saffran2003]. The *HPP* predictor was coded as a continuous variable indicating the overall number of experiments with the Head-turn Preference Procedure the infants participated in. *Test Item *was centered on familiar test items (Familiar = 0; Novel = 1). Since the experiments differ at distinct levels (e.g., different stimuli, lab location), the model accounted for cross-participant and cross-study differences in looking time. Degrees of freedom were approximated using the Kenward-Roger approach [@judd2012], which can result in non-integer values. Further modeling details are provided in Appendix, Section 3.
+We modeled results of all infants (*N*=`r printnum(nrow(data)/2, digits = 0) `) who participated in the four studies. Number of HPP visits varied from one to six total visits (including the current visit). We fit a linear mixed-effect model including *Looking time* as the response variable, and *Test item* (Familiar vs. Novel), *HPP* (number of experiments completed by infants) and their interaction as fixed effects. We also included by-participant and by-study random intercepts (4 levels: Santolin & Saffran, 2019; Santolin, Saffran, & Sebastian-Galles, 2019; Saffran et al., 2008; Saffran & Wilson, 2003). The *HPP* predictor was coded as a continuous variable indicating the overall number of experiments with the Head-turn Preference Procedure the infants participated in. *Test Item *was centered on familiar test items (Familiar = 0; Novel = 1). Since the experiments differ at distinct levels (e.g., different stimuli, lab location), the model accounted for cross-participant and cross-study differences in looking time. Degrees of freedom were approximated using the Kenward-Roger approach [@judd2012], which can result in non-integer values. Further modeling details are provided in Appendix A, S3.
 
 We predicted a *Test item* (familiar vs. novel) by number of *HPP* interaction, indicating that the duration of infants' looking towards familiar versus novel items would depend on infants’ HPP experience. An interaction could result from at least three different patterns of results: an increase in looking time for novel items, a decrease in looking time for familiar items, or both, as a result of additional experience in HPP studies.
 
 
 # Results
 
-We found a statistically significant interaction (*F*(`r printnum(anova$Df[4])`,`r printnum(anova$Df.res[4])`) `r printnum(anova$F[4], add_equals=TRUE)`, *p* `r printp(anova$p[4], add_equals = TRUE)`) suggesting that the effect of Test Items on looking time differences was affected by the number of HPP experiments infants had participated in (Table \@ref(tab:tab1), Fig. \@ref(fig:fig2)). In line with our predictions, the size of the difference between looking times on familiar and novel test items changed as a function of number of HPP visits.
+We found a statistically significant interaction (*F*(`r printnum(anova$Df[4])`,`r printnum(anova$Df.res[4])`) `r printnum(anova$F[4], add_equals=TRUE)`, *p* `r printp(anova$p[4], add_equals = TRUE)`) suggesting that the effect of Test Items on looking time differences was affected by the number of HPP experiments infants had participated in (Table 1, Figure 2). In line with our predictions, the size of the difference between looking times on familiar and novel test items changed as a function of number of HPP visits.
 
 We also found a significant main effect of the HPP predictor (*F*(`r printnum(anova$Df[3])`,`r printnum(anova$Df.res[3])`) `r printnum(anova$F[3], add_equals=TRUE)`, *p* `r printp(anova$p[3], add_equals = TRUE)`) indicating that the Test Item by HPP interaction is mainly driven by a significant decrease in looking time to familiar items as the number of HPP visits increases. There was no evidence that a greater number of HPP visits was accompanied by longer looking to the novel item (*F*(`r printnum(anova.novel$Df[3])`,`r printnum(anova.novel$Df.res[3])`) `r printnum(anova.novel$F[3], add_equals=TRUE)`, *p* `r printp(anova.novel$p[3], add_equals = TRUE)`).
 
@@ -129,7 +126,7 @@ anova %>%
         row.names = TRUE,
         align = "c",
         digits = 3,
-        caption = "Summary of the results of the linear mixed-effects model. Degrees of freedom were approximated using the Kenward-Rogers approach, thus sometimes result in non-integers.",
+        caption = "Summary of the results of the linear mixed-effects model.",
         format = "pandoc")
 
 ```
@@ -146,26 +143,37 @@ Results reported in this article are consistent with our hypothesis that experie
 
 It is important to notice that this effect may not just be limited to experiencing the HPP setting *per se*, but can be caused by the entire laboratory visit. When infants visit the lab for the very first time, they face a challenging situation: a new environment with new people interacting with them, testing rooms with a peculiar design (e.g., all-black or all-white walls with big screens), and novel sounds and images. This is a great amount of novel information for a young infant to process at once. In contrast, as infants come back to the lab for subsequent studies, the location, testing room and research staff may become more familiar, reducing the information load. The present study cannot discern which type of previous experience (HPP setting or lab) is responsible for the observed results.
 
-Our findings have important implications for the interpretation of directions of preference in future studies. Infants' prior experience with a lab or research paradigm could account for distinct, and sometimes counterintuitive, patterns of preference. A related hypothesis suggests that less-common directions of preference for studies adressing a given topic (e.g., rule learning)
+Our findings have important implications for the interpretation of directions of preference in future studies. Infants' prior experience with a lab or research paradigm could account for distinct, and sometimes counterintuitive, patterns of preference. A related hypothesis suggests that less-common directions of preference for studies addressing a given topic (e.g., rule learning) likely represent sign errors as opposed to true infant preferences [@rabagliati2019; @bergmann2019; RR]. While this may be the case, it is also possible that discrepancies in preferential looking are related to factors like those investigate in the current study: prior experience with the testing environment. For this reason, discrepancies such as unexpected directions of preference may actually be meaningful and informative about the state of infant learners in specific studies.
 
-Our results are consistent with existing theories of cognitive development suggesting that, in spite of their limited capacities, infants 1) constantly gather input from the natural environment, 2) selectively sample the information to learn, and 3) direct their resources to examine the most relevant and informative input [e.g., @bates1996; @kidd2014; @santolin2018; @saffran2018]. Our results suggest that infants actively process information about the lab environment and, consequently, their test performance are affected by how much lab experience they have accumulated. The learning outcome, in fact, seems to be constrained by the amount of novel information infants have to process in parallel when visiting the lab.
-
-Evidence provided in this article has important implications for future interpretation of directions of preference. Infants’ prior experience with the lab or a given research paradigm can account for different, and sometimes counterintuitive, patterns of preference. A related hypothesis suggests that less-frequent directions of preference with respect to the pattern of preferences shown in the literature of a given topic (e.g., rule learning) likely represent sign errors as opposed to true infant preferences [@rabagliati2019; @bergmann_rabagliati_tsuji_2019, RR]. While this may be the case, it is also possible that discrepancies in preferential looking are related to factors like those investigated in the current study: prrior experience with the testing environment. For this reason, discrepancies such as unexpected directions of preference may actually be meaningful and informative about the state of infant learners in specific studies.
-
-
-thes results would allow to update the model of the dactors inducing different patterns of preferences in infant studies [e.g., @hunter1988]. Here we propose that the dimension *task complexity* could be expanded beyond the specific task content (e.g., how complex are the stimuli presented) to include infants' familiarity with the task. Our findings, in fact, suggest that the learning outcome of a given task is constrained by how much task experience infants have accumulated through prior lab visits. Therefore, the amount of novel information infants have to process in parallel during a study increases the task demands, and the likelihood of showing a familiarity preference. This may well include the novelty of the experimental paradigm. It would be of great interest to expand our findings to other preferential paradigms (e.g., infant-controlled preferential looking procedures, visual-world paradigms) to advance our understanding of how such experiences modulate infants’ performance at test.
+These results would allow to update the model of the factors inducing different patterns of preferences in infant studies [e.g., @hunter1988]. Here we propose that the dimension *task complexity* could be expanded beyond the specific task content (e.g., how complex are the stimuli presented) to include infants' familiarity with the task. Our findings, in fact, suggest that the learning outcome of a given task is constrained by how much task experience infants have accumulated through prior lab visits. Therefore, the amount of novel information infants have to process in parallel during a study increases the task demands, and the likelihood of showing a familiarity preference. This may well include the novelty of the experimental paradigm. It would be of great interest to expand our findings to other preferential paradigms (e.g., infant-controlled preferential looking procedures, visual-world paradigms) to advance our understanding of how such experiences modulate infants’ performance at test.
 
 \newpage
 
-# References
+```{r render_appendix, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 
-```{r create_r-references, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-r_refs(file = "./References/Flip.bib")
+render_appendix(x = "flip_manuscript_appendix.Rmd", bibliography = "./References/Flip.bib", csl = rmarkdown::metadata$csl, quiet = TRUE)
+
 ```
+
+
+# References
 
 \begingroup
 \setlength{\parindent}{-0.5in}
 \setlength{\leftskip}{0.5in}
 
 <div id="refs" custom-style="Bibliography"></div>
+
 \endgroup
+
+```{r create_r-references, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+r_refs(file = "./References/Flip.bib")
+
+```
+
+```{r echo = FALSE, results = 'asis', cache = FALSE}
+render_appendix('flip_manuscript_appendix.Rmd')
+```
+
+

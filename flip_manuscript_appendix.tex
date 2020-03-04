@@ -6,9 +6,9 @@
 
 \begin{appendix}
 \section{}
-\hypertarget{experiments-included-in-the-linear-mixed-effects-model.}{%
-\subsection{Experiments included in the linear mixed-effects
-model.}\label{experiments-included-in-the-linear-mixed-effects-model.}}
+\hypertarget{s1-experiments-included-in-the-linear-mixed-effects-model.}{%
+\subsection{S1: Experiments included in the linear mixed-effects
+model.}\label{s1-experiments-included-in-the-linear-mixed-effects-model.}}
 
 The selected experiments consist of an artificial grammar learning task
 with 12-month-old infants. These experiments are characterized by
@@ -37,14 +37,15 @@ informative about the ``grammaticality'' of test items). Infants showed
 a significant familiarity preference: \emph{F}(1, 38)= 5.37,
 \emph{p}\textless{}.05.
 
-\emph{Saffran et al. (2008)} demonstrated that infants could detect
-simple phrases (i.e., clusters of nonsense words grouped together based
-on statistical regularities) from artificial grammars. In Exp. 1,
-infants in the Predictive Language condition were familiarized with a
-grammar including predictive (statistical) dependencies between words.
-The test items consisted of familiar sentences vs.~novel sentences
-violating the grammar. Infants showed a significant novelty preference:
-\emph{t}(11)= 2.52, \emph{p}\textless{}.05.
+\emph{Saffran, Hauser, Seibel, Kapfhamer, Tsao, \& Cushman (2008)}
+demonstrated that infants could detect simple phrases (i.e., clusters of
+nonsense words grouped together based on statistical regularities) from
+artificial grammars. In Exp. 1, infants in the Predictive Language
+condition were familiarized with a grammar including predictive
+(statistical) dependencies between words. The test items consisted of
+familiar sentences vs.~novel sentences violating the grammar. Infants
+showed a significant novelty preference: \emph{t}(11)= 2.52,
+\emph{p}\textless{}.05.
 
 \emph{Santolin \& Saffran (2019)} is a conceptual replication of Saffran
 et al. (2008) using non-linguistic sounds (e.g., computer alert sounds)
@@ -53,81 +54,71 @@ showed a significant novelty preference: \emph{t}(26)=2.45,
 \emph{p}=.021, \emph{d}=0.47.
 
 We replicated the Predictive Language condition of Santolin \& Saffran
-(2019) at the University Pompeu Fabra, Barcelona (Santolin et al.,
-2019), using identical stimuli and procedures. We found significant
-discrimination of the test stimuli but observed the opposite direction
-of preference: Infants listened longer to familiar than novel strings:
-\emph{t}(23)=2.30, \emph{p}=.030, \emph{d}=0.47. All results are shown
-in Fig. 1 of the main manuscript.
+(2019) at the University Pompeu Fabra, Barcelona (\emph{Santolin,
+Saffran \& Sebastian-Galles, 2019})(2019), using identical stimuli and
+procedures. We found significant discrimination of the test stimuli but
+observed the opposite direction of preference: Infants listened longer
+to familiar than novel strings: \emph{t}(23)=2.30, \emph{p}=.030,
+\emph{d}=0.47. All results are shown in Fig. 1 of the main manuscript.
 
-\hypertarget{participants-information}{%
-\subsection{Participants information}\label{participants-information}}
+\hypertarget{s2-participants-information}{%
+\subsection{S2: Participants
+information}\label{s2-participants-information}}
 
 We retrieved data from 102 12-month-old infants who had participated in
-a range of 1-6 studies. Three of the studies were run in Madison, WI
-(University of Wisconsin-Madison): Saffran \& Wilson, 2003 (Exp. 2):
-\emph{N}=40, mean age: 11.5 months; Saffran et al., 2008 (Exp. 1,
-Condition P-Language): \emph{N}=12), mean age: 12.8 months; Santolin \&
-Saffran, 2019 (Condition 1); \emph{N}=26, mean age: 12.9 months. One
+a range of 1-6 HPP visits Three of the experiments were run in Madison,
+WI (University of Wisconsin-Madison): Saffran \& Wilson, 2003 (Exp. 2;
+\emph{N}=40, mean age: 11.5 months); Saffran et al., 2008 (Exp. 1,
+Condition P-Language; \emph{N}=12), mean age: 12.8 months); Santolin \&
+Saffran, 2019 (Condition 1; \emph{N}=26, mean age: 12.9 months). One
 study was run in Barcelona, Spain (Universitat Pompeu Fabra): Santolin,
-Saffran \& Sebastian-Galles, 2019: \emph{N}=24, mean age: 13 months. Two
-data points (average looking time for familiar and novel test items)
+Saffran \& Sebastian-Galles, 2019 (\emph{N}=24, mean age: 13 months).
+Two data points (average looking time for familiar and novel test items)
 were available for each participant. Participants included in the
 current analysis are those included in the final version of the studies.
 
-\hypertarget{linear-mixed-effects-model---additional-information}{%
-\subsection{Linear mixed-effects model - additional
-information}\label{linear-mixed-effects-model---additional-information}}
+\hypertarget{s3-linear-mixed-effects-model---additional-information}{%
+\subsection{S3: Linear mixed-effects model - additional
+information}\label{s3-linear-mixed-effects-model---additional-information}}
 
 We fit a model predicting looking time (\(LT\)) including \(TestItem\)
 (Familiar vs.~Novel), number of Head-turn Preference Procedure
 experiments completed by infants (\(HPP\)), and their interaction
 (\(Item \times HPP\)) as fixed effects. Participant and study (4 levels:
-Santolin \& Saffran (2019), Santolin et al. (2019), Saffran et al.
-(2008), and Saffran \& Wilson (2003)) were included as random effects.
-Following Barr, Levy, Scheepers, \& Tily (2013), we fit a model with a
-maximal random effects structure including random intercepts
+Santolin \& Saffran, 2019; Santolin, Saffran, \& Sebastian-Galles, 2019;
+Saffran et al., 2008; Saffran \& Wilson, 2003) were included as random
+effects. Following Barr, Levy, Scheepers, \& Tily (2013), we fit a model
+with a maximal random effects structure including random intercepts
 by-participant and by-study, and random slopes of HPP by-participant and
 by-study. However, due to lack of convergence, we pruned the random
 effects structure until convergence was achieved (e.g., Brauer \&
-Curtin, 2018). The final model included by-participant and by-study
-random intercepts only. The particular random effects structure chosen
-does not qualitatively impact the estimates and conclusions from the
-model. This model accounts for cross-participant variability in overall
-looking time (as some infants look longer than others), and for
-cross-studies differences in overall looking time. The model was fit
-using the \texttt{lme4} package (Bates, Mächler, Bolker, \& Walker,
-2015) from the R environment (R Core Team, 2018). We used the
+Curtin, 2018) or the model showed little evidence of
+overparameterization (Bates et al., 2015a). The final model included
+by-participant and by-study random intercepts only. The particular
+random effects structure chosen does not qualitatively impact the
+estimates and conclusions from the model. This model accounts for
+cross-participant variability in overall looking time (as some infants
+look longer than others), and for cross-studies differences in overall
+looking time. The model was fit using the \texttt{lme4} package (Bates
+et al., 2015b) from the R environment (R Core Team, 2018). We used the
 \texttt{Anova} function from the \texttt{car} R package (Fox \&
 Weisberg, 2019) to perform F-tests on fixed effects using
 Kenward-Roger's approximation to degrees of freedom (e.g., Judd,
 Westfall, \& Kenny, 2012).
 
-\hypertarget{results-sub-setting-data-to-participants-with-less-than-6-5-4-and-3-hpp-studies}{%
-\subsection{Results sub-setting data to participants with less than 6,
-5, 4, and 3 HPP
-studies}\label{results-sub-setting-data-to-participants-with-less-than-6-5-4-and-3-hpp-studies}}
+\hypertarget{s4-results-sub-setting-data-to-participants-with-less-than-6-5-4-and-3-hpp-studies}{%
+\subsection{S4: Results sub-setting data to participants with less than
+6, 5, 4, and 3 HPP
+studies}\label{s4-results-sub-setting-data-to-participants-with-less-than-6-5-4-and-3-hpp-studies}}
 
 Consistent with the results of the entire dataset, we found a
 statistically significant interaction of \emph{Test Item} with the
 number of \emph{HPP} visits when reducing the sample to the infants who
 participanted in less than 6, 5, 4, and 3 HPP experiments. Below, we
 report the output of the linear mixed-effects model fitted on the
-original and reduced samples (Table @ref(tab:tabA1), Fig.
-@ref(fig:figA1)).
+original and reduced samples (Table A1, Figure A1).
 
 \begin{longtable}[]{@{}cccccccc@{}}
-\caption{(\#tab:tabA1)Output of the Linear Mixed Effects-Model fitted on
-the subsetted data. Results are reported for the original analysis, and
-the HPP5, HPP4, HPP3, and HPP2 subsets. Degrees of freedom were
-approximated using the Kenward-Roger approach, this sometimes resulting
-in non integers.}\tabularnewline
-\toprule
-\textbf{Subset} & \textbf{Term} & \textbf{Coefficient} &
-\textbf{\emph{SEM}} & \textbf{95\% CI} & \textbf{F} & \textbf{Den.
-\emph{df}} & \textbf{\emph{p}}\tabularnewline
-\midrule
-\endfirsthead
 \toprule
 \textbf{Subset} & \textbf{Term} & \textbf{Coefficient} &
 \textbf{\emph{SEM}} & \textbf{95\% CI} & \textbf{F} & \textbf{Den.
@@ -135,45 +126,45 @@ in non integers.}\tabularnewline
 \midrule
 \endhead
 Original & \emph{Intercept} & 7,679.1 & 673.1 & {[}6390.1, 9294.1{]} &
-124.6893997 & 9.064502 & \textless{} .001\tabularnewline
-& \emph{Test Item} & -1,398.8 & 411.3 & {[}-2204.8, -589.1{]} &
-11.5654404 & 100.000000 & .001\tabularnewline
-& \emph{HPP} & -539.7 & 238.7 & {[}-999.9, -74.8{]} & 4.8005476 &
-133.099688 & .030\tabularnewline
+124.7 & 9.1 & \textless{} .001\tabularnewline
+& \emph{Test Item} & -1,398.8 & 411.3 & {[}-2204.8, -589.1{]} & 11.6 &
+100.0 & .001\tabularnewline
+& \emph{HPP} & -539.7 & 238.7 & {[}-999.9, -74.8{]} & 4.8 & 133.1 &
+.030\tabularnewline
 & \emph{Test Item \(\times\) HPP} & 667.1 & 192.6 & {[}247.2, 1028.5{]}
-& 11.9927376 & 100.000000 & .001\tabularnewline
+& 12.0 & 100.0 & .001\tabularnewline
 HPP 1-5 & \emph{Intercept} & 7,675.0 & 691.6 & {[}6452.7, 9029.3{]} &
-118.3288753 & 10.074791 & \textless{} .001\tabularnewline
-& \emph{Test Item} & -1,416.1 & 435.4 & {[}-2237.7, -543.7{]} &
-10.5777662 & 99.000000 & .002\tabularnewline
-& \emph{HPP} & -535.6 & 261.2 & {[}-1081.1, -37.5{]} & 3.9653404 &
-133.567312 & .048\tabularnewline
+118.3 & 10.1 & \textless{} .001\tabularnewline
+& \emph{Test Item} & -1,416.1 & 435.4 & {[}-2237.7, -543.7{]} & 10.6 &
+99.0 & .002\tabularnewline
+& \emph{HPP} & -535.6 & 261.2 & {[}-1081.1, -37.5{]} & 4.0 & 133.6 &
+.048\tabularnewline
 & \emph{Test Item \(\times\) HPP} & 677.8 & 211.3 & {[}241, 1081.9{]} &
-10.2938879 & 99.000000 & .002\tabularnewline
+10.3 & 99.0 & .002\tabularnewline
 HPP 1-4 & \emph{Intercept} & 7,611.1 & 719.4 & {[}6188.4, 9275.6{]} &
-107.3503715 & 10.458693 & \textless{} .001\tabularnewline
-& \emph{Test Item} & -1,491.1 & 452.1 & {[}-2348.4, -578.5{]} &
-10.8789948 & 98.000000 & .001\tabularnewline
-& \emph{HPP} & -500.8 & 278.7 & {[}-1070.2, 98.2{]} & 3.0430523 &
-131.918391 & .083\tabularnewline
+107.4 & 10.5 & \textless{} .001\tabularnewline
+& \emph{Test Item} & -1,491.1 & 452.1 & {[}-2348.4, -578.5{]} & 10.9 &
+98.0 & .001\tabularnewline
+& \emph{HPP} & -500.8 & 278.7 & {[}-1070.2, 98.2{]} & 3.0 & 131.9 &
+.083\tabularnewline
 & \emph{Test Item \(\times\) HPP} & 726.2 & 224.9 & {[}294.2, 1145{]} &
-10.4251927 & 98.000000 & .002\tabularnewline
+10.4 & 98.0 & .002\tabularnewline
 HPP1-3 & \emph{Intercept} & 7,470.0 & 794.6 & {[}6007.1, 9172.5{]} &
-83.7790216 & 14.299003 & \textless{} .001\tabularnewline
-& \emph{Test Item} & -1,349.9 & 532.3 & {[}-2426.9, -267.6{]} &
-6.4305807 & 92.000000 & .013\tabularnewline
-& \emph{HPP} & -395.8 & 366.6 & {[}-1182.6, 316.1{]} & 1.0867433 &
-122.312388 & .299\tabularnewline
+83.8 & 14.3 & \textless{} .001\tabularnewline
+& \emph{Test Item} & -1,349.9 & 532.3 & {[}-2426.9, -267.6{]} & 6.4 &
+92.0 & .013\tabularnewline
+& \emph{HPP} & -395.8 & 366.6 & {[}-1182.6, 316.1{]} & 1.1 & 122.3 &
+.299\tabularnewline
 & \emph{Test Item \(\times\) HPP} & 627.9 & 294.1 & {[}3, 1252.6{]} &
-4.5589727 & 92.000000 & .035\tabularnewline
+4.6 & 92.0 & .035\tabularnewline
 HPP 1-2 & \emph{Intercept} & 7,301.9 & 1,009.9 & {[}5252.9, 9362.1{]} &
-48.8571582 & 23.938709 & \textless{} .001\tabularnewline
-& \emph{Test Item} & -1,783.7 & 726.7 & {[}-3199.6, -360.7{]} &
-6.0247027 & 78.000000 & .016\tabularnewline
-& \emph{HPP} & -261.3 & 586.8 & {[}-1449.8, 991.7{]} & 0.1855918 &
-106.961951 & .667\tabularnewline
+48.9 & 23.9 & \textless{} .001\tabularnewline
+& \emph{Test Item} & -1,783.7 & 726.7 & {[}-3199.6, -360.7{]} & 6.0 &
+78.0 & .016\tabularnewline
+& \emph{HPP} & -261.3 & 586.8 & {[}-1449.8, 991.7{]} & 0.2 & 107.0 &
+.667\tabularnewline
 & \emph{Test Item \(\times\) HPP} & 969.5 & 481.8 & {[}38.3, 2010.4{]} &
-4.0493079 & 78.000000 & .048\tabularnewline
+4.0 & 78.0 & .048\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -186,10 +177,47 @@ effect of HPP on the preference pattern we observed in our main analysis
 is not entirely dependent on any subsample of the HPP variable.
 
 \begin{figure}
-\includegraphics[width=\textwidth]{/Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged} \caption{Graphical representation of the coefficients of the Test Item by HPP visits interaction term of the model fitted on the complete data-set (reported in the main manuscript), and of the models fitted on the reduced data-sets. Black dots represent the point estimate of the coefficient, black whiskers represent the standard error of the mean, and grey boxes represent the bootstrapped 95\% confidence interval around the point estimate.}(\#fig:figA1)
+\includegraphics[width=\textwidth]{/Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged} \caption{Graphical representation of the coefficients of the Test Item by HPP visits interaction term of the model fitted on the complete data-set (reported in the main manuscript), and of the models fitted on the reduced data-sets. Black dots represent the point estimate of the coefficient, black whiskers represent the standard error of the mean, and grey boxes represent the bootstrapped 95\% confidence interval around the point estimate.}(\#fig:unnamed-chunk-16)
 \end{figure}
 
-\newpage
+\hypertarget{session-info}{%
+\section{Session info}\label{session-info}}
+
+R version 3.5.1 (2018-07-02) Platform: x86\_64-apple-darwin15.6.0
+(64-bit) Running under: macOS 10.15.2
+
+Matrix products: default BLAS:
+/Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK:
+/Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale: {[}1{]}
+en\_US.UTF-8/en\_US.UTF-8/en\_US.UTF-8/C/en\_US.UTF-8/en\_US.UTF-8
+
+attached base packages: {[}1{]} stats graphics grDevices utils datasets
+methods base
+
+other attached packages: {[}1{]} purrr\_0.3.3 kableExtra\_1.1.0
+ggplot2\_3.2.1\\
+{[}4{]} here\_0.1-11 tibble\_2.99.99.9014 dplyr\_0.8.99.9000\\
+{[}7{]} magrittr\_1.5 knitr\_1.27 papaja\_0.1.0.9942
+
+loaded via a namespace (and not attached): {[}1{]} Rcpp\_1.0.3
+pillar\_1.4.3.9000 compiler\_3.5.1\\
+{[}4{]} highr\_0.8 lobstr\_1.1.1 base64enc\_0.1-3\\
+{[}7{]} tools\_3.5.1 zeallot\_0.1.0 digest\_0.6.25\\
+{[}10{]} viridisLite\_0.3.0 evaluate\_0.14 lifecycle\_0.1.0\\
+{[}13{]} gtable\_0.3.0 pkgconfig\_2.0.3 rlang\_0.4.4.9000\\
+{[}16{]} rstudioapi\_0.11 yaml\_2.2.1 xfun\_0.12\\
+{[}19{]} xml2\_1.2.2 httr\_1.4.1 withr\_2.1.2\\
+{[}22{]} stringr\_1.4.0.9000 hms\_0.5.3 vctrs\_0.2.99.9005\\
+{[}25{]} webshot\_0.5.2 rprojroot\_1.3-2 grid\_3.5.1\\
+{[}28{]} tidyselect\_1.0.0 glue\_1.3.1 R6\_2.4.1\\
+{[}31{]} rmarkdown\_2.1.1 bookdown\_0.17 readr\_1.3.1\\
+{[}34{]} backports\_1.1.5 scales\_1.1.0 htmltools\_0.4.0.9003 {[}37{]}
+ellipsis\_0.3.0 rvest\_0.3.5 colorspace\_1.4-1\\
+{[}40{]} stringi\_1.4.6 lazyeval\_0.2.2 munsell\_0.5.0\\
+{[}43{]} crayon\_1.3.4
 
 \hypertarget{references}{%
 \subsection{References}\label{references}}
@@ -205,10 +233,16 @@ effects structure for confirmatory hypothesis testing: Keep it maximal.
 \emph{Journal of Memory and Language}, \emph{68}(3), 255--278.
 \url{https://doi.org/10.1016/j.jml.2012.11.001}
 
+\leavevmode\hypertarget{ref-bates2015a}{}%
+Bates, D., Kliegl, R., Vasishth, S., \& Baayen, H. (2015a). Parsimonious
+Mixed Models. \emph{arXiv:1506.04967 {[}Stat{]}}. Retrieved from
+\url{http://arxiv.org/abs/1506.04967}
+
 \leavevmode\hypertarget{ref-bates2015}{}%
-Bates, D., Mächler, M., Bolker, B., \& Walker, S. (2015). Fitting linear
-mixed-effects models using lme4. \emph{Journal of Statistical Software},
-\emph{67}(1), 1--48. \url{https://doi.org/10.18637/jss.v067.i01}
+Bates, D., Mächler, M., Bolker, B., \& Walker, S. (2015b). Fitting
+linear mixed-effects models using lme4. \emph{Journal of Statistical
+Software}, \emph{67}(1), 1--48.
+\url{https://doi.org/10.18637/jss.v067.i01}
 
 \leavevmode\hypertarget{ref-brauer2018}{}%
 Brauer, M., \& Curtin, J. J. (2018). Linear mixed-effects models and the
