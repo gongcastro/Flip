@@ -73,9 +73,8 @@ Consistent with the results of the entire dataset, we found a statistically sign
 
 anova %>%
   mutate(Term = rep(c("*Intercept*", "*Test Item*", "*HPP*", "*Test Item $\\times$ HPP*"), 5),
-         p = printp(anova$p),
-         CI95 = paste0("[", CI95, "]")) %>%
-  mutate_at(c(3, 5, 6, 7), printnum) %>%
+         p = printp(anova$p)) %>%
+  mutate_at(c(3, 5, 6, 7), ~printnum(., digits = 1)) %>%
   arrange(desc(Subset)) %>%
   mutate(Subset = c("Original", "", "", "", "HPP 1-5", "", "", "","HPP 1-4", "", "", "","HPP1-3", "", "", "", "HPP 1-2", "", "", "")) %>%
   select(Subset, Term, Coefficient, SEM, CI95, F, Df.res, p) %>%
@@ -97,11 +96,16 @@ include_graphics(here("Figures", "05_anova-merged.png"))
 
 \newpage
 
-# References
+## References
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+r_refs(file = "./References/Flip.bib")
+```
 
 \begingroup
 \setlength{\parindent}{-0.5in}
 \setlength{\leftskip}{0.5in}
 
 <div id="refs" custom-style="Bibliography"></div>
+
 \endgroup

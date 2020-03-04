@@ -32,7 +32,7 @@ anova %>%
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_errorbar(aes(ymin = ci1, ymax = ci2), alpha = 0.4, colour = "black", width = 0, size = 6) +
   geom_errorbar(aes(ymin = Coefficient-SEM, ymax = Coefficient+SEM), colour = "black", width = 0) +
-  geom_point(size = 3) +
+  geom_point(size = 5) +
   labs(x = "Term", y = "Coefficient\n") +
   coord_flip() +
   theme(

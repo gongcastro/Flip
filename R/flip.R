@@ -164,9 +164,10 @@ anova <- Anova(model3, type = "III", test.statistic = "F") %>% # perform type II
   rownames_to_column("Term") %>%
   right_join(., coefs, by = "Term") %>% # join outcome with coefficients
   left_join(., confints, by = "Term") %>% # join outcome with confidence intervals
-  mutate(ci1 = round(`2.5 %`, 2),
-         ci2 = round(`97.5 %`, 2)) %>%
+  mutate(ci1 = round(`2.5 %`, 1),
+         ci2 = round(`97.5 %`, 1)) %>%
   unite(col = "CI95", ci1, ci2, sep = ", ") %>% # make a string with the lower and upper CI
+  mutate(CI95 = paste0("[", CI95, "]")) %>%
   rename(ci1 = `2.5 %`,
          ci2 = `97.5 %`,
          p = `Pr(>F)`) %>%
@@ -177,9 +178,10 @@ anova.effect <- Anova(model3.effect, type = "III", test.statistic = "F") %>% # p
   rownames_to_column("Term") %>%
   right_join(., coefs.effect, by = "Term") %>% # join outcome with coefficients
   left_join(., confints.effect, by = "Term") %>% # join outcome with confidence intervals
-  mutate(ci1 = round(`2.5 %`, 2),
-         ci2 = round(`97.5 %`, 2)) %>%
+  mutate(ci1 = round(`2.5 %`, 1),
+         ci2 = round(`97.5 %`, 1)) %>%
   unite(col = "CI95", ci1, ci2, sep = ", ") %>% # make a string with the lower and upper CI
+  mutate(CI95 = paste0("[", CI95, "]")) %>%
   rename(ci1 = `2.5 %`,
          ci2 = `97.5 %`,
          p = `Pr(>F)`) %>%
@@ -190,9 +192,10 @@ anova.novel <- Anova(model3.novel, type = "III", test.statistic = "F") %>% # per
   rownames_to_column("Term") %>%
   right_join(., coefs.novel, by = "Term") %>% # join outcome with coefficients
   left_join(., confints.novel, by = "Term") %>% # join outcome with confidence intervals
-  mutate(ci1 = round(`2.5 %`, 2),
-         ci2 = round(`97.5 %`, 2)) %>%
+  mutate(ci1 = round(`2.5 %`, 1),
+         ci2 = round(`97.5 %`, 1)) %>%
   unite(col = "CI95", ci1, ci2, sep = ", ") %>% # make a string with the lower and upper CI
+  mutate(CI95 = paste0("[", CI95, "]")) %>%
   rename(ci1 = `2.5 %`,
          ci2 = `97.5 %`,
          p = `Pr(>F)`) %>%

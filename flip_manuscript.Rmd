@@ -40,7 +40,7 @@ footnotelist      : no
 linenumbers       : yes
 mask              : no
 draft             : no
-keep_text         : no
+keep_text         : false
 class             : "man"
 
 
@@ -49,7 +49,7 @@ classoption       : "man"
 output            :
   papaja::apa6_pdf:
     keep_tex: FALSE
-appendix: "flip_manuscript_supplement.rmd"
+appendix: "flip_manuscript_appendix.rmd"
 
 params: 
   output_dir: "../Rmd/"
@@ -71,13 +71,13 @@ set.seed(888) # for reproducibility
 
 
 # import data
-data        <- read.csv(here("Data", "01_data-processed.csv"))                           # main data-set
-anova       <- read.csv(here("Data", "02_results-lmem.csv"))                             # ANOVA with HPP6
+data <- read.csv(here("Data", "01_data-processed.csv")) # main data-set
+anova <- read.csv(here("Data", "02_results-lmem.csv")) # ANOVA with HPP6
 anova.novel <- read.csv(here("Data", "Dummy-coding-Novel", "02_results-lmem-novel.csv")) # ANOVA with HPP6 (novel is baseline)
-anova5      <- read.csv(here("Data", "HPP5", "02_results-lmem-5.csv"))                   # ANOVA with HPP 1-5
-anova4      <- read.csv(here("Data", "HPP4", "02_results-lmem-4.csv"))                   # ANOVA with HPP 1-4
-anova3      <- read.csv(here("Data", "HPP3", "02_results-lmem-3.csv"))                   # ANOVA with HPP 1-3
-anova2      <- read.csv(here("Data", "HPP2", "02_results-lmem-2.csv"))                   # ANOVA with HPP 1-2
+anova5 <- read.csv(here("Data", "HPP5", "02_results-lmem-5.csv")) # ANOVA with HPP 1-5
+anova4 <- read.csv(here("Data", "HPP4", "02_results-lmem-4.csv")) # ANOVA with HPP 1-4
+anova3 <- read.csv(here("Data", "HPP3", "02_results-lmem-3.csv")) # ANOVA with HPP 1-3
+anova2 <- read.csv(here("Data", "HPP2", "02_results-lmem-2.csv")) # ANOVA with HPP 1-2
 ```
 
 # Introduction
@@ -121,7 +121,7 @@ Results also hold when reducing the data to infants with less than six HPP indic
 anova %>%
   mutate(term = c("*Intercept*", "*Test Item*", "*HPP*", "*Test Item $\\times$ HPP*"),
          p = printp(anova$p)) %>%
-  mutate_at(c(2, 4, 5, 6), printnum) %>%
+  mutate_at(c(2, 4, 5, 6), ~printnum(., digits = 1)) %>%
   select(term, Coefficient, SEM, CI95, F, Df.res, p) %>%
   column_to_rownames("term") %>%
   kable(#note = "Degrees of freedom were approximated using the Kenward-Rogers approach, thus sometimes result in non-integers. ",
