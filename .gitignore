@@ -5,5 +5,8 @@
 .httr-oauth
 .DS_Store
 .Rproj
-*.pdf
-*.png
+Figures/*.pdf
+Figures/*.png
+Data/*.csv
+Data/*.txt
+
