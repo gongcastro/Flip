@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.2.25)  2 MAR 2020 16:16
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.2.25)  1 JAN 2019 02:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -719,11 +719,11 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 .map}
 
 ] [2] [3] [4]
-<Figures/01_lookingtimes-study.png, id=70, 3613.5pt x 1806.75pt>
+<Figures/01_lookingtimes-study.png, id=73, 3613.5pt x 1806.75pt>
 File: Figures/01_lookingtimes-study.png Graphic file (type png)
 <use Figures/01_lookingtimes-study.png>
 Package pdftex.def Info: Figures/01_lookingtimes-study.png  used on input line 
-149.
+148.
 (pdftex.def)             Requested size: 469.71635pt x 234.85817pt.
 [5] [6 <./Figures/01_lookingtimes-study.png>] [7]
 </Users/GonzaloGGC/projects/Flip/Figures/03_interaction.pdf, id=94, 722.7pt x 3
@@ -732,153 +732,140 @@ File: /Users/GonzaloGGC/projects/Flip/Figures/03_interaction.pdf Graphic file (
 type pdf)
 <use /Users/GonzaloGGC/projects/Flip/Figures/03_interaction.pdf>
 Package pdftex.def Info: /Users/GonzaloGGC/projects/Flip/Figures/03_interaction
-.pdf  used on input line 183.
+.pdf  used on input line 182.
 (pdftex.def)             Requested size: 469.76045pt x 234.88023pt.
-[8 </Users/GonzaloGGC/projects/Flip/Figures/03_interaction.pdf>]
-Underfull \vbox (badness 1838) has occurred while \output is active []
+[8 </Users/GonzaloGGC/projects/Flip/Figures/03_interaction.pdf>] [9] [10] [11] 
+[12] [13] [14]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 303.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 303.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 303.
+[15
 
-[9]
-Underfull \vbox (badness 3977) has occurred while \output is active []
 
-[10] [11] [12] [13] [14]
+]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 3
-00.
+84.
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-302.
-(/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmtt.fd
-File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [15]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 332.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 332.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 332.
-[16
-
-
-] [17]pdfTeX warning (ext4): destination with the same identifier (name{table.1
-}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.430 \begin{longtable}[]{@{}cccccccc@{}}
-                                         
-Overfull \hbox (62.45952pt too wide) in alignment at lines 430--441
- [] [] [] [] [] [] [] [] 
- []
-
-
-Overfull \hbox (62.45952pt too wide) in alignment at lines 441--447
- [] [] [] [] [] [] [] [] 
- []
-
-
-Overfull \hbox (62.45952pt too wide) in alignment at lines 447--488
- [] [] [] [] [] [] [] [] 
- []
-
-[18]
-Overfull \hbox (62.45952pt too wide) in alignment at lines 488--489
- [] [] [] [] [] [] [] [] 
- []
-
-
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-[19]
-</Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged.pdf, id=230, 651.43375
-pt x 505.89pt>
+[16] [17]pdfTeX warning (ext4): destination with the same identifier (name{tabl
+e.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.403 \begin{longtable}[]{@{}cccccccc@{}}
+                                         
+Overfull \hbox (38.95958pt too wide) in alignment at lines 403--409
+ [] [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (38.95958pt too wide) in alignment at lines 409--450
+ [] [] [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (38.95958pt too wide) in alignment at lines 450--451
+ [] [] [] [] [] [] [] [] 
+ []
+
+
+Underfull \vbox (badness 1953) has occurred while \output is active []
+
+[18]
+</Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged.pdf, id=215, 505.89pt 
+x 505.89pt>
 File: /Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged.pdf Graphic file 
 (type pdf)
 <use /Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged.pdf>
 Package pdftex.def Info: /Users/GonzaloGGC/projects/Flip/Figures/05_anova-merge
-d.pdf  used on input line 500.
-(pdftex.def)             Requested size: 469.7675pt x 364.81174pt.
-[20 </Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged.pdf>]pdfTeX warnin
-g (ext4): destination with the same identifier (name{references}) has been alre
-ady used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.506 \section{References}\label{references}}
-                                             pdfTeX warning (ext4): destination
- with the same identifier (name{refs}) has been already used, duplicate ignored
+d.pdf  used on input line 462.
+(pdftex.def)             Requested size: 469.76265pt x 469.76265pt.
+[19] [20 </Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged.pdf>] [21
 
+]pdfTeX warning (ext4): destination with the same identifier (name{references})
+ has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.512 \hypertarget{refs}{}
+l.505 \subsection{References}\label{references}}
+                                                pdfTeX warning (ext4): destinat
+ion with the same identifier (name{refs}) has been already used, duplicate igno
+red
+<to be read again> 
+                   \relax 
+l.511 \hypertarget{refs}{}
                           pdfTeX warning (ext4): destination with the same iden
 tifier (name{ref-judd2012}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.536 \leavevmode\hypertarget{ref-judd2012}{}
-                                             %pdfTeX warning (ext4): destinatio
-n with the same identifier (name{ref-saffran2008}) has been already used, dupli
-cate ignored
+l.541 \leavevmode\hypertarget{ref-judd2012}{}
+                                             % [22]pdfTeX warning (ext4): desti
+nation with the same identifier (name{ref-saffran2008}) has been already used, 
+duplicate ignored
 <to be read again> 
                    \relax 
-l.548 \leavevmode\hypertarget{ref-saffran2008}{}
+l.553 \leavevmode\hypertarget{ref-saffran2008}{}
                                                 %pdfTeX warning (ext4): destina
 tion with the same identifier (name{ref-saffran2003}) has been already used, du
 plicate ignored
 <to be read again> 
                    \relax 
-l.554 \leavevmode\hypertarget{ref-saffran2003}{}
-                                                % [21
-
-]pdfTeX warning (ext4): destination with the same identifier (name{ref-santolin
-2019}) has been already used, duplicate ignored
+l.559 \leavevmode\hypertarget{ref-saffran2003}{}
+                                                %pdfTeX warning (ext4): destina
+tion with the same identifier (name{ref-santolin2019}) has been already used, d
+uplicate ignored
 <to be read again> 
                    \relax 
-l.559 \leavevmode\hypertarget{ref-santolin2019}{}
+l.564 \leavevmode\hypertarget{ref-santolin2019}{}
                                                  %pdfTeX warning (ext4): destin
 ation with the same identifier (name{ref-santolin2019a}) has been already used,
  duplicate ignored
 <to be read again> 
                    \relax 
-l.565 \leavevmode\hypertarget{ref-santolin2019a}{}
+l.570 \leavevmode\hypertarget{ref-santolin2019a}{}
                                                   % AED endfloat: Processing en
-d Figures and Tables [22]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 573.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 573.
+d Figures and Tables [23]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 578.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 578.
 (./flip_manuscript.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 573.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 573.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 578.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 578.
 Package rerunfilecheck Info: File `flip_manuscript.out' has not changed.
-(rerunfilecheck)             Checksum: 41CDD019164C029D4801001B7EE098D5;2275.
+(rerunfilecheck)             Checksum: 4512FAB3926BF9E5AF350A02DA3A1CD6;2473.
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 14338 strings out of 483172
- 212430 string characters out of 5964622
- 488042 words of memory out of 5000000
- 28965 multiletter control sequences out of 15000+600000
- 610103 words of font info for 91 fonts, out of 8000000 for 9000
+ 14302 strings out of 483172
+ 211802 string characters out of 5964622
+ 482998 words of memory out of 5000000
+ 28933 multiletter control sequences out of 15000+600000
+ 609797 words of font info for 90 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 49i,10n,51p,2254b,599s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.en
-c}{/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/
-Users/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/Use
-rs/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}</Use
-rs/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Use
-rs/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbxi10.pfb></Us
-ers/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi12.pfb></Us
-ers/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Use
-rs/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></User
-s/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/
-GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></Users/Go
-nzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri12.pfb></Users/Go
-nzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmss8.pfb></Users/Gon
-zaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/Gon
-zaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt12.pfb>
-Output written on flip_manuscript.pdf (22 pages, 415832 bytes).
+ 49i,10n,51p,2254b,525s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/
+Users/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/
+Users/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}</
+Users/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></
+Users/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbxi10.pfb><
+/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi12.pfb><
+/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></
+Users/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></U
+sers/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Use
+rs/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></Users
+/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri12.pfb></Users
+/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmss8.pfb></Users/
+GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/
+GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt12.pfb>
+Output written on flip_manuscript.pdf (23 pages, 412469 bytes).
 PDF statistics:
- 330 PDF objects out of 1000 (max. 8388607)
- 286 compressed objects within 3 object streams
+ 326 PDF objects out of 1000 (max. 8388607)
+ 281 compressed objects within 3 object streams
  85 named destinations out of 1000 (max. 500000)
- 96 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 104 words of extra memory for PDF output out of 10000 (max. 10000000)
 
