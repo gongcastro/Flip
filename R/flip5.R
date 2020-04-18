@@ -51,31 +51,25 @@ data <- read.csv(
 model <- lmer(
   LookingTime ~              # response variable
     Item * HPP +             # fixed effects ("*" means "include the interaction")
-    (1 | Participant) +      # by-Participant random intercept
-    (1 + Item*HPP | Study),  # by-study random intercept and HPP random slope
+    (1 + Item*HPP | Study/Participant),  # by-study random intercept and HPP random slope
   data = data,               # indicate dataset
   REML = TRUE                # fit using REML
 ) 
-summary(model)              # model summary: correlation parameter (by-study intercepts and HPP slopes) is at boundary (-1)
+# model fails to converge
 ### 3.2.a. Drop Item-by-study random slopes (Item dummy-coding, baseline on familiar trials)
 model2 <- lmer(
   LookingTime ~          # response variable
     Item*HPP +           # fixed effects ("*" means "include the interaction")
-    (1 | Participant) +  # by-Participant random intercept
-    (1 + HPP | Study),   # by-study random intercept and HPP random slope
+    (1 + HPP | Study/Participant),   # by-study random intercept and HPP random slope
   data = data,           # indicate dataset
   REML = TRUE            # fit using REML
 ) 
-summary(model2)                            # model summary:  # model summary: correlation parameter (by-study intercepts and HPP slopes) is at boundary (-1)
-chf2        <- getME(model2,"Tlist")[[2]]  # Cholesky factor
-rowlengths2 <- sqrt(rowSums(chf2*chf2))    # unconditional correlation matrix
-svd2       <- svd(chf2, nv = 0)$u          # singular value decomposition - Near-singular matrix
+# model fails to converge
 ### 3.3.a. We drop the random slopes term to avoid singular fit
 model3 <- lmer(
   LookingTime ~          # response variable
     Item*HPP +           # fixed effects ("*" means "include the interaction")
-    (1 | Participant) +  # by-Participant random intercept
-    (1 | Study),         # by-study random intercept
+    (1 | Study/Participant),         # by-study random intercept
   data = data,           # indicate dataset
   REML = TRUE            # fit using REML
 ) 
@@ -84,8 +78,7 @@ summary(model3)          # model summary
 model3.effect <- lmer(
   LookingTime ~          # response variable
     ItemCenter*HPP +     # fixed effects ("*" means "include the interaction")
-    (1 | Participant) +  # by-Participant random intercept
-    (1 | Study),         # by-study random intercept
+    (1 | Study/Participant),         # by-study random intercept
   data = data,           # indicate dataset
   REML = TRUE            # fit using REML
 ) 
@@ -94,8 +87,7 @@ summary(model3.effect)   # model summary
 model3.novel <- lmer(
   LookingTime ~          # response variable
     ItemNovel*HPP +      # fixed effects ("*" means "include the interaction")
-    (1 | Participant) +  # by-Participant random intercept
-    (1 | Study),         # by-study random intercept
+    (1 | Study/Participant),         # by-study random intercept
   data = data,           # indicate dataset
   REML = TRUE            # fit using REML
 ) 
