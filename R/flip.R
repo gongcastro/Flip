@@ -343,35 +343,8 @@ data %>%
   ) +
   ggsave(here("Figures", "02_lookingtimes-hpp.png"), height = 5, width = 12)
 
-# 10.4. Coefficients
-anova %>%
-  filter(., Term != "(Intercept)") %>%
-  mutate(Term = case_when(Term == "Item" ~ "Item",
-                          Term=="HPP" ~ "HPP",
-                          Term=="Item:HPP" ~ "Item \U000D7 HPP",
-                          TRUE ~ "")) %>%
-  ggplot(data = ., aes(Term, Coefficient)) +  geom_linerange(aes(x = Term, ymin = ci1, ymax = ci2), alpha = 0.5, size = 10) +
-  geom_point(size = 5, colour = "black") +
-  geom_errorbar(aes(ymax = Coefficient+SEM, ymin = Coefficient-SEM), size = 1.5, width = 0, colour = "black") +
-  geom_hline(yintercept = 0) +
-  labs(x = "Term", y = "Coefficient\n") +
-  coord_flip() +
-  theme(
-    panel.grid.major.x = element_line(colour = "grey", linetype = "dotted"),
-    panel.grid.minor.x = element_line(colour = "grey", linetype = "dotted"),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 20),
-    axis.text          = element_text(colour = "black"),
-    axis.title.y       = element_blank(),
-    axis.title.x       = element_text(size = 15), 
-    axis.ticks.y       = element_blank(),
-    legend.position    = "none"
-  ) +
-  ggsave(here("Figures", "03_coefficients.png"), height = 4, width = 10) +
-  # plot predictions
-  ggplot(effects, aes(x = HPP, y = predicted, shape = Item, fill = Item)) +
+# 10.4. Predictions
+ggplot(effects, aes(x = HPP, y = predicted, shape = Item, fill = Item)) +
   geom_ribbon(aes(x = HPP, ymin = conf.low, ymax = conf.high), colour = NA, alpha = 0.5) +
   geom_line(size = 0.75) +
   geom_point(size = 5) +
@@ -394,10 +367,8 @@ anova %>%
     legend.direction = "horizontal",
     legend.background = element_rect(fill = "transparent")
   ) +
-  plot_layout(nrow = 1, guides = "keep", tag_level = "new") +
-  plot_annotation(tag_levels = "A") +
-  ggsave(here("Figures", "03_interaction.png"), width = 10, height = 5) +
-  ggsave(here("Figures", "03_interaction.pdf"), width = 10, height = 5)
+  ggsave(here("Figures", "03_interaction.png"), width = 7, height = 5) +
+  ggsave(here("Figures", "03_interaction.pdf"), width = 7, height = 5)
 
 
 # 10.6. Model assumptions: normality
