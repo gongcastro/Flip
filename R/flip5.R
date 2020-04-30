@@ -344,17 +344,15 @@ data %>%
   ) +
   ggsave(here("Figures", "HPP5", "02_lookingtimes-hpp-5.png"), height = 5, width = 12)
 
-# 10.4. Interaction
-ggplot(effects, aes(x = HPP, y = predicted, shape = Item, fill = Item)) +
-  geom_ribbon(aes(x = HPP, ymin = conf.low, ymax = conf.high), colour = NA, alpha = 0.5) +
-  geom_line(size = 0.75) +
-  geom_point(size = 3) +
-  labs(x = "HPP visits",
-       y = "Looking time (ms)\n",
-       colour = "Test item",
-       fill = "Test item",
-       shape = "Test item") +
-  scale_fill_grey(start = 0.25, end = 0.75) +
+# 10.3. Predictions
+ggplot(data = fitted, aes(x = HPP, y = LookingTime,
+                          colour = Item, fill = Item, shape = Item, linetype = Item)) +
+  geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.25) +
+  stat_summary(fun = "mean", geom = "point", size = 4) +
+  labs(x = "HPP visits", y = "Looking time (ms)\n",
+       colour = "Test item", fill = "Test item", linetype = "Test item", shape = "Test item") +
+  scale_colour_grey(start = 0, end = 0.25) +
+  scale_fill_grey(start = 0, end = 0.25) +
   scale_x_continuous(breaks = seq(1, 6, by = 1)) +
   theme(
     panel.grid         = element_line(colour = "grey", linetype = "dotted"),
@@ -362,15 +360,16 @@ ggplot(effects, aes(x = HPP, y = predicted, shape = Item, fill = Item)) +
     text               = element_text(colour = "black", size = 20),
     axis.text          = element_text(colour = "black"),
     axis.title         = element_text(size = 15), 
-    legend.position    = c(0.3, 0.05),
+    legend.position    = c(0.2, 0.05),
     legend.text = element_text(size = 10),
     legend.title = element_blank(),
     legend.direction = "horizontal",
     legend.background = element_rect(fill = "transparent")
   ) +
-  ggsave(here("Figures", "HPP5", "03_interaction-5.png"), width = , height = 5)
+  ggsave(here("Figures", "HPP4", "03_interaction-5.png"), width = 7, height = 5) +
+  ggsave(here("Figures", "HPP4", "03_interaction-5.pdf"), width = 7, height = 5)
 
-# 10.6. Model assumptions: normality
+# 10.4. Model assumptions: normality
 ggplot(fitted, aes(sample = .resid)) +
   geom_qq(colour = "grey") +
   geom_qq_line(colour = "black", size = 1) +
@@ -431,7 +430,7 @@ ggplot(fitted, aes(sample = .resid)) +
   plot_layout(nrow = 2, ncol = 2) +
   ggsave(here("Figures", "HPP5", "04_model-assumptions-normality-5.png"),width = 10,height = 5)
 
-# 10.8. Model assumptions: homoskedasticity
+# 10.5. Model assumptions: homoskedasticity
 data.frame(
   studentised_residual = rstudent(model3),
   fitted = fitted(model3),

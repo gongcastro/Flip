@@ -301,7 +301,7 @@ data %>%
   mutate(Item = ifelse(Item==0, "Familiar", "Novel")) %>%
   ggplot(aes(x = Item, y = LookingTime, fill = Item)) +
   facet_wrap(~HPP, nrow = 1, strip.position = "bottom") +
-  stat_summary(fun.y = mean, geom = "bar", size = 0.5) +
+  stat_summary(fun = mean, geom = "bar", size = 0.5) +
   stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.25, size = 0.75) +
   labs(x = "HPP Visits", y = "Looking time (ms)") +
   scale_colour_grey(start = 0.25, end = 0.75) +
@@ -319,41 +319,15 @@ data %>%
   ) +
   ggsave(here("Figures", "02_lookingtimes-hpp.png"), height = 5, width = 12)
 
-# 10.3. Looking times against HPP
-data %>%
-  mutate(Item = ifelse(Item==0, "Familiar", "Novel")) %>%
-  group_by(Study, Item, HPP, Participant) %>%
-  summarise(LookingTime = mean(LookingTime)) %>%
-  ggplot(aes(x = HPP, y = LookingTime, linetype = Item)) +
-  stat_summary(fun.y = "mean", geom = "line", size = 1) +
-  labs(x = "HPP Visits", y = "Looking time (ms)") +
-  scale_colour_grey(start = 0.25, end = 0.75) +
-  scale_fill_grey(start = 0.25, end = 0.75) +
-  theme(
-    panel.grid.major.y = element_line(colour = "grey", linetype = "dotted"),
-    panel.grid.minor.y = element_line(colour = "grey", linetype = "dotted"),
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor.x = element_blank(),
-    panel.background   = element_rect(fill = "white", colour = "grey"),
-    text               = element_text(colour = "black", size = 20),
-    axis.text          = element_text(colour = "black"),
-    legend.position    = c(0.25, 0.1),
-    legend.direction = "horizontal",
-    strip.placement = "outside" 
-  ) +
-  ggsave(here("Figures", "02_lookingtimes-hpp.png"), height = 5, width = 12)
-
-# 10.4. Predictions
-ggplot(effects, aes(x = HPP, y = predicted, shape = Item, fill = Item)) +
-  geom_ribbon(aes(x = HPP, ymin = conf.low, ymax = conf.high), colour = NA, alpha = 0.5) +
-  geom_line(size = 0.75) +
-  geom_point(size = 5) +
-  labs(x = "HPP visits",
-       y = "Looking time (ms)\n",
-       colour = "Test item",
-       fill = "Test item",
-       shape = "Test item") +
-  scale_fill_grey(start = 0.25, end = 0.75) +
+# 10.3. Predictions
+ggplot(data = fitted, aes(x = HPP, y = LookingTime,
+                          colour = Item, fill = Item, shape = Item, linetype = Item)) +
+  geom_smooth(method = "lm", formula = "y ~ x", alpha = 0.25) +
+  stat_summary(fun = "mean", geom = "point", size = 4) +
+  labs(x = "HPP visits", y = "Looking time (ms)\n",
+       colour = "Test item", fill = "Test item", linetype = "Test item", shape = "Test item") +
+  scale_colour_grey(start = 0, end = 0.25) +
+  scale_fill_grey(start = 0, end = 0.25) +
   scale_x_continuous(breaks = seq(1, 6, by = 1)) +
   theme(
     panel.grid         = element_line(colour = "grey", linetype = "dotted"),
@@ -361,7 +335,7 @@ ggplot(effects, aes(x = HPP, y = predicted, shape = Item, fill = Item)) +
     text               = element_text(colour = "black", size = 20),
     axis.text          = element_text(colour = "black"),
     axis.title         = element_text(size = 15), 
-    legend.position    = c(0.3, 0.05),
+    legend.position    = c(0.2, 0.05),
     legend.text = element_text(size = 10),
     legend.title = element_blank(),
     legend.direction = "horizontal",
@@ -371,7 +345,7 @@ ggplot(effects, aes(x = HPP, y = predicted, shape = Item, fill = Item)) +
   ggsave(here("Figures", "03_interaction.pdf"), width = 7, height = 5)
 
 
-# 10.6. Model assumptions: normality
+# 10.4. Model assumptions: normality
 ggplot(fitted, aes(sample = .resid)) +
   geom_qq(colour = "grey") +
   geom_qq_line(colour = "black", size = 1) +
@@ -432,7 +406,7 @@ ggplot(fitted, aes(sample = .resid)) +
   plot_layout(nrow = 2, ncol = 2) +
   ggsave(here("Figures", "04_model-assumptions-normality.png"),width = 10,height = 5)
 
-# 10.8. Model assumptions: homoskedasticity
+# 10.5. Model assumptions: homoskedasticity
 data.frame(
   studentised_residual = rstudent(model3),
   fitted = fitted(model3),
