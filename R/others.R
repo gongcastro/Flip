@@ -52,7 +52,7 @@ ggplot(visits, aes(x = TotalStudies, y = HPP, size = Counts)) +
                           ", 95% CI = [", round(corr$CI_low, 2), ", ", round(corr$CI_high, 2), "]"),
            size = 4.5) +
   geom_point(alpha = 0.5) +
-  labs(x = "Total Visits", y = "HPP Visits", size = "Sample size") +
+  labs(x = "Total Visits", y = "HPP Visits", size = "Number of\nparticipants") +
   scale_size(breaks = seq(0, 30, by = 5)) +
   scale_x_continuous(breaks = seq(0, 7, 1)) +
   scale_y_continuous(breaks = seq(0, 7, 1)) +
