@@ -39,7 +39,8 @@ anova %>%
   scale_color_brewer(palette = "Set1") +
   theme_custom +
   theme(legend.position = "none",
-        axis.ticks = element_blank()) +
+        axis.ticks = element_blank(),
+        axis.title.y = element_blank()) +
   ggsave(here("Figures", "05_anova-merged.png"), height = 7) +
   ggsave(here("Figures", "05_anova-merged.pdf"), height = 7)
 

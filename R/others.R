@@ -8,6 +8,7 @@ library(tidyr)       # for reshaping datasets
 library(ggplot2)     # for visualising data
 library(correlation) # for computing the Pearson correlation
 library(papaja)      # for formatting p-values
+library(janitor)     # for cleaning column namaes
 library(here)        # for locating files
 
 # import functions
@@ -33,7 +34,9 @@ dat <- read.csv(file = here("Data","00_data-raw.csv"), header = TRUE, sep = ",",
 # HPP vs total studies
 visits <- dat %>% group_by(hpp, total_studies) %>% summarise(counts = n())
 
-corr <- cor_test(dat, x = "total_studies", y = "hpp", method = "pearson")
+corr <- cor_test(dat, x = "total_studies", y = "hpp", method = "pearson") %>%
+  as.data.frame() %>%
+  clean_names()
 
 ggplot(visits, aes(x = total_studies, y = hpp, size = counts)) +
   geom_smooth(method = "lm", formula = "y ~ x", colour = "black", show.legend = FALSE) +
@@ -50,5 +53,8 @@ ggplot(visits, aes(x = total_studies, y = hpp, size = counts)) +
         legend.direction = "horizontal") +
   ggsave(here("Figures", "00_visits.png"), height = 7, width = 7) +
   ggsave(here("Figures", "00_visits.pdf"), height = 7, width = 7)
+
+#### export data ###################################
+write.table(corr, here("Data", "04_total-vs-hpp.csv"), sep = ",", dec = ".", row.names = FALSE)
 
 

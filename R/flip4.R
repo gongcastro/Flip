@@ -219,21 +219,19 @@ ggplot(dat_diff_hpp, aes(hpp, mean_novelty_preference)) +
   theme(legend.position = c(0.2, 0.2), 
         legend.direction = "vertical") +
   plot_layout(guides = "keep") +
-  plot_annotation(tag_levels = "A", theme = theme_custom) +
-  ggsave(here("Figures", "02_interaction.png"), width = 12) +
-  ggsave(here("Figures", "02_interaction.pdf"), width = 12) 
+  plot_annotation(tag_levels = "A", theme = theme_custom)
 
 #### 10. Export results ########################################################
 # 10.a. Export results from Item-dummy-coded model (baseline on familiar trials)
-write.table(data, here("Data", "HPP4", "01_data-processed-4.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(dat, here("Data", "HPP4", "01_data-processed-4.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(anova, here("Data", "HPP4", "02_results-lmem-4.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(predictions, here("Data", "HPP4", "02_results-effects-4.csv"), sep = ",", dec = ".", row.names = FALSE)
 # 11.b. Export results from Item-effect-coded model
-write.table(data, here("Data", "HPP4", "Effect-coding", "01_data-processed-effect-4.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(dat, here("Data", "HPP4", "Effect-coding", "01_data-processed-effect-4.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(anova.effect, here("Data", "HPP4", "Effect-coding", "02_results-lmem-effect-4.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(predictions.effect, here("Data", "HPP4", "Effect-coding", "02_results-effects-effect-4.csv"), sep = ",", dec = ".", row.names = FALSE)
 # 11.c. Export results from Item-dummy-coded model (baseline on novel trials)
-write.table(data, here("Data", "HPP4", "Dummy-coding-Novel", "01_data-processed-novel-4.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(dat, here("Data", "HPP4", "Dummy-coding-Novel", "01_data-processed-novel-4.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(anova.novel, here("Data", "HPP4", "Dummy-coding-Novel", "02_results-lmem-novel-4.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(predictions.novel, here("Data", "HPP4", "Dummy-coding-Novel", "02_results-effects-novel-4.csv"), sep = ",", dec = ".", row.names = FALSE)
 

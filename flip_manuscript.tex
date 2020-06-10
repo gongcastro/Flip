@@ -101,8 +101,8 @@
 \authornote{
 
 Correspondence concerning this article should be addressed to Chiara Santolin, Edifici Merce Rodereda, Calle Ramón Trias Fargas, 25, 08018 Barcelona. E-mail: chiara.santolin@upf.edu}
-\note{Preprint submitted to peer-review on February, 17th, 2020}
-\keywords{preferential looking, familiarity preference, novelty preference, head-turn preference procedure, linear mixed-effects model\newline\indent Word count: 2939}
+\note{Preprint submitted to peer-review on February 17th, 2020. Updated addressing reviewers' comments on June 4th, 2020.}
+\keywords{preferential looking, familiarity preference, novelty preference, head-turn preference procedure, linear mixed-effects model\newline\indent Word count: 2765}
 \usepackage{lineno}
 
 \linenumbers
@@ -120,7 +120,7 @@ Correspondence concerning this article should be addressed to Chiara Santolin, E
 \date{}
 
 \abstract{
-Interpreting and predicting direction of preference in infant behavioral research has been a thorny issue for decades. Several factors have been proposed to account for familiarity and novelty preferences in habituation and familiarization studies, including infant age, length of exposure and task complexity. The current study explores an additional dimension that may affect direction of preference: amount of experience with the experimental task. To test this hypothesis, we re-analyzed the data from 4 experiments on artificial grammar learning in 12-month-old infants run using the Head- turn Preference Procedure (HPP). The participants in these studies varied substantially in their number of laboratory visits. Linear mixed-effects results show that the number of HPP studies in which infants had previously participated is related to infants' direction of preference: infants who had no (or limited) experience with the HPP setting were more likely to show familiarity preferences than infants who had amassed more experience with this task in prior study visits. Interestingly, the effect is driven by a significant decrease in looking time for familiar trials. These results have important implications for the interpretation of experimental results: infants' experience with a given paradigm or, more broadly, with the lab environment, may affect their patterns of preferences.
+Interpreting and predicting direction of preference in infant research has been a thorny issue for decades. Several factors have been proposed to account for familiarity versus novelty preferences, including age, length of exposure, and task complexity. The current study explores an additional dimension: experience with the experimental paradigm. We re-analyzed the data from 4 experiments on artificial grammar learning in 12-month-old infants run using the Head-turn Preference Procedure (HPP). Participants in these studies varied substantially in their number of laboratory visits. Results show that the number of HPP studies is related to direction of preference: infants with limited experience with the HPP setting were more likely to show familiarity preferences than infants who had amassed more experience with this paradigm. This evidence has important implications for the interpretation of experimental results: experience with a given method or, more broadly, with the lab environment, may affect infants' patterns of preferences.
 }
 
 \begin{document}
@@ -129,37 +129,35 @@ Interpreting and predicting direction of preference in infant behavioral researc
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-In infancy research, the importance of changes in preferential looking has been recognized since at least the 1960s, when Fantz (1964) showed that young infants preferentially attend to novel visual stimuli. Subsequent studies extended this evidence to other domains, including acoustic perception and cognition, revealing differences in direction of preference. Theories intended to account for such differences suggest that novelty preferences arise when infants have completed the processing of a (familiar) stimulus (see Houston‐Price \& Nakai, 2004; and Aslin, 2007 for reviews).
+The importance of changes in preferential looking has been recognized since at least the 1960s, when Fantz (1964) showed that infants preferentially attend to novel visual stimuli. Subsequent studies extended this evidence to domains including auditory perception and cognition, revealing differences in direction of preference. Rather than representing a binary distinction, direction of preference can be construed as a continuum from more familiar to more novel (e.g., Thiessen et al., 2005). The infant's position along this continuum seems to be determined by a variety of factors related to the task and/or age (e.g., Houston‐Price \& Nakai, 2004; Aslin, 2007; Hunter \& Ames, 1988). However, it is frequently the case that the observed direction of preference does not conform with expectations based on these dimensions; the infancy literature is rife with examples of counterintuitive patterns of preference (e.g., Fiser \& Aslin, 2001; Bosch \& Sebastián‐Gallés, 2001; Dawson \& Gerken, 2009; DePaolis, Keren-Portnoy, \& Vihman, 2016; Johnson et al., 2009; Jusczyk \& Aslin, 1995; Sebastián-Gallés \& Bosch, 2009; Thiessen, 2012).
 
-Rather than representing a binary distinction, direction of preference can be construed as a continuum from more familiar to more novel (e.g., Thiessen, Hill, \& Saffran, 2005). Hunter and Ames (1988) provide the most comprehensive model of preferential looking with three central factors hypothesized to affect the strength and direction of preference: age, familiarization duration and task complexity. In a given task, younger infants tend to prefer the familiar stimulus whereas older infants are more likely to prefer the novel one (e.g., Colombo \& Bundy, 1983; though see Bergmann \& Cristia, 2016, for a meta-analysis suggesting that age does not predict shifts in preference). A shorter exposure to familiar stimulus prior to testing also leads infants to subsequently prefer the familiar object (for reviews, see also Rose, Feldman, \& Jankowski, 2004). Task complexity refers to the stage of stimulus processing. For example, in a visual recognition task, 4-month-old infants revealed a systematic preference for the familiar object prior to showing a strong preference for the novel object (Roder, Bushneil, \& Sasseville, 2000). Task complexity can also refer to the complexity of stimuli. For example, sequential stimuli put greater strain on memory resources than stimuli in which all components are simultaneously available (e.g., Ferguson, Franconeri, \& Waxman, 2018). A related dimension is the similarity across stimuli used at familiarization and test: when there is a close perceptual match such as same colors or sounds during training and test, infants are more likely to show a novelty preference (e.g., Hunter \& Ames, 1988; Thiessen \& Saffran, 2003).
+One frequently-overlooked factor is that infants do not arrive at the lab as naïve participants. Like adults, they bring significant prior experience that may influence their performance in lab tasks. Researchers attempt to override or sidestep those experiences by using novel stimuli (e.g., unfamiliar languages, shapes or sounds), or by integrating those experiences into their experimental designs (e.g., monolingual vs.~bilingual infants; see Sebastian-Galles \& Santolin, 2020 for a recent review). But there may also be forms of experience that go unidentified by researchers. One such factor is that many infants participate in multiple (putatively unrelated) experiments over the course of weeks or months. This common practice in infant research reflects the challenges of advancing a field of investigation that is based on a limited and hard-to-recruit population. Researchers are typically very careful to avoid stimulus contagion across unrelated studies, but it is possible that prior lab experience impacts infants' performance. The purpose of this article is to explore the effect of experience with experimental paradigms on direction of preference in learning tasks.
 
-The combination of these factors informs predictions concerning direction of preference in systematic ways. For example, Thiessen et al. (2005) manipulated length of exposure and observed a flip from familiarity to novelty preference after doubling the amount of familiarization received by the infants. Similarly, Ferguson et al. (2018) manipulated sequential vs.~spatial presentation of visual patterns, and observed stronger novelty effects with (a) increasing age and (b) spatial presentation. That said, it is also frequently the case that the observed direction of preference does not conform with expectations based on the dimensions noted above; the infancy literature is rife with examples of counterintuitive patterns of preference (e.g., Fiser and Aslin (2001); Thiessen (2012) for post-habituation familiarity preference; Bosch and Sebastián‐Gallés (2001); Sebastián-Gallés and Bosch (2009); Dawson and Gerken (2009) for novelty preference in 4-month-olds; Jusczyk and Aslin (1995) for familiarity preference in 7-months-olds; Johnson et al. (2009) for both novelty and familiarity preference in 11-months-olds).
+In an influential model of preferential behavior in infants, Hunter and Ames (1988) hypothesized three central factors to affect the strength and direction of preference: age, familiarization duration, and task complexity. In a given task, younger infants tend to prefer familiar stimuli whereas older infants are more likely to prefer novel stimuli (e.g., Colombo \& Bundy, 1983; though see Bergmann \& Cristia, 2016, for a meta-analysis suggesting that age does not predict shifts in preference). A shorter exposure to familiar stimuli prior to testing also leads infants to subsequently prefer the familiar items (for reviews, see Rose, Feldman, \& Jankowski, 2004). Task complexity refers to the stage of stimulus processing. For example, in a visual recognition task, 4-month-old infants preferred familiar objects before subsequently showing a strong preference for the novel object (Roder, Bushneil, \& Sasseville, 2000). Task complexity can also refer to the complexity of the stimuli. For example, sequential stimuli put greater strain on memory resources than materials in which all components are simultaneously available (e.g., Ferguson, Franconeri, \& Waxman, 2018). A related dimension is the similarity between stimuli used during familiarization and test: when there is a close perceptual match, infants are more likely to show a novelty preference (e.g., Hunter \& Ames, 1988; Thiessen \& Saffran, 2003). The combination of these factors informs predictions concerning direction of preference in systematic ways. For example, Thiessen, Hill, and Saffran (2005) manipulated length of exposure and observed a flip from familiarity to novelty preference after doubling the amount of familiarization received by infants. Similarly, Ferguson et al. (2018) manipulated sequential vs.~spatial presentation of visual patterns, and observed stronger novelty effects with (a) increasing age and (b) spatial presentation.
 
-One factor that is frequently overlooked in considerations of infant data is that infants do not arrive at the lab as naïve participants. Like adults, they bring significant prior experience that may influence their performance in lab tasks. In many instances, researchers attempt to override or sidestep those experiences by using novel stimuli (e.g., unfamiliar languages, shapes or sounds), or by integrating those experiences into their experimental designs (e.g., monolingual vs.~bilingual infants). But there may also be forms of experience that go unidentified by researchers. One such factor is that many infants participate in more than one experiment over the course of weeks or months. Testing the same participants in multiple (putatively unrelated) experiments is a common practice in infant research, reflecting the challenges of advancing a field of investigation that is based on a limited and hard-to-recruit population. Researchers are typically very careful to avoid stimulus contagion across unrelated studies, but it is possible that prior lab experience impacts infants' performance.
-
-The purpose of this article is to explore the effect of experience with experimental paradigms on direction of preference in learning tasks. This idea emerged from a puzzling pattern of results in a replication of a published study focused on non-linguistic artificial grammar learning in 12-month-olds (Santolin \& Saffran, 2019). We observed a flip in preference from novelty to familiarity between the original study and its replication (Santolin et al., 2019), despite the use of identical stimuli and procedures. While there were some differences between the studies (most notably, in the location in which the studies were run), one main factor stood out to us: many of the infants in the study that elicited a novelty preference had participated in prior studies with Head-turn Preference Procedure (HPP), whereas most of the infants in the study that elicited a familiarity preference were first-time HPP participants. We reasoned that the more familiarity infants had with the lab apparatus and task demands, the more likely they would be to learn rapidly, leading to a novelty preference. To explore this question, we combined the data from these two experiments with the data from two other published artificial grammar learning tasks with similar designs that included 12-month-olds with a range in number of lab visits (Saffran et al., 2008, Exp. 1 Language P; and Saffran \& Wilson, 2003, Exp. 2). Our hypothesis was that the amount of infants' prior experience with HPP would affect direction of preference.
+The idea behind the current paper emerged from a puzzling pattern of results in a replication of a published study focused on non-linguistic artificial grammar learning in 12-month-olds (Santolin \& Saffran, 2019). We observed a flip in preference from novelty to familiarity between the original study and its replication (Santolin \& Saffran, 2019), despite the use of identical stimuli and procedures. While there were some differences between the studies (most notably, in the location in which the studies were run), one main factor stood out to us: many of the infants in the study that elicited a novelty preference had participated in prior studies using the Head-turn Preference Procedure (HPP), whereas most of the infants in the study that elicited a familiarity preference were first-time HPP participants. We reasoned that the more familiarity infants had with the lab apparatus and task demands, the more likely they would be to learn rapidly, leading to a novelty preference. To explore this question, we combined the data from these two experiments with the data from two other published artificial grammar learning tasks with similar designs that included 12-month-olds who ranged in the number of lab visits (Saffran et al., 2008, Exp. 1 Language P, and @saffran2003, Exp. 2). Our hypothesis was that the amount of infants' experience with HPP would affect direction of preference.
 
 \hypertarget{methods}{%
 \section{Methods}\label{methods}}
 
-A brief description of the four experiments included in this analysis, and our rationale for selecting them, is provided in the Appendix A, S1 (see Figure 1) for a summary of the results). A fully reproducible repository hosting data and analyses is available at \url{https://osf.io/g95ub/}.
+A brief description of the four experiments included in this analysis, and our rationale for selecting them, is provided in the Supplementary Information (SI), Section 1 (see Fig. 1 for a summary of the results). Infants were aged between 11-13 months in all studies. A fully reproducible repository hosting data and analyses is available at \url{https://osf.io/g95ub/}.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{/Users/GonzaloGGC/projects/Flip/Figures/01_lookingtimes-study} \caption{Looking time for familiar and novel test stimuli of the original studies. Stimuli vary based on the experiment. Error bars indicate the standard error of the mean.}\label{fig:fig1}
 \end{figure}
 
-We modeled results of all infants (\emph{N}=102) who participated in the four studies. Number of HPP visits varied from one to six total visits (including the current visit). We fit a linear mixed-effect model including \emph{Looking time} as the response variable, and \emph{Test item} (Familiar vs.~Novel), \emph{HPP} (number of experiments completed by infants) and their interaction as fixed effects. We especified a nested random effects structure, with participants nested wihtin studies (each participant was inluded in only one study). We included by-participant and by-study random intercepts (4 levels: Santolin \& Saffran, 2019; Santolin, Saffran, \& Sebastian-Galles, 2019; Saffran et al., 2008; Saffran \& Wilson, 2003). The \emph{HPP} predictor was coded as a continuous variable indicating the overall number of experiments with the Head-turn Preference Procedure the infants participated in. \emph{Test Item }was centered on familiar test items (Familiar = 0; Novel = 1). Since the experiments differ at distinct levels (e.g., different stimuli, lab location), the model accounted for cross-participant and cross-study differences in looking time. Degrees of freedom were approximated using the Kenward-Roger approach (Judd, Westfall, \& Kenny, 2012), which can result in non-integer values. Further modeling details are provided in Appendix A, S3.
+We modeled results of all infants (\emph{N} = 102) who completed the four studies. Number of HPP visits varied from one to six (including the current visit). We fit a linear mixed-effects model including \emph{Looking Time} as the response variable, and \emph{Test Item} (Familiar vs.~Novel), \emph{HPP} (number of experiments completed by infants) and their interaction as fixed effects. We also included by-participant and by-study random intercepts (4 levels: Santolin \& Saffran, 2019, 2019; Saffran et al., 2008; Saffran \& Wilson, 2003). The \emph{HPP} predictor was coded as a continuous variable indicating each infant's total number of HPP experiments. \emph{Test Item} was centered on familiar test items (Familiar = 0; Novel = 1). Since the experiments differ at distinct levels (e.g., different stimuli, lab location), the model accounted for cross-participant and cross-study differences in looking time. Degrees of freedom were approximated using the Kenward-Rogers approach (e.g., Judd, Westfall, \& Kenny, 2012), which can result in non-integer values. See SI, Section 3, for additional details.
 
-We predicted a \emph{Test item} (familiar vs.~novel) by number of \emph{HPP} interaction, indicating that the duration of infants' looking towards familiar versus novel items would depend on infants' HPP experience. An interaction could result from at least three different patterns of results: an increase in looking time for novel items, a decrease in looking time for familiar items, or both, as a result of additional experience in HPP studies.
+We predicted a \emph{Test Item} (familiar vs.~novel) by number of \emph{HPP} studies interaction, indicating that the duration of infants' looking towards familiar versus novel items would depend on infants' HPP experience. An interaction could result from at least three different patterns of results: an increase in looking time for novel items, a decrease in looking time for familiar items, or both, as a result of additional HPP experience.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
 
-We found a statistically significant interaction (\emph{F}(1,100.00) = 11.99, \emph{p} = .001) suggesting that the effect of Test Items on looking time differences was affected by the number of HPP experiments infants had participated in (Table 1, Figure 2). In line with our predictions, the size of the difference between looking times on familiar and novel test items changed as a function of number of HPP visits.
+The interaction was statistically significant, \emph{F}(1,100.00) = 11.99, \emph{p} = .001, suggesting that the effect of Test Items on looking time differences was affected by the number of HPP experiments infants had participated in (Table 1, Fig. 2). In line with our predictions, the size of the difference between looking times on familiar and novel test items changed as a function of number of HPP visits.
 
-We also found a significant main effect of the HPP predictor (\emph{F}(1,133.12) = 4.80, \emph{p} = .030) indicating that the Test Item by HPP interaction is mainly driven by a significant decrease in looking time to familiar items as the number of HPP visits increases. There was no evidence that a greater number of HPP visits was accompanied by longer looking to the novel item (\emph{F}(1,133.12) = 0.27, \emph{p} = .606).
+The main effect of the HPP predictor was also significant, \emph{F}(1,133.12) = 4.80, \emph{p} = .030, indicating that the Test Item by HPP interaction is mainly driven by a significant decrease in looking time to familiar items as the number of HPP visits increases. There was no evidence that a greater number of HPP visits was accompanied by longer looking to novel items, \emph{F}(1,133.12) = 0.27, \emph{p} = .606.
 
-Results also hold when reducing the data to infants with less than six HPP indicating that the interaction effect was not driven exclusively by participants with an unusually high number of visits {[}HPP 1-5: \emph{F}(1,99.00) = 10.29, \emph{p} = .002; HPP 1-4: \emph{F}(1,98.00) = 10.42, \emph{p} = .002; HPP 1-3: \emph{F}(1,92.00) = 4.56, \emph{p} = .035{]}. Notably, the interaction is significant even when sub-setting the data to the infants who participated in two HPP experiments only (HPP 1-2: \emph{F}(1,78.00) = 4.05, \emph{p} = .048).
+Results also hold when reducing the data to infants with less than six HPP visits, indicating that the interaction effect was not driven exclusively by participants with an unusually high number of visits {[}HPP 1-5: \emph{F}(1,98.00) = 10.42, \emph{p} = .002; HPP 1-4: \emph{F}(1,98.00) = 10.42, \emph{p} = .002; HPP 1-3: \emph{F}(1,92.00) = 4.56, \emph{p} = .035{]}. Notably, the interaction is significant even with the subset of infants who participated in 1-2 HPP experiments only, HPP 1-2: \emph{F}(1,78.00) = 4.05, \emph{p} = .048.
 
 \begin{longtable}[]{@{}lcccccc@{}}
 \caption{\label{tab:tab1}Summary of the results of the linear mixed-effects model.}\tabularnewline
@@ -171,27 +169,30 @@ Results also hold when reducing the data to infants with less than six HPP indic
 & \textbf{Coefficient} & \textbf{\emph{SEM}} & \textbf{95\% CI} & \textbf{\emph{F}} & \textbf{Den. \emph{df}} & \textbf{\emph{p}}\tabularnewline
 \midrule
 \endhead
-\emph{Intercept} & 7,679.0 & 673.3 & {[}6389.7, 9294.6{]} & 124.6 & 9.1 & \textless{} .001\tabularnewline
-\emph{Test Item} & -1,398.8 & 411.3 & {[}-2204.9, -589.1{]} & 11.6 & 100.0 & .001\tabularnewline
-\emph{HPP} & -539.7 & 238.7 & {[}-999.9, -74.7{]} & 4.8 & 133.1 & .030\tabularnewline
-\emph{Test Item \(\times\) HPP} & 667.1 & 192.6 & {[}247.2, 1028.5{]} & 12.0 & 100.0 & .001\tabularnewline
+\emph{Intercept} & 7,679.0 & 673.287 & {[}6389.7, 9294.6{]} & 124.638 & 9.060 & \textless{} .001\tabularnewline
+\emph{Test Item} & -1,398.8 & 411.324 & {[}-2204.9, -589.1{]} & 11.565 & 100.000 & .001\tabularnewline
+\emph{HPP} & -539.7 & 238.688 & {[}-999.9, -74.7{]} & 4.800 & 133.117 & .030\tabularnewline
+\emph{Test Item \(\times\) HPP} & 667.1 & 192.645 & {[}247.2, 1028.5{]} & 11.992 & 100.000 & .001\tabularnewline
 \bottomrule
 \end{longtable}
 
 \begin{figure}
-\includegraphics[width=\textwidth]{/Users/GonzaloGGC/projects/Flip/Figures/03_interaction} \caption{Panel A: graphic representation of the coefficients of the fixed effects of the model. Black dots represent the point estimate of the coefficient, black whiskers represent the standard error of the mean, and grey boxes represent the bootstrapped 95\% confidence interval around the point estimate. Panel B: predicted looking time (in ms) for familiar and novel test items plotted against number of HPP visits. Black dots and lines represent the mean predicted looking time, and grey shaded areas represent the standard error of the mean.}\label{fig:fig2}
+\includegraphics[width=\textwidth]{/Users/GonzaloGGC/projects/Flip/Figures/02_interaction} \caption{A: Difference in looking time between novel and familiar trials, as a function of HPP visits. shaded bands indicate 95\% CIs. Points represente group means, with error bars representing 95\% CIs. B: Predicted looking time (in ms) for familiar and novel test items plotted against number of HPP visits. Shaded bands represent +1\/-1 SEs. Points represent group means with +1\/-1 SEs as error bars.}\label{fig:fig2}
 \end{figure}
 
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
 
-Results reported in this article are consistent with our hypothesis that experience with the Head-turn Preference Procedure affects direction of preference. The model combined four experiments with 12-month-old infants performing simple artificial grammar learning tasks, and showed that infants who had \emph{not} previously experienced the HPP setting were more likely to show familiarity preferences than infants who had prior experience. One possible explanation for this finding relates to the structure of the HPP task. There are at least two types of information that must be simultaneously encoded by the infant at her first HPP experiment: 1) visual-auditory contingency (i.e., sounds appear contingently on the infant looking at the screen), and 2) the experiment stimuli (e.g., word sequences, sound streams). Therefore, infants have to engage in two concurrent learning when experiencing HPP for the first time: learning the structure of the HPP method, and solving the learning problem itself (e.g., discriminating sound strings following/breaking the grammar patterns). Such double-processing of information likely increases the task complexity, biasing results towards familiarity preferences. Infants who return to the lab for subsequent HPP experiments may be more able to focus on the learning problem, resulting in better learning as evidenced in novelty preferences.
+Experience with the Head-turn Preference Procedure affects direction of preference, at least for the subset of studies examined in this article. The model combined four experiments with 12-month-old infants performing artificial grammar learning tasks. Infants who had \emph{not} previously experienced the HPP setting were more likely to show familiarity preferences than infants who had prior experience. One possible explanation for this finding relates to the structure of the HPP task. There are at least two types of information that must be simultaneously encoded during an infant's first HPP experiment: 1) visual-auditory contingency (i.e., sounds appear contingently on the infant looking at the screen), and 2) the experiment stimuli (e.g., word sequences, sound streams). When experiencing HPP for the first time, infants must both learn the structure of the HPP method and solve the learning problem itself (e.g., grammatical pattern learning). Such double-processing of information likely increases the task complexity, biasing results towards familiarity preferences. Infants who return to the lab for subsequent HPP experiments may be more able to focus on the learning problem, resulting in better learning as evidenced by novelty preferences.
 
-It is important to notice that this effect may not just be limited to experiencing the HPP setting \emph{per se}, but can be caused by the entire laboratory visit. When infants visit the lab for the very first time, they face a challenging situation: a new environment with new people interacting with them, testing rooms with a peculiar design (e.g., all-black or all-white walls with big screens), and novel sounds and images. This is a great amount of novel information for a young infant to process at once. In contrast, as infants come back to the lab for subsequent studies, the location, testing room and research staff may become more familiar, reducing the information load. The present study cannot discern which type of previous experience (HPP setting or lab) is responsible for the observed results.
+It is important to notice that this effect may not just be limited to experiencing the HPP setting \emph{per se}, but may also be influenced by the laboratory visit itself. When infants visit the lab for the first time, they face an unusual situation: a new environment with unfamiliar people, testing rooms with a peculiar design (e.g., monochrome walls with big screens), and novel sounds and images (e.g., blinking lights). This is a significant amount of information for a young infant to process at once. In contrast, as infants come back to the lab for subsequent studies, the location, testing room and research staff may become more familiar, reducing the information load (see Rovee-Collier, 1997, for effects of consistent training and testing contexts on reminding infants of details of prior experiences). In the current study, the number of laboratory visits was significantly correlated with the number of HPP visits, \emph{r}(100 = .92, \emph{p} \textless{} .001, 95\% CI = {[}.88, .94{]}), therefore the current analyses cannot discern which type of previous experience (HPP procedure and/or lab setting) is responsible for the observed results.
 
-Our findings have important implications for the interpretation of directions of preference in future studies. Infants' prior experience with a lab or research paradigm could account for distinct, and sometimes counterintuitive, patterns of preference. A related hypothesis suggests that less-common directions of preference for studies addressing a given topic (e.g., rule learning) likely represent sign errors as opposed to true infant preferences {[}Rabagliati, Ferguson, and Lew-Williams (2019); Bergmann, Rabagliati, and Tsuji (2019); RR{]}. While this may be the case, it is also possible that discrepancies in preferential looking are related to factors like those investigate in the current study: prior experience with the testing environment. For this reason, discrepancies such as unexpected directions of preference may actually be meaningful and informative about the state of infant learners in specific studies.
+Our findings have important implications for the interpretation of directions of preference in future studies. Prior experience with a lab or research paradigm could account for distinct, and sometimes counterintuitive, patterns of preference.
+We encourage researchers to track number of visits as part of their lab's workflow, and to consider this form of prior experience when preregistering analytic plans and interpreting results. Doing so may be particularly informative when unpredicted directions of preferences emerge, as in the replication that spawned the current set of analyses. It is also possible that apparent null effects may be driven by variability in the number of lab visits; infants with more lab experience may show novelty preferences while infants with less lab experience may exhibit familiarity preferences, leading to an overall lack of preference across the sample. Effects of prior research experience are less likely to be evident in studies with large effect sizes, where there is less intra-infant variability. In addition, apparent age differences may conceivably be the result not of age per se, but of the number of prior studies, since older infants are likely to have participated in more experiments than younger infants, on average. By tracking infants' study participation, it becomes possible to examine these potential effects, which may be especially apparent in tasks that yield relatively small effects (as most infant studies do).
 
-These results would allow to update the model of the factors inducing different patterns of preferences in infant studies (e.g., Hunter \& Ames, 1988). Here we propose that the dimension \emph{task complexity} could be expanded beyond the specific task content (e.g., how complex are the stimuli presented) to include infants' familiarity with the task. Our findings, in fact, suggest that the learning outcome of a given task is constrained by how much task experience infants have accumulated through prior lab visits. Therefore, the amount of novel information infants have to process in parallel during a study increases the task demands, and the likelihood of showing a familiarity preference. This may well include the novelty of the experimental paradigm. It would be of great interest to expand our findings to other preferential paradigms (e.g., infant-controlled preferential looking procedures, visual-world paradigms) to advance our understanding of how such experiences modulate infants' performance at test.
+A related hypothesis suggests that less-common directions of preference for studies addressing a given topic (e.g., rule learning) likely represent sign errors (a sampling error in which the estimated effect has the wrong sign, e.g.~a novelty preference is incorrectly estimated to be a familiarity preference; see also Gelman \& Carlin, 2014) as opposed to true infant preferences (Bergmann, Rabagliati, \& Tsuji, 2019; Rabagliati, Ferguson, \& Lew-Williams, 2019). While this may be the case, it is also possible that some discrepancies in preferential looking are related to factors like those investigated in the current study: prior experience with the testing environment. For this reason, unexpected directions of preference may actually be meaningful and informative about the state of infant learners in specific studies.
+
+These results also suggest extensions of models of the factors inducing different patterns of preference (e.g., Hunter \& Ames, 1988). The current results suggest that the dimension of task complexity could be expanded beyond the specific task content (e.g., how complex are the stimuli presented) to include \emph{infants' familiarity with the paradigm}. Our findings, in fact, suggest that the learning outcome of a given task is constrained by how much task experience infants have accumulated through prior lab visits. Therefore, the amount of novel information infants must process in parallel during a study increases the task demands, and the likelihood of showing a familiarity preference. This may well include the novelty of the experimental paradigm. Ongoing efforts in the infant research community to facilitate large-scale replications of studies (e.g., Consortium, 2020) provide a unique opportunity to determine whether experience with different paradigms influences preferential behavior. Expanding our findings to other paradigms (e.g., infant-controlled preferential looking procedures, visual-world paradigms) would continue to advance our understanding of how task/laboratory experience modulates infants' performance. These efforts, in turn, will bring us closer to connecting our research paradigms with the pressing questions about infant behavior that we hope to answer.
 
 \newpage
 
@@ -218,8 +219,14 @@ Bosch, L., \& Sebastián‐Gallés, N. (2001). Evidence of Early Language Discri
 \leavevmode\hypertarget{ref-colombo1983}{}%
 Colombo, J., \& Bundy, R. S. (1983). Infant response to auditory familiarity and novelty. \emph{Infant Behavior \& Development}, \emph{6}(3), 305--311. \url{https://doi.org/10.1016/S0163-6383(83)80039-3}
 
+\leavevmode\hypertarget{ref-many-babies2020}{}%
+Consortium, T. M. (2020). Quantifying sources of variability in infancy research using the infant-directed-speech preference. \emph{Advances in Methods and Practices in Psychological Science}, \emph{3}(1), 24--52. \url{https://doi.org/10.1177/2515245919900809}
+
 \leavevmode\hypertarget{ref-dawson2009}{}%
 Dawson, C., \& Gerken, L. (2009). From Domain-Generality to Domain-Sensitivity: 4-Month-Olds Learn an Abstract Repetition Rule in Music That 7-Month-Olds Do Not. \emph{Cognition}, \emph{111}(3), 378--382. \url{https://doi.org/10.1016/j.cognition.2009.02.010}
+
+\leavevmode\hypertarget{ref-depaolis2016}{}%
+DePaolis, R. A., Keren-Portnoy, T., \& Vihman, M. (2016). Making sense of infant familiarity and novelty responses to words at lexical onset. \emph{Frontiers in Psychology}, \emph{7}, 715. \url{https://doi.org/10.3389/fpsyg.2016.00715}
 
 \leavevmode\hypertarget{ref-fantz1964}{}%
 Fantz, R. L. (1964). Visual Experience in Infants: Decreased Attention to Familiar Patterns Relative to Novel Ones. \emph{Science}, \emph{146}(3644), 668--670. \url{https://doi.org/10.1126/science.146.3644.668}
@@ -229,6 +236,9 @@ Ferguson, B., Franconeri, S. L., \& Waxman, S. R. (2018). Very young infants lea
 
 \leavevmode\hypertarget{ref-fiser2001}{}%
 Fiser, J., \& Aslin, R. N. (2001). Unsupervised statistical learning of higher-order spatial structures from visual scenes. \emph{Psychological Science}, \emph{12}(6), 499--504. \url{https://doi.org/10.1111/1467-9280.00392}
+
+\leavevmode\hypertarget{ref-gelman2014}{}%
+Gelman, A., \& Carlin, J. (2014). Beyond power calculations: Assessing type s (sign) and type m (magnitude) errors. \emph{Perspectives on Psychological Science}, \emph{9}(6), 641--651. \url{https://doi.org/https://doi.org/10.1177/1745691614551642}
 
 \leavevmode\hypertarget{ref-houston-price2004}{}%
 Houston‐Price, C., \& Nakai, S. (2004). Distinguishing novelty and familiarity effects in infant preference procedures. \emph{Infant and Child Development}, \emph{13}(4), 341--348. \url{https://doi.org/10.1002/icd.364}
@@ -263,8 +273,8 @@ Saffran, J. R., \& Wilson, D. P. (2003). From Syllables to Syntax: Multilevel St
 \leavevmode\hypertarget{ref-santolin2019}{}%
 Santolin, C., \& Saffran, J. R. (2019). Non-Linguistic Grammar Learning by 12-Month-Old Infants: Evidence for Constraints on Learning. \emph{Journal of Cognition and Development}, \emph{20}(3), 433--441. \url{https://doi.org/10.1080/15248372.2019.1604525}
 
-\leavevmode\hypertarget{ref-santolin2019a}{}%
-Santolin, C., Saffran, J. R., \& Sebastian-Galles, N. (2019). Non-linguistic artificial grammar learning in 12-month-old infants: A cross-lab replication study. In. Potsdam, Germany.
+\leavevmode\hypertarget{ref-sebastian-galles2020}{}%
+Sebastian-Galles, N., \& Santolin, C. (2020). Bilingual acquisition: The early steps. \emph{Annual Review of Developmental Psychology (in Press)}.
 
 \leavevmode\hypertarget{ref-sebastian-galles2009}{}%
 Sebastián-Gallés, N., \& Bosch, L. (2009). Developmental shift in the discrimination of vowel contrasts in bilingual infants: Is the distributional account all there is to it? \emph{Developmental Science}, \emph{12}(6), 874--887. \url{https://doi.org/10.1111/j.1467-7687.2009.00829.x}
@@ -295,18 +305,18 @@ model.}\label{s1-experiments-included-in-the-linear-mixed-effects-model.}}
 The selected experiments consist of an artificial grammar learning task
 with 12-month-old infants. These experiments are characterized by
 variability in the number of infants' prior HPP visits\footnote{At the
-time of publication of Saffran \& Wilson (2003), the first author
+time of publication of Saffran \& Wilson (2003)}, the first author
 noted that there appeared to be an association between the number of
-prior studies completed by the infants and the direction of
-preference. The analysis was included in the original manuscript
-submission but was removed from later revisions based on the
-manuscript reviews.}. They include all studies run in the two senior
-authors' labs that included (a) 12- to 13-month-old participants; (b)
-HPP; (c) artificial grammar learning (linguistic or non-linguistic); (d)
-2 to 5 minutes of exposure; (e) an \emph{a priori} hypothesis that
-infants would show learning; (f) visit numbers recorded at the time of
-testing. The studies are thus as well matched as is possible given the
-retrospective nature of this analysis.
+prior studies completed by the infants and the direction of preference.
+The analysis was included in the original manuscript submission but was
+removed from later revisions based on reviewer suggestions.{]}. They
+include all studies run in the two senior authors' labs that included
+(a) 11- to 13-month-old participants; (b) HPP; (c) artificial grammar
+learning (linguistic or non-linguistic); (d) 2 to 5 minutes of exposure;
+(e) an \emph{a priori} hypothesis that infants would show learning; (f)
+visit numbers recorded at the time of testing. The studies are thus as
+well matched as is possible given the retrospective nature of this
+analysis.
 
 \emph{Saffran \& Wilson (2003)} demonstrated that 12-month-old infants
 can compute multiple regularities from a finite-state grammar. Infants
@@ -316,8 +326,8 @@ segmented words. Test items consisted of grammatical and ungrammatical
 sentences that could only be discriminated based on word-level
 information (transitional probabilities between syllables were not
 informative about the ``grammaticality'' of test items). Infants showed
-a significant familiarity preference: \emph{F}(1, 38)= 5.37,
-\emph{p}\textless{}.05.
+a significant familiarity preference: \emph{F}(1, 38)= 5.37, \emph{p}
+\textless{} .05.
 
 \emph{Saffran, Hauser, Seibel, Kapfhamer, Tsao, \& Cushman (2008)}
 demonstrated that infants could detect simple phrases (i.e., clusters of
@@ -326,8 +336,14 @@ artificial grammars. In Exp. 1, infants in the Predictive Language
 condition were familiarized with a grammar including predictive
 (statistical) dependencies between words. The test items consisted of
 familiar sentences vs.~novel sentences violating the grammar. Infants
-showed a significant novelty preference: \emph{t}(11)= 2.52,
-\emph{p}\textless{}.05.
+showed a significant novelty preference: \emph{t}(11) = 2.52, \emph{p}
+\textless{} .05.
+
+\emph{Santolin \& Saffran (2019)} is a conceptual replication of Saffran
+et al. (2008) using non-linguistic sounds (e.g., computer alert sounds)
+to implement the grammars. Infants exposed to the Predictive language
+showed a significant novelty preference: \emph{t}(26) = 2.45, \emph{p} =
+.021, \emph{d} = 0.47.
 
 \emph{Santolin \& Saffran (2019)} is a conceptual replication of Saffran
 et al. (2008) using non-linguistic sounds (e.g., computer alert sounds)
@@ -339,53 +355,48 @@ We replicated the Predictive Language condition of Santolin \& Saffran
 (2019) at the University Pompeu Fabra, Barcelona (\emph{Santolin,
 Saffran \& Sebastian-Galles, 2019})(2019), using identical stimuli and
 procedures. We found significant discrimination of the test stimuli but
-observed the opposite direction of preference: Infants listened longer
-to familiar than novel strings: \emph{t}(23)=2.30, \emph{p}=.030,
-\emph{d}=0.47. All results are shown in Fig. 1 of the main manuscript.
+observed the opposite direction of preference: infants listened longer
+to familiar than novel strings: \emph{t}(23) = 2.30, \emph{p} = .030,
+\emph{d} = 0.47. All results are shown in Figure 1 of the main
+manuscript.
 
 \hypertarget{s2-participants-information}{%
 \subsection{S2: Participants
 information}\label{s2-participants-information}}
 
-We retrieved data from 102 12-month-old infants who had participated in
-a range of 1-6 HPP visits Three of the experiments were run in Madison,
-WI (University of Wisconsin-Madison): Saffran \& Wilson, 2003 (Exp. 2;
+We retrieved data from 102 infants who had participated in a range of
+1-6 HPP visits. Three of the experiments were run in Madison, WI
+(University of Wisconsin-Madison): Saffran \& Wilson, 2003 (Exp. 2;
 \emph{N}=40, mean age: 11.5 months); Saffran et al., 2008 (Exp. 1,
-Condition P-Language; \emph{N}=12), mean age: 12.8 months); Santolin \&
+Condition P-Language: \emph{N}=12, mean age: 12.8 months); Santolin \&
 Saffran, 2019 (Condition 1; \emph{N}=26, mean age: 12.9 months). One
 study was run in Barcelona, Spain (Universitat Pompeu Fabra): Santolin,
 Saffran \& Sebastian-Galles, 2019 (\emph{N}=24, mean age: 13 months).
-Two data points (average looking time for familiar and novel test items)
-were available for each participant. Participants included in the
-current analysis are those included in the final version of the studies.
 
 \hypertarget{s3-linear-mixed-effects-model---additional-information}{%
 \subsection{S3: Linear mixed-effects model - additional
 information}\label{s3-linear-mixed-effects-model---additional-information}}
 
-We fit a model predicting looking time (\(LT\)) including \(TestItem\)
+We fit a model predicting looking time (\(LT\)) including \(Item\)
 (Familiar vs.~Novel), number of Head-turn Preference Procedure
 experiments completed by infants (\(HPP\)), and their interaction
-(\(Item \times HPP\)) as fixed effects. Participant and study (4 levels:
-Santolin \& Saffran, 2019; Santolin, Saffran, \& Sebastian-Galles, 2019;
-Saffran et al., 2008; Saffran \& Wilson, 2003) were included as random
-effects. Following Barr, Levy, Scheepers, \& Tily (2013), we fit a model
-with a maximal random effects structure including random intercepts
-by-participant and by-study, and random slopes of HPP by-participant and
-by-study. However, due to lack of convergence, we pruned the random
-effects structure until convergence was achieved (e.g., Brauer \&
-Curtin, 2018) or the model showed little evidence of
-overparameterization (Bates et al., 2015a). The final model included
-by-participant and by-study random intercepts only. The particular
-random effects structure chosen does not qualitatively impact the
-estimates and conclusions from the model. This model accounts for
-cross-participant variability in overall looking time (as some infants
-look longer than others), and for cross-studies differences in overall
-looking time. The model was fit using the \texttt{lme4} package (Bates
-et al., 2015b) from the R environment (R Core Team, 2018). We used the
-\texttt{Anova} function from the \texttt{car} R package (Fox \&
-Weisberg, 2019) to perform F-tests on fixed effects using
-Kenward-Roger's approximation to degrees of freedom (e.g., Judd,
+(\(Item \times HPP\)) as fixed effects. Participant and study {[}4
+levels: Santolin \& Saffran (2019), Santolin, Saffran \&
+Sebastian-Galles (2019), Saffran et al. (2008), Saffran \& Wilson
+(2003){]} were included as random effects. Following Barr, Levy,
+Scheepers, \& Tily (2013), we fit a model with the maximal random
+effects structure including random intercepts by-participant and
+by-study, and random slopes of \(HPP\) by-participant and by-study.
+However, due to lack of convergence, we pruned the random effects
+structure until convergence was achieved (e.g., Brauer \& Curtin, 2018).
+The final model included by-participant and by-study random intercepts
+only. This model accounts for cross-participant variability in overall
+looking time (as some infants look longer than others), and for
+cross-study differences in overall looking time. The model was fit using
+the \texttt{lme4} R package (Bates, Kliegl, Vasishth, \& Baayen, 2015).
+We used the \texttt{Anova} function from the \texttt{car} R package (Fox
+\& Weisberg, 2019) to perform \emph{F}-tests on fixed effects using
+Kenward-Roger's approximation of the degrees of freedom (e.g., Judd,
 Westfall, \& Kenny, 2012).
 
 \hypertarget{s4-results-sub-setting-data-to-participants-with-less-than-6-5-4-and-3-hpp-studies}{%
@@ -396,9 +407,9 @@ studies}\label{s4-results-sub-setting-data-to-participants-with-less-than-6-5-4-
 Consistent with the results of the entire dataset, we found a
 statistically significant interaction of \emph{Test Item} with the
 number of \emph{HPP} visits when reducing the sample to the infants who
-participanted in less than 6, 5, 4, and 3 HPP experiments. Below, we
-report the output of the linear mixed-effects model fitted on the
-original and reduced samples (Table A1, Figure A1).
+participated in less than 6, 5, 4, and 3 HPP experiments. Below, a table
+reporting the output of the linear mixed-effects model fitted on the
+original and reduced samples (Table S4.1).
 
 \begin{longtable}[]{@{}cccccccc@{}}
 \toprule
@@ -407,23 +418,15 @@ original and reduced samples (Table A1, Figure A1).
 \emph{df}} & \textbf{\emph{p}}\tabularnewline
 \midrule
 \endhead
-Original & \emph{Intercept} & 7,679.1 & 673.1 & {[}6390.1, 9294.1{]} &
-124.7 & 9.1 & \textless{} .001\tabularnewline
-& \emph{Test Item} & -1,398.8 & 411.3 & {[}-2204.8, -589.1{]} & 11.6 &
+Original & \emph{Intercept} & 7,679.0 & 673.3 & {[}6389.7, 9294.6{]} &
+124.6 & 9.1 & \textless{} .001\tabularnewline
+& \emph{Test Item} & -1,398.8 & 411.3 & {[}-2204.9, -589.1{]} & 11.6 &
 100.0 & .001\tabularnewline
-& \emph{HPP} & -539.7 & 238.7 & {[}-999.9, -74.8{]} & 4.8 & 133.1 &
+& \emph{HPP} & -539.7 & 238.7 & {[}-999.9, -74.7{]} & 4.8 & 133.1 &
 .030\tabularnewline
 & \emph{Test Item \(\times\) HPP} & 667.1 & 192.6 & {[}247.2, 1028.5{]}
 & 12.0 & 100.0 & .001\tabularnewline
-HPP 1-5 & \emph{Intercept} & 7,675.0 & 691.6 & {[}6452.7, 9029.3{]} &
-118.3 & 10.1 & \textless{} .001\tabularnewline
-& \emph{Test Item} & -1,416.1 & 435.4 & {[}-2237.7, -543.7{]} & 10.6 &
-99.0 & .002\tabularnewline
-& \emph{HPP} & -535.6 & 261.2 & {[}-1081.1, -37.5{]} & 4.0 & 133.6 &
-.048\tabularnewline
-& \emph{Test Item \(\times\) HPP} & 677.8 & 211.3 & {[}241, 1081.9{]} &
-10.3 & 99.0 & .002\tabularnewline
-HPP 1-4 & \emph{Intercept} & 7,611.1 & 719.4 & {[}6188.4, 9275.6{]} &
+HPP 1-5 & \emph{Intercept} & 7,611.1 & 719.3 & {[}6188.6, 9275.3{]} &
 107.4 & 10.5 & \textless{} .001\tabularnewline
 & \emph{Test Item} & -1,491.1 & 452.1 & {[}-2348.4, -578.5{]} & 10.9 &
 98.0 & .001\tabularnewline
@@ -431,7 +434,15 @@ HPP 1-4 & \emph{Intercept} & 7,611.1 & 719.4 & {[}6188.4, 9275.6{]} &
 .083\tabularnewline
 & \emph{Test Item \(\times\) HPP} & 726.2 & 224.9 & {[}294.2, 1145{]} &
 10.4 & 98.0 & .002\tabularnewline
-HPP1-3 & \emph{Intercept} & 7,470.0 & 794.6 & {[}6007.1, 9172.5{]} &
+HPP 1-4 & \emph{Intercept} & 7,611.1 & 719.3 & {[}6188.6, 9275.3{]} &
+107.4 & 10.5 & \textless{} .001\tabularnewline
+& \emph{Test Item} & -1,491.1 & 452.1 & {[}-2348.4, -578.5{]} & 10.9 &
+98.0 & .001\tabularnewline
+& \emph{HPP} & -500.8 & 278.7 & {[}-1070.2, 98.2{]} & 3.0 & 131.9 &
+.083\tabularnewline
+& \emph{Test Item \(\times\) HPP} & 726.2 & 224.9 & {[}294.2, 1145{]} &
+10.4 & 98.0 & .002\tabularnewline
+HPP1-3 & \emph{Intercept} & 7,470.0 & 794.6 & {[}6007.1, 9172.6{]} &
 83.8 & 14.3 & \textless{} .001\tabularnewline
 & \emph{Test Item} & -1,349.9 & 532.3 & {[}-2426.9, -267.6{]} & 6.4 &
 92.0 & .013\tabularnewline
@@ -439,7 +450,7 @@ HPP1-3 & \emph{Intercept} & 7,470.0 & 794.6 & {[}6007.1, 9172.5{]} &
 .299\tabularnewline
 & \emph{Test Item \(\times\) HPP} & 627.9 & 294.1 & {[}3, 1252.6{]} &
 4.6 & 92.0 & .035\tabularnewline
-HPP 1-2 & \emph{Intercept} & 7,301.9 & 1,009.9 & {[}5252.9, 9362.1{]} &
+HPP 1-2 & \emph{Intercept} & 7,301.9 & 1009.9 & {[}5253.3, 9362.1{]} &
 48.9 & 23.9 & \textless{} .001\tabularnewline
 & \emph{Test Item} & -1,783.7 & 726.7 & {[}-3199.6, -360.7{]} & 6.0 &
 78.0 & .016\tabularnewline
@@ -451,7 +462,7 @@ HPP 1-2 & \emph{Intercept} & 7,301.9 & 1,009.9 & {[}5252.9, 9362.1{]} &
 \end{longtable}
 
 In all models, the \(Item \times HPP\) interaction term was
-statistically significant {[}HPP 1-5: \emph{F}(1, 99) = 10.29, \emph{p}
+statistically significant {[}HPP 1-5: \emph{F}(1, 98) = 10.42, \emph{p}
 = .002; HPP 1-4: \emph{F}(1, 98) = 10.42, \emph{p} = .002; HPP 1-3:
 \emph{F}(1, 92) = 4.56, \emph{p} = .035; HPP 1-2: \emph{F}(1, 78) =
 4.05, \emph{p} = .048{]} . These results provide evidence that the
@@ -466,7 +477,7 @@ is not entirely dependent on any subsample of the HPP variable.
 \section{Session info}\label{session-info}}
 
 R version 3.6.3 (2020-02-29) Platform: x86\_64-apple-darwin15.6.0
-(64-bit) Running under: macOS Catalina 10.15.2
+(64-bit) Running under: macOS Catalina 10.15.4
 
 Matrix products: default BLAS:
 /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
@@ -480,22 +491,22 @@ attached base packages: {[}1{]} stats graphics grDevices utils datasets
 methods base
 
 other attached packages: {[}1{]} purrr\_0.3.4 kableExtra\_1.1.0
-ggplot2\_3.3.0 here\_0.1\\
-{[}5{]} tibble\_3.0.1 dplyr\_0.8.5 magrittr\_1.5 knitr\_1.28\\
+ggplot2\_3.3.1 here\_0.1\\
+{[}5{]} tibble\_3.0.1 dplyr\_1.0.0 magrittr\_1.5 knitr\_1.28\\
 {[}9{]} papaja\_0.1.0.9942
 
 loaded via a namespace (and not attached): {[}1{]} Rcpp\_1.0.4.6
-pillar\_1.4.3 compiler\_3.6.3 highr\_0.8\\
+pillar\_1.4.4 compiler\_3.6.3 highr\_0.8\\
 {[}5{]} base64enc\_0.1-3 tools\_3.6.3 digest\_0.6.25 viridisLite\_0.3.0
 {[}9{]} evaluate\_0.14 lifecycle\_0.2.0 gtable\_0.3.0 pkgconfig\_2.0.3\\
-{[}13{]} rlang\_0.4.5 rstudioapi\_0.11 yaml\_2.2.1 xfun\_0.13\\
+{[}13{]} rlang\_0.4.6 rstudioapi\_0.11 yaml\_2.2.1 xfun\_0.14\\
 {[}17{]} xml2\_1.3.1 httr\_1.4.1 withr\_2.2.0 stringr\_1.4.0\\
-{[}21{]} hms\_0.5.3 vctrs\_0.2.4 webshot\_0.5.2 rprojroot\_1.3-2\\
-{[}25{]} grid\_3.6.3 tidyselect\_1.0.0 glue\_1.4.0 R6\_2.4.1\\
-{[}29{]} rmarkdown\_2.1 bookdown\_0.18 readr\_1.3.1 backports\_1.1.6\\
-{[}33{]} scales\_1.1.0 ellipsis\_0.3.0 htmltools\_0.4.0 rvest\_0.3.5\\
-{[}37{]} assertthat\_0.2.1 colorspace\_1.4-1 stringi\_1.4.6
-munsell\_0.5.0\\
+{[}21{]} hms\_0.5.3 generics\_0.0.2 vctrs\_0.3.0 webshot\_0.5.2\\
+{[}25{]} rprojroot\_1.3-2 grid\_3.6.3 tidyselect\_1.1.0 glue\_1.4.1\\
+{[}29{]} R6\_2.4.1 rmarkdown\_2.1 bookdown\_0.18 readr\_1.3.1\\
+{[}33{]} backports\_1.1.7 scales\_1.1.1 ellipsis\_0.3.1
+htmltools\_0.4.0\\
+{[}37{]} rvest\_0.3.5 colorspace\_1.4-1 stringi\_1.4.6 munsell\_0.5.0\\
 {[}41{]} crayon\_1.3.4
 
 \hypertarget{references}{%
@@ -513,15 +524,9 @@ effects structure for confirmatory hypothesis testing: Keep it maximal.
 \url{https://doi.org/10.1016/j.jml.2012.11.001}
 
 \leavevmode\hypertarget{ref-bates2015a}{}%
-Bates, D., Kliegl, R., Vasishth, S., \& Baayen, H. (2015a). Parsimonious
+Bates, D., Kliegl, R., Vasishth, S., \& Baayen, H. (2015). Parsimonious
 Mixed Models. \emph{arXiv:1506.04967 {[}Stat{]}}. Retrieved from
 \url{http://arxiv.org/abs/1506.04967}
-
-\leavevmode\hypertarget{ref-bates2015}{}%
-Bates, D., Mächler, M., Bolker, B., \& Walker, S. (2015b). Fitting
-linear mixed-effects models using lme4. \emph{Journal of Statistical
-Software}, \emph{67}(1), 1--48.
-\url{https://doi.org/10.18637/jss.v067.i01}
 
 \leavevmode\hypertarget{ref-brauer2018}{}%
 Brauer, M., \& Curtin, J. J. (2018). Linear mixed-effects models and the
@@ -541,11 +546,6 @@ random factor in social psychology: A new and comprehensive solution to
 a pervasive but largely ignored problem. \emph{Journal of Personality
 and Social Psychology}, \emph{103}(1), 54--69.
 \url{https://doi.org/10.1037/a0028347}
-
-\leavevmode\hypertarget{ref-rcoreteam2018}{}%
-R Core Team. (2018). \emph{R: A language and environment for statistical
-computing}. Vienna, Austria. Retrieved from
-\url{https://www.R-project.org/}
 
 \leavevmode\hypertarget{ref-saffran2008}{}%
 Saffran, J., Hauser, M., Seibel, R., Kapfhamer, J., Tsao, F., \&

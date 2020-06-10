@@ -222,15 +222,15 @@ ggplot(dat_diff_hpp, aes(hpp, mean_novelty_preference)) +
 
 #### 10. Export results ########################################################
 # 10.a. Export results from Item-dummy-coded model (baseline on familiar trials)
-write.table(data, here("Data", "01_data-processed.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(dat, here("Data", "01_data-processed.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(anova, here("Data", "02_results-lmem.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(predictions, here("Data", "02_results-effects.csv"), sep = ",", dec = ".", row.names = FALSE)
 # 11.b. Export results from Item-effect-coded model
-write.table(data, here("Data", "Effect-coding", "01_data-processed-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(dat, here("Data", "Effect-coding", "01_data-processed-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(anova.effect, here("Data", "Effect-coding", "02_results-lmem-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(predictions.effect, here("Data", "Effect-coding", "02_results-effects-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
 # 11.c. Export results from Item-dummy-coded model (baseline on novel trials)
-write.table(data, here("Data", "Dummy-coding-Novel", "01_data-processed-novel.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(dat, here("Data", "Dummy-coding-Novel", "01_data-processed-novel.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(anova.novel, here("Data", "Dummy-coding-Novel", "02_results-lmem-novel.csv"), sep = ",", dec = ".", row.names = FALSE)
 write.table(predictions.novel, here("Data", "Dummy-coding-Novel", "02_results-effects-novel.csv"), sep = ",", dec = ".", row.names = FALSE)
 
