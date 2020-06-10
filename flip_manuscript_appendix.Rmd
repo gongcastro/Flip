@@ -54,9 +54,9 @@ The selected experiments consist of an artificial grammar learning task with 12-
 
 *Saffran, Hauser, Seibel, Kapfhamer, Tsao, & Cushman (2008)* demonstrated that infants could detect simple phrases (i.e., clusters of nonsense words grouped together based on statistical regularities) from artificial grammars. In Exp. 1, infants in the Predictive Language condition were familiarized with a grammar including predictive (statistical) dependencies between words. The test items consisted of familiar sentences vs. novel sentences violating the grammar. Infants showed a significant novelty preference: *t*(`r printnum(11, digits = 0)`) = `r printnum(2.52, digits = 2)`, *p* < .05.
 
+
 *@santolin2019* is a conceptual replication of @saffran2008 using non-linguistic sounds (e.g., computer alert sounds) to implement the grammars. Infants exposed to the Predictive language showed a significant novelty preference: *t*(`r printnum(26, digits = 0)`) = `r printnum(2.45, digits = 2)`, *p* = `r printp(0.021, digits = 3)`, *d* = `r printnum(0.47, digits = 2)`.
 	
-*@santolin2019* is a conceptual replication of @saffran2008 using non-linguistic sounds (e.g., computer alert sounds) to implement the grammars. Infants exposed to the Predictive language showed a significant novelty preference: *t*(`r printnum(26, digits = 0)`)=`r printnum(2.45, digits = 2)`, *p*=`r printp(0.021, digits = 3)`, *d*=`r printnum(0.47, digits = 2)`.
 
 We replicated the Predictive Language condition of @santolin2019 at the University Pompeu Fabra, Barcelona (*Santolin, Saffran & Sebastian-Galles, 2019*)[-@santolin2019a], using identical stimuli and procedures. We found significant discrimination of the test stimuli but observed the opposite direction of preference: infants listened longer to familiar than novel strings: *t*(`r printnum(23, digits = 0)`) = `r printnum(2.303, digits = 2)`, *p* = `r printp(0.03, digits = 3)`, *d* = `r printnum(0.47, digits = 2)`. All results are shown in Figure 1 of the main manuscript. 
 
