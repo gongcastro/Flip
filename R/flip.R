@@ -188,18 +188,18 @@ ggplot(study_data, aes(item, looking_time, fill = item)) +
 ggplot(dat_diff_hpp, aes(hpp, mean_novelty_preference)) +
   geom_hline(yintercept = 0, size = 1, linetype = "dotted") +
   geom_smooth(data = dat_diff, aes(hpp, novelty_preference), formula = "y ~ x",
-              colour = "black", size = 1.2, method = "lm", alpha = 0.25) +
-  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
-  geom_point(aes(size = N))+
+              colour = "#225ea8", fill = "#225ea8", size = 1.2, method = "lm", alpha = 0.25) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0, colour = "#e34a33") +
+  geom_point(aes(size = N), colour = "#e34a33") +
   xlab("HPP visits")+
   scale_x_continuous(breaks = seq(1, 6))+
   scale_y_continuous(breaks = seq(-1000, 4000, 1000), labels = add_big_mark)+
   ylab("Difference in Looking Time (ms)\n(Novel - Familiar)")+
   theme_custom +
-  theme(legend.position = "top") +
+  theme(legend.position = c(0.15, 0.7)) +
 
   # 9.3. Predictions
-  ggplot(predictions, aes(hpp, fit, fill = item, shape = item, linetype = item)) +
+  ggplot(predictions, aes(hpp, fit, fill = item, shape = item, colour = item, linetype = item)) +
   geom_ribbon(aes(ymin = fit-std_error, ymax = fit+std_error), colour = NA, alpha = 0.5) +
   geom_line(size = 1) +
   geom_point(data = dat_aggregated, aes(x = hpp, y = mean_looking_time),
@@ -210,14 +210,15 @@ ggplot(dat_diff_hpp, aes(hpp, mean_novelty_preference)) +
        colour = "Test item", fill = "Test item", linetype = "Test item", shape = "Test item") +
   scale_y_continuous(labels = add_big_mark) +
   scale_x_continuous(breaks = seq(1, 6, by = 1)) +
-  scale_fill_grey() +
+  scale_colour_brewer(palette = "Set1") +
+  scale_fill_brewer(palette = "Set1") +
   theme_custom +
-  theme(legend.position = "top", 
-        legend.direction = "horizontal") +
+  theme(legend.position = c(0.2, 0.2), 
+        legend.direction = "vertical") +
   plot_layout(guides = "keep") +
   plot_annotation(tag_levels = "A", theme = theme_custom) +
-  ggsave(here("Figures", "02_interaction.png"), width = 15) +
-  ggsave(here("Figures", "02_interaction.pdf"), width = 15) 
+  ggsave(here("Figures", "02_interaction.png"), width = 12) +
+  ggsave(here("Figures", "02_interaction.pdf"), width = 12) 
 
 #### 10. Export results ########################################################
 # 10.a. Export results from Item-dummy-coded model (baseline on familiar trials)
