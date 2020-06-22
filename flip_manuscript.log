@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.5.9)  10 JUN 2020 17:16
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.20)  22 JUN 2020 17:19
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **flip_manuscript.tex
 (./flip_manuscript.tex
 LaTeX2e <2020-02-02> patch level 5
-L3 programming layer <2020-05-05> (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist
+L3 programming layer <2020-06-18> (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist
 /tex/latex/apa6/apa6.cls
 Document Class: apa6 2020/01/13 v2.34 APA formatting (6th edition)
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/base/article.cls
@@ -147,9 +147,9 @@ Package: threeparttable 2003/06/13  v 3.0
 \b@level@five@skip=\skip57
 \e@level@five@skip=\skip58
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/caption/caption.sty
-Package: caption 2020/01/03 v3.4h Customizing captions (AR)
+Package: caption 2020/05/30 v3.4k Customizing captions (AR)
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/caption/caption3.sty
-Package: caption3 2020/01/03 v1.8h caption3 kernel (AR)
+Package: caption3 2020/05/30 v1.12 caption3 kernel (AR)
 Package caption3 Info: TeX engine: e-TeX on input line 61.
 \captionmargin=\dimen158
 \captionmargin@=\dimen159
@@ -295,13 +295,13 @@ Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
 Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
 tim
 ) (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty
-Package: hyperref 2020/01/14 v7.00d Hypertext links for LaTeX
+Package: hyperref 2020-05-15 v7.00e Hypertext links for LaTeX
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
 Package: ltxcmds 2019/12/15 v1.24 LaTeX kernel commands for general use (HO)
 )
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/pdftexcmds/pdftexcmds.s
 ty
-Package: pdftexcmds 2019/11/24 v0.31 Utility functions of pdfTeX for LuaTeX (HO
+Package: pdftexcmds 2020-06-04 v0.32 Utility functions of pdfTeX for LuaTeX (HO
 )
 
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/generic/infwarerr/infwarerr.s
@@ -339,7 +339,7 @@ Package: kvoptions 2019/11/29 v3.13 Key value format for package options (HO)
 \Hy@linkcounter=\count270
 \Hy@pagecounter=\count271
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def
-File: pd1enc.def 2020/01/14 v7.00d Hyperref: PDFDocEncoding definition (HO)
+File: pd1enc.def 2020-05-15 v7.00e Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
 ) (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty
@@ -349,25 +349,25 @@ Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
 )
 \Hy@SavedSpaceFactor=\count272
-Package hyperref Info: Option `unicode' set `true' on input line 4421.
+Package hyperref Info: Option `unicode' set `true' on input line 4338.
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/hyperref/puenc.def
-File: puenc.def 2020/01/14 v7.00d Hyperref: PDF Unicode definition (HO)
+File: puenc.def 2020-05-15 v7.00e Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
 )
-Package hyperref Info: Hyper figures OFF on input line 4547.
-Package hyperref Info: Link nesting OFF on input line 4552.
-Package hyperref Info: Hyper index ON on input line 4555.
-Package hyperref Info: Plain pages OFF on input line 4562.
-Package hyperref Info: Backreferencing OFF on input line 4567.
+Package hyperref Info: Hyper figures OFF on input line 4464.
+Package hyperref Info: Link nesting OFF on input line 4469.
+Package hyperref Info: Hyper index ON on input line 4472.
+Package hyperref Info: Plain pages OFF on input line 4479.
+Package hyperref Info: Backreferencing OFF on input line 4484.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
-Package hyperref Info: Bookmarks ON on input line 4800.
+Package hyperref Info: Bookmarks ON on input line 4717.
 \c@Hy@tempcnt=\count273
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip17
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
-LaTeX Info: Redefining \url on input line 5159.
+LaTeX Info: Redefining \url on input line 5076.
 \XeTeXLinkMargin=\dimen175
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -380,15 +380,15 @@ Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 \Fld@menulength=\count274
 \Field@Width=\dimen176
 \Fld@charsize=\dimen177
-Package hyperref Info: Hyper figures OFF on input line 6430.
-Package hyperref Info: Link nesting OFF on input line 6435.
-Package hyperref Info: Hyper index ON on input line 6438.
-Package hyperref Info: backreferencing OFF on input line 6445.
-Package hyperref Info: Link coloring OFF on input line 6450.
-Package hyperref Info: Link coloring with OCG OFF on input line 6455.
-Package hyperref Info: PDF/A mode OFF on input line 6460.
-LaTeX Info: Redefining \ref on input line 6500.
-LaTeX Info: Redefining \pageref on input line 6504.
+Package hyperref Info: Hyper figures OFF on input line 6347.
+Package hyperref Info: Link nesting OFF on input line 6352.
+Package hyperref Info: Hyper index ON on input line 6355.
+Package hyperref Info: backreferencing OFF on input line 6362.
+Package hyperref Info: Link coloring OFF on input line 6367.
+Package hyperref Info: Link coloring with OCG OFF on input line 6372.
+Package hyperref Info: PDF/A mode OFF on input line 6377.
+LaTeX Info: Redefining \ref on input line 6417.
+LaTeX Info: Redefining \pageref on input line 6421.
 
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/generic/atbegshi/atbegshi.sty
 Package: atbegshi 2019/12/05 v1.19 At begin shipout hook (HO)
@@ -399,7 +399,7 @@ Package: atbegshi 2019/12/05 v1.19 At begin shipout hook (HO)
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def
-File: hpdftex.def 2020/01/14 v7.00d Hyperref driver for pdfTeX
+File: hpdftex.def 2020-05-15 v7.00e Hyperref driver for pdfTeX
 
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/atveryend/atveryend.sty
 Package: atveryend 2019-12-11 v1.11 Hooks at the very end of document (HO)
@@ -524,11 +524,12 @@ Package csquotes Info: ... configuration file loaded successfully.
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/csquotes/csquotes.cfg
 File: csquotes.cfg 
 )) (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/generic/babel/babel.sty
-Package: babel 2020/04/28 3.43 The Babel package
+Package: babel 2020/06/10 3.45 The Babel package
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/generic/babel/babel.def
-File: babel.def 2020/04/28 3.43 Babel common definitions
+File: babel.def 2020/06/10 3.45 Babel common definitions
 \babel@savecnt=\count300
 \U@D=\dimen192
+\l@babelnohyphens=\language5
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/generic/babel/txtbabel.def)
 \bbl@readstream=\read2
 )
@@ -559,7 +560,7 @@ Package csquotes Info: Redefining alias 'default' -> 'english'.
 
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdf
 mode.def
-File: l3backend-pdfmode.def 2020-05-05 L3 backend support: PDF mode
+File: l3backend-pdfmode.def 2020-06-18 L3 backend support: PDF mode
 \l__kernel_color_stack_int=\count302
 \l__pdf_internal_box=\box58
 ) (./flip_manuscript.aux
@@ -649,7 +650,7 @@ Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: longtable package is loaded.
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/caption/ltcaption.sty
-Package: ltcaption 2018/08/26 v1.4a longtable captions (AR)
+Package: ltcaption 2020/05/30 v1.4b longtable captions (AR)
 )
 Package caption Info: End \AtBeginDocument code.
 \AtBeginShipoutBox=\box59
@@ -716,7 +717,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 .map}
 
 ] [2] [3] [4]
-</Users/GonzaloGGC/projects/Flip/Figures/01_lookingtimes-study.png, id=73, 3613
+</Users/GonzaloGGC/projects/Flip/Figures/01_lookingtimes-study.png, id=79, 3613
 .5pt x 1806.75pt>
 File: /Users/GonzaloGGC/projects/Flip/Figures/01_lookingtimes-study.png Graphic
  file (type png)
@@ -728,7 +729,7 @@ s-study.png  used on input line 146.
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 [6 </Users/GonzaloGGC/projects/Flip/Figures/01_lookingtimes-study.png>]
-</Users/GonzaloGGC/projects/Flip/Figures/02_interaction.pdf, id=87, 867.24pt x 
+</Users/GonzaloGGC/projects/Flip/Figures/02_interaction.pdf, id=98, 867.24pt x 
 336.25626pt>
 File: /Users/GonzaloGGC/projects/Flip/Figures/02_interaction.pdf Graphic file (
 type pdf)
@@ -742,105 +743,116 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 [7] [8 </Users/GonzaloGGC/projects/Flip/Figures/02_interaction.pdf>] [9] [10] [
 11] [12] [13] [14] [15]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 313.
+(Font)              <10> on input line 319.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 313.
+(Font)              <7> on input line 319.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 313.
+(Font)              <5> on input line 319.
 [16
 
 
 ]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 3
-90.
+95.
 (/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) [17]pdfTeX warning (ext4): destination with the same identifier (name{table.1
 }) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.408 \begin{longtable}[]{@{}cccccccc@{}}
+l.412 \begin{longtable}[]{@{}cccccccc@{}}
                                          
-Overfull \hbox (35.69559pt too wide) in alignment at lines 408--414
+Overfull \hbox (35.69559pt too wide) in alignment at lines 412--425
  [] [] [] [] [] [] [] [] 
  []
 
 
-Overfull \hbox (35.69559pt too wide) in alignment at lines 414--455
+Overfull \hbox (35.69559pt too wide) in alignment at lines 425--431
  [] [] [] [] [] [] [] [] 
  []
 
 
-Overfull \hbox (35.69559pt too wide) in alignment at lines 455--456
+Overfull \hbox (35.69559pt too wide) in alignment at lines 431--472
  [] [] [] [] [] [] [] [] 
  []
 
 [18]
-</Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged.pdf, id=221, 505.89pt 
-x 505.89pt>
+Overfull \hbox (35.69559pt too wide) in alignment at lines 472--473
+ [] [] [] [] [] [] [] [] 
+ []
+
+[19]
+</Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged.pdf, id=237, 466.74374
+pt x 505.89pt>
 File: /Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged.pdf Graphic file 
 (type pdf)
 <use /Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged.pdf>
 Package pdftex.def Info: /Users/GonzaloGGC/projects/Flip/Figures/05_anova-merge
-d.pdf  used on input line 467.
-(pdftex.def)             Requested size: 469.76265pt x 469.76265pt.
-[19] [20 </Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged.pdf>]pdfTeX w
-arning (ext4): destination with the same identifier (name{references}) has been
- already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.507 \subsection{References}\label{references}}
-                                                 [21
+d.pdf  used on input line 476.
+(pdftex.def)             Requested size: 466.74971pt x 505.89645pt.
+[20] [21 </Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged.pdf>] [22
 
-]pdfTeX warning (ext4): destination with the same identifier (name{refs}) has b
-een already used, duplicate ignored
+]pdfTeX warning (ext4): destination with the same identifier (name{references})
+ has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.513 \hypertarget{refs}{}
+l.517 \subsection*{References}\label{references}}
+                                                 pdfTeX warning (ext4): destina
+tion with the same identifier (name{refs}) has been already used, duplicate ign
+ored
+<to be read again> 
+                   \relax 
+l.524 \hypertarget{refs}{}
                           pdfTeX warning (ext4): destination with the same iden
 tifier (name{ref-judd2012}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.537 \leavevmode\hypertarget{ref-judd2012}{}
+l.548 \leavevmode\hypertarget{ref-judd2012}{}
                                              %pdfTeX warning (ext4): destinatio
 n with the same identifier (name{ref-saffran2008}) has been already used, dupli
 cate ignored
 <to be read again> 
                    \relax 
-l.544 \leavevmode\hypertarget{ref-saffran2008}{}
+l.555 \leavevmode\hypertarget{ref-saffran2008}{}
                                                 %pdfTeX warning (ext4): destina
 tion with the same identifier (name{ref-saffran2003}) has been already used, du
 plicate ignored
 <to be read again> 
                    \relax 
-l.550 \leavevmode\hypertarget{ref-saffran2003}{}
+l.561 \leavevmode\hypertarget{ref-saffran2003}{}
                                                 %pdfTeX warning (ext4): destina
 tion with the same identifier (name{ref-santolin2019}) has been already used, d
 uplicate ignored
 <to be read again> 
                    \relax 
-l.555 \leavevmode\hypertarget{ref-santolin2019}{}
-                                                 % [22] AED endfloat: Processin
-g end Figures and Tables [23]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 569.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 569.
+l.566 \leavevmode\hypertarget{ref-santolin2019}{}
+                                                 % [23]pdfTeX warning (ext4): d
+estination with the same identifier (name{ref-santolin2019a}) has been already 
+used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.572 \leavevmode\hypertarget{ref-santolin2019a}{}
+                                                  % AED endfloat: Processing en
+d Figures and Tables [24]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 580.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 580.
 (./flip_manuscript.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 569.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 569.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 580.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 580.
 Package rerunfilecheck Info: File `flip_manuscript.out' has not changed.
-(rerunfilecheck)             Checksum: 4512FAB3926BF9E5AF350A02DA3A1CD6;2473.
+(rerunfilecheck)             Checksum: C51C6939F84583DD30583167E6C1E0EF;2576.
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 14400 strings out of 482604
- 213431 string characters out of 5950848
- 490825 words of memory out of 5000000
- 29588 multiletter control sequences out of 15000+600000
+ 14452 strings out of 482394
+ 214304 string characters out of 5945626
+ 496569 words of memory out of 5000000
+ 29848 multiletter control sequences out of 15000+600000
  609797 words of font info for 90 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 49i,10n,51p,2254b,600s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 46i,10n,51p,2254b,605s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/Users/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/
 Users/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/
 Users/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}</
@@ -855,10 +867,10 @@ rs/GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></Users
 /GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmss8.pfb></Users/
 GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/
 GonzaloGGC/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt12.pfb>
-Output written on flip_manuscript.pdf (23 pages, 407112 bytes).
+Output written on flip_manuscript.pdf (24 pages, 409075 bytes).
 PDF statistics:
- 329 PDF objects out of 1000 (max. 8388607)
- 284 compressed objects within 3 object streams
- 87 named destinations out of 1000 (max. 500000)
- 104 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 342 PDF objects out of 1000 (max. 8388607)
+ 296 compressed objects within 3 object streams
+ 89 named destinations out of 1000 (max. 500000)
+ 112 words of extra memory for PDF output out of 10000 (max. 10000000)
 

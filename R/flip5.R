@@ -39,7 +39,7 @@ dat <- read.csv(here("Data","00_data-raw.csv"), sep = ",", dec = ".", stringsAsF
            study ==  "Saffran & Wilson"                  ~ "Saffran & Wilson (2003)",
            study == "SaffranHauser1"                     ~ "Saffran et al. (2008)",
            TRUE                                          ~ NA_character_))) %>%
-  filter(hpp < 5)
+  filter(hpp < 6)
 
 # aggregate data
 dat_aggregated <- dat %>%

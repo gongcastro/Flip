@@ -6,9 +6,9 @@
 
 \begin{appendix}
 \section{}
-\hypertarget{s1-experiments-included-in-the-linear-mixed-effects-model.}{%
+\hypertarget{s1}{%
 \subsection{S1: Experiments included in the linear mixed-effects
-model.}\label{s1-experiments-included-in-the-linear-mixed-effects-model.}}
+model}\label{s1}}
 
 The selected experiments consist of an artificial grammar learning task
 with 12-month-old infants. These experiments are characterized by
@@ -55,16 +55,15 @@ showed a significant novelty preference: \emph{t}(26) = 2.45, \emph{p} =
 
 We replicated the Predictive Language condition of Santolin \& Saffran
 (2019) at the University Pompeu Fabra, Barcelona (\emph{Santolin,
-Saffran \& Sebastian-Galles, 2019})(2019), using identical stimuli and
+Saffran \& Sebastian-Galles, 2019}, 2019), using identical stimuli and
 procedures. We found significant discrimination of the test stimuli but
 observed the opposite direction of preference: infants listened longer
 to familiar than novel strings: \emph{t}(23) = 2.30, \emph{p} = .030,
 \emph{d} = 0.47. All results are shown in Figure 1 of the main
 manuscript.
 
-\hypertarget{s2-participants-information}{%
-\subsection{S2: Participants
-information}\label{s2-participants-information}}
+\hypertarget{s2}{%
+\subsection{S2: Participants information}\label{s2}}
 
 We retrieved data from 102 infants who had participated in a range of
 1-6 HPP visits. Three of the experiments were run in Madison, WI
@@ -75,9 +74,9 @@ Saffran, 2019 (Condition 1; \emph{N}=26, mean age: 12.9 months). One
 study was run in Barcelona, Spain (Universitat Pompeu Fabra): Santolin,
 Saffran \& Sebastian-Galles, 2019 (\emph{N}=24, mean age: 13 months).
 
-\hypertarget{s3-linear-mixed-effects-model---additional-information}{%
+\hypertarget{s3}{%
 \subsection{S3: Linear mixed-effects model - additional
-information}\label{s3-linear-mixed-effects-model---additional-information}}
+information}\label{s3}}
 
 We fit a model predicting looking time (\(LT\)) including \(Item\)
 (Familiar vs.~Novel), number of Head-turn Preference Procedure
@@ -101,10 +100,9 @@ We used the \texttt{Anova} function from the \texttt{car} R package (Fox
 Kenward-Roger's approximation of the degrees of freedom (e.g., Judd,
 Westfall, \& Kenny, 2012).
 
-\hypertarget{s4-results-sub-setting-data-to-participants-with-less-than-6-5-4-and-3-hpp-studies}{%
+\hypertarget{s4}{%
 \subsection{S4: Results sub-setting data to participants with less than
-6, 5, 4, and 3 HPP
-studies}\label{s4-results-sub-setting-data-to-participants-with-less-than-6-5-4-and-3-hpp-studies}}
+6, 5, 4, and 3 HPP studies}\label{s4}}
 
 Consistent with the results of the entire dataset, we found a
 statistically significant interaction of \emph{Test Item} with the
@@ -114,6 +112,19 @@ reporting the output of the linear mixed-effects model fitted on the
 original and reduced samples (Table S4.1).
 
 \begin{longtable}[]{@{}cccccccc@{}}
+\caption{(\#tab:unnamed-chunk-15)Estimated coefficients for the three
+predictors (Test Item, HPP, and their interaction) across the same
+linear mixed-effects model fitted on the overall sample (HPP 1-6,
+including all participants), and its subsets (including participants
+that completed less than 6, 5, 4, 3 HPP studies). Dots indicate point
+estimates, error bars indicate +1/-1 SE, and shaded boxes indicate 95\%
+CIs.}\tabularnewline
+\toprule
+\textbf{Subset} & \textbf{Term} & \textbf{Coefficient} &
+\textbf{\emph{SEM}} & \textbf{95\% CI} & \textbf{F} & \textbf{Den.
+\emph{df}} & \textbf{\emph{p}}\tabularnewline
+\midrule
+\endfirsthead
 \toprule
 \textbf{Subset} & \textbf{Term} & \textbf{Coefficient} &
 \textbf{\emph{SEM}} & \textbf{95\% CI} & \textbf{F} & \textbf{Den.
@@ -128,14 +139,14 @@ Original & \emph{Intercept} & 7,679.0 & 673.3 & {[}6389.7, 9294.6{]} &
 .030\tabularnewline
 & \emph{Test Item \(\times\) HPP} & 667.1 & 192.6 & {[}247.2, 1028.5{]}
 & 12.0 & 100.0 & .001\tabularnewline
-HPP 1-5 & \emph{Intercept} & 7,611.1 & 719.3 & {[}6188.6, 9275.3{]} &
-107.4 & 10.5 & \textless{} .001\tabularnewline
-& \emph{Test Item} & -1,491.1 & 452.1 & {[}-2348.4, -578.5{]} & 10.9 &
-98.0 & .001\tabularnewline
-& \emph{HPP} & -500.8 & 278.7 & {[}-1070.2, 98.2{]} & 3.0 & 131.9 &
-.083\tabularnewline
-& \emph{Test Item \(\times\) HPP} & 726.2 & 224.9 & {[}294.2, 1145{]} &
-10.4 & 98.0 & .002\tabularnewline
+HPP 1-5 & \emph{Intercept} & 7,675.0 & 691.6 & {[}6452.7, 9029.3{]} &
+118.3 & 10.1 & \textless{} .001\tabularnewline
+& \emph{Test Item} & -1,416.1 & 435.4 & {[}-2237.7, -543.7{]} & 10.6 &
+99.0 & .002\tabularnewline
+& \emph{HPP} & -535.6 & 261.2 & {[}-1081.1, -37.5{]} & 4.0 & 133.6 &
+.048\tabularnewline
+& \emph{Test Item \(\times\) HPP} & 677.8 & 211.3 & {[}241, 1081.9{]} &
+10.3 & 99.0 & .002\tabularnewline
 HPP 1-4 & \emph{Intercept} & 7,611.1 & 719.3 & {[}6188.6, 9275.3{]} &
 107.4 & 10.5 & \textless{} .001\tabularnewline
 & \emph{Test Item} & -1,491.1 & 452.1 & {[}-2348.4, -578.5{]} & 10.9 &
@@ -163,20 +174,13 @@ HPP 1-2 & \emph{Intercept} & 7,301.9 & 1009.9 & {[}5253.3, 9362.1{]} &
 \bottomrule
 \end{longtable}
 
-In all models, the \(Item \times HPP\) interaction term was
-statistically significant {[}HPP 1-5: \emph{F}(1, 98) = 10.42, \emph{p}
-= .002; HPP 1-4: \emph{F}(1, 98) = 10.42, \emph{p} = .002; HPP 1-3:
-\emph{F}(1, 92) = 4.56, \emph{p} = .035; HPP 1-2: \emph{F}(1, 78) =
-4.05, \emph{p} = .048{]} . These results provide evidence that the
-effect of HPP on the preference pattern we observed in our main analysis
-is not entirely dependent on any subsample of the HPP variable.
-
 \begin{figure}
 \includegraphics[width=\textwidth]{/Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged} \caption{Graphical representation of the coefficients of the Test Item by HPP visits interaction term of the model fitted on the complete data-set (reported in the main manuscript), and of the models fitted on the reduced data-sets. Black dots represent the point estimate of the coefficient, black whiskers represent the standard error of the mean, and grey boxes represent the bootstrapped 95\% confidence interval around the point estimate.}(\#fig:unnamed-chunk-16)
 \end{figure}
 
 \hypertarget{session-info}{%
-\section{Session info}\label{session-info}}
+\section*{Session info}\label{session-info}}
+\addcontentsline{toc}{section}{Session info}
 
 R version 3.6.3 (2020-02-29) Platform: x86\_64-apple-darwin15.6.0
 (64-bit) Running under: macOS Catalina 10.15.4
@@ -193,7 +197,7 @@ attached base packages: {[}1{]} stats graphics grDevices utils datasets
 methods base
 
 other attached packages: {[}1{]} purrr\_0.3.4 kableExtra\_1.1.0
-ggplot2\_3.3.1 here\_0.1\\
+ggplot2\_3.3.2 here\_0.1\\
 {[}5{]} tibble\_3.0.1 dplyr\_1.0.0 magrittr\_1.5 knitr\_1.28\\
 {[}9{]} papaja\_0.1.0.9942
 
@@ -201,18 +205,19 @@ loaded via a namespace (and not attached): {[}1{]} Rcpp\_1.0.4.6
 pillar\_1.4.4 compiler\_3.6.3 highr\_0.8\\
 {[}5{]} base64enc\_0.1-3 tools\_3.6.3 digest\_0.6.25 viridisLite\_0.3.0
 {[}9{]} evaluate\_0.14 lifecycle\_0.2.0 gtable\_0.3.0 pkgconfig\_2.0.3\\
-{[}13{]} rlang\_0.4.6 rstudioapi\_0.11 yaml\_2.2.1 xfun\_0.14\\
-{[}17{]} xml2\_1.3.1 httr\_1.4.1 withr\_2.2.0 stringr\_1.4.0\\
-{[}21{]} hms\_0.5.3 generics\_0.0.2 vctrs\_0.3.0 webshot\_0.5.2\\
+{[}13{]} rlang\_0.4.6 rstudioapi\_0.11 yaml\_2.2.1 xfun\_0.15\\
+{[}17{]} xml2\_1.3.2 httr\_1.4.1 withr\_2.2.0 stringr\_1.4.0\\
+{[}21{]} generics\_0.0.2 vctrs\_0.3.1 hms\_0.5.3 webshot\_0.5.2\\
 {[}25{]} rprojroot\_1.3-2 grid\_3.6.3 tidyselect\_1.1.0 glue\_1.4.1\\
-{[}29{]} R6\_2.4.1 rmarkdown\_2.1 bookdown\_0.18 readr\_1.3.1\\
-{[}33{]} backports\_1.1.7 scales\_1.1.1 ellipsis\_0.3.1
-htmltools\_0.4.0\\
+{[}29{]} R6\_2.4.1 rmarkdown\_2.3 bookdown\_0.18 readr\_1.3.1\\
+{[}33{]} backports\_1.1.8 scales\_1.1.1 ellipsis\_0.3.1
+htmltools\_0.5.0\\
 {[}37{]} rvest\_0.3.5 colorspace\_1.4-1 stringi\_1.4.6 munsell\_0.5.0\\
 {[}41{]} crayon\_1.3.4
 
 \hypertarget{references}{%
-\subsection{References}\label{references}}
+\subsection*{References}\label{references}}
+\addcontentsline{toc}{subsection}{References}
 
 \begingroup
 \setlength{\parindent}{-0.5in}
