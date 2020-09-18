@@ -1,5 +1,7 @@
 #### Import, process, analyse, and export data #####################
 
+# Older data
+
 #### 1. Set up ########################################################
 
 # load packages
@@ -36,7 +38,8 @@ dat <- read.csv(here("Data","00_data-raw.csv"), sep = ",", dec = ".", stringsAsF
            study == "Santolin" & location == "Wisconsin" ~ "Santolin & Saffran (2019)",
            study ==  "Saffran & Wilson"                  ~ "Saffran & Wilson (2003)",
            study == "SaffranHauser1"                     ~ "Saffran et al. (2008)",
-           TRUE                                          ~ NA_character_)))
+           TRUE                                          ~ NA_character_))) %>%
+  filter(study %in% c("Saffran & Wilson (2003)", "Saffran et al. (2008)"))
 
 # aggregate data
 dat_aggregated <- dat %>%
@@ -87,14 +90,14 @@ confints.effect <- confint.merMod(model3.effect, method = "boot") %>%
   as.data.frame() %>%
   rownames_to_column(var = "term") %>%
   slice(4:7) %>%
-  mutate(term = c("(Intercept)", "item_center", "hpp", "item_center:hpp")) %>%
+  mutate(term = c("(Intercept)", "item", "hpp", "item:hpp")) %>%
   clean_names()
 
 confints.novel <- confint.merMod(model3.novel, method = "boot") %>%
   as.data.frame() %>%
   rownames_to_column(var = "term") %>%
   slice(4:7) %>%
-  mutate(term = c("(Intercept)", "item_novel", "hpp", "item_novel:hpp")) %>%
+  mutate(term = c("(Intercept)", "item", "hpp", "item:hpp")) %>%
   clean_names()
 
 #### 6. ANOVA ##########################################################################
@@ -166,9 +169,7 @@ study_data <- dat %>%
   rename(looking_time = mean) %>%
   ungroup() %>%
   mutate(item = ifelse(item==0, "Familiar", "Novel"),
-         study = as.character(study),
-         study = ifelse(study=="Santolin, Saffran & Sebastian-Galles (2019)",
-                        "Santolin, Saffran &\nSebastian-Galles (2019)", study))
+         study = as.character(study))
 
 ggplot(study_data, aes(item, looking_time, fill = item)) +
   facet_wrap(~study,nrow=1) +
@@ -182,7 +183,7 @@ ggplot(study_data, aes(item, looking_time, fill = item)) +
   scale_y_continuous(limits = c(0, 10000), labels = add_big_mark) +
   theme_custom +
   theme(legend.position = "none") +
-  ggsave(here("Figures", "01_lookingtimes-study.png"), height = 6, width = 12)
+  ggsave(here("Figures", "Older", "01_lookingtimes-study-older.png"), height = 6, width = 12)
 
 # 9.2. Novelty preference
 ggplot(dat_diff_hpp, aes(hpp, mean_novelty_preference)) +
@@ -197,7 +198,7 @@ ggplot(dat_diff_hpp, aes(hpp, mean_novelty_preference)) +
   ylab("Difference in Looking Time (ms)\n(Novel - Familiar)")+
   theme_custom +
   theme(legend.position = c(0.15, 0.7)) +
-
+  
   # 9.3. Predictions
   ggplot(predictions, aes(hpp, fit, fill = item, shape = item, colour = item, linetype = item)) +
   geom_ribbon(aes(ymin = fit-std_error, ymax = fit+std_error), colour = NA, alpha = 0.5) +
@@ -217,20 +218,21 @@ ggplot(dat_diff_hpp, aes(hpp, mean_novelty_preference)) +
         legend.direction = "vertical") +
   plot_layout(guides = "keep") +
   plot_annotation(tag_levels = "A", theme = theme_custom) +
-  ggsave(here("Figures", "02_interaction.png"), width = 12, height = 5) +
-  ggsave(here("Figures", "02_interaction.pdf"), width = 12, height = 5) 
+  ggsave(here("Figures", "Older", "02_interaction.png"), width = 12, height = 5) +
+  ggsave(here("Figures", "Older", "02_interaction.pdf"), width = 12, height = 5) 
+
 
 #### 10. Export results ########################################################
 # 10.a. Export results from Item-dummy-coded model (baseline on familiar trials)
-write.table(dat, here("Data", "01_data-processed.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(anova, here("Data", "02_results-lmem.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(predictions, here("Data", "02_results-effects.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(dat, here("Data", "Older", "01_data-processed-older.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(anova, here("Data", "Older", "02_results-lmem-older.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(predictions, here("Data", "Older", "02_results-effects-older.csv"), sep = ",", dec = ".", row.names = FALSE)
 # 11.b. Export results from Item-effect-coded model
-write.table(dat, here("Data", "Effect-coding", "01_data-processed-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(anova.effect, here("Data", "Effect-coding", "02_results-lmem-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(predictions.effect, here("Data", "Effect-coding", "02_results-effects-effect.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(dat, here("Data", "Older", "Effect-coding", "01_data-processed-effect-older.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(anova.effect, here("Data", "Older", "Effect-coding", "02_results-lmem-effect-older.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(predictions.effect, here("Data", "Older", "Effect-coding", "02_results-effects-effect-older.csv"), sep = ",", dec = ".", row.names = FALSE)
 # 11.c. Export results from Item-dummy-coded model (baseline on novel trials)
-write.table(dat, here("Data", "Dummy-coding-Novel", "01_data-processed-novel.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(anova.novel, here("Data", "Dummy-coding-Novel", "02_results-lmem-novel.csv"), sep = ",", dec = ".", row.names = FALSE)
-write.table(predictions.novel, here("Data", "Dummy-coding-Novel", "02_results-effects-novel.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(dat, here("Data", "Older", "Dummy-coding-Novel", "01_data-processed-novel-older.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(anova.novel, here("Data", "Older", "Dummy-coding-Novel", "02_results-lmem-novel-older.csv"), sep = ",", dec = ".", row.names = FALSE)
+write.table(predictions.novel, here("Data", "Older", "Dummy-coding-Novel", "02_results-effects-novel-older.csv"), sep = ",", dec = ".", row.names = FALSE)
 

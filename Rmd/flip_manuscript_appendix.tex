@@ -73,6 +73,18 @@ Condition P-Language: \emph{N}=12, mean age: 12.8 months); Santolin \&
 Saffran, 2019 (Condition 1; \emph{N}=26, mean age: 12.9 months). One
 study was run in Barcelona, Spain (Universitat Pompeu Fabra): Santolin,
 Saffran \& Sebastian-Galles, 2019 (\emph{N}=24, mean age: 13 months).
+All studies were conducted according to guidelines provided by the
+Declaration of Helsinki, with written informed consent obtained from a
+caregiver for each child before any assessment or data collection.
+Ethical approval was granted by the University of Wisconsin-Madison
+Social and Behavioral Sciences IRB for Saffran \& Wilson (2003), Saffran
+et al. (2008), and Santolin \& Saffran (2019), and by the Comitè Etic
+d'Investigació Clinica, Parc de Salut Mar Barcelona, for Santolin et al.
+(2019).
+
+Two data points (average looking time for familiar and novel test items)
+were available for each participant. Participants included in the
+current analysis are those included in the final version of the studies.
 
 \hypertarget{s3}{%
 \subsection{S3: Linear mixed-effects model - additional
@@ -83,7 +95,7 @@ We fit a model predicting looking time (\(LT\)) including \(Item\)
 experiments completed by infants (\(HPP\)), and their interaction
 (\(Item \times HPP\)) as fixed effects. Participant and study {[}4
 levels: Santolin \& Saffran (2019), Santolin, Saffran \&
-Sebastian-Galles (2019), Saffran et al. (2008), Saffran \& Wilson
+Sebastian-Galles (2019), Saffran et al.~(2008), Saffran \& Wilson
 (2003){]} were included as random effects. Following Barr, Levy,
 Scheepers, \& Tily (2013), we fit a model with the maximal random
 effects structure including random intercepts by-participant and
@@ -109,16 +121,11 @@ statistically significant interaction of \emph{Test Item} with the
 number of \emph{HPP} visits when reducing the sample to the infants who
 participated in less than 6, 5, 4, and 3 HPP experiments. Below, a table
 reporting the output of the linear mixed-effects model fitted on the
-original and reduced samples (Table S4.1).
+original and reduced samples.
 
-\begin{longtable}[]{@{}cccccccc@{}}
-\caption{(\#tab:unnamed-chunk-15)Estimated coefficients for the three
-predictors (Test Item, HPP, and their interaction) across the same
-linear mixed-effects model fitted on the overall sample (HPP 1-6,
-including all participants), and its subsets (including participants
-that completed less than 6, 5, 4, 3 HPP studies). Dots indicate point
-estimates, error bars indicate +1/-1 SE, and shaded boxes indicate 95\%
-CIs.}\tabularnewline
+\begin{longtable}[]{@{}llllllll@{}}
+\caption{(\#tab:unnamed-chunk-17)Summary of the results of the linear
+mixed-effects model performed on the reduced data.}\tabularnewline
 \toprule
 \textbf{Subset} & \textbf{Term} & \textbf{Coefficient} &
 \textbf{\emph{SEM}} & \textbf{95\% CI} & \textbf{F} & \textbf{Den.
@@ -175,45 +182,67 @@ HPP 1-2 & \emph{Intercept} & 7,301.9 & 1009.9 & {[}5253.3, 9362.1{]} &
 \end{longtable}
 
 \begin{figure}
-\includegraphics[width=\textwidth]{/Users/GonzaloGGC/projects/Flip/Figures/05_anova-merged} \caption{Graphical representation of the coefficients of the Test Item by HPP visits interaction term of the model fitted on the complete data-set (reported in the main manuscript), and of the models fitted on the reduced data-sets. Black dots represent the point estimate of the coefficient, black whiskers represent the standard error of the mean, and grey boxes represent the bootstrapped 95\% confidence interval around the point estimate.}(\#fig:unnamed-chunk-16)
+\includegraphics[width=\textwidth]{/home/vant/Documents/Flip/Figures/05_anova-merged} \caption{Estimated coefficients for the three predictors (Test Item, HPP, and their interaction) across the same linear mixed-effects model fitted on the overall sample (HPP 1-6, including all participants), and its subsets (including particpiants that completed less than 6, 5, 4, 3 HPP studies). Dots indicate point estimates, error bars indicate SEs, and shaded boxes indicate 95\% CIs.}(\#fig:unnamed-chunk-18)
 \end{figure}
 
-\hypertarget{session-info}{%
-\section*{Session info}\label{session-info}}
-\addcontentsline{toc}{section}{Session info}
+\hypertarget{s5}{%
+\subsection{S5: Results of Saffran \& Wilson (2003) and Saffran et
+al.~(2008) only}\label{s5}}
 
-R version 3.6.3 (2020-02-29) Platform: x86\_64-apple-darwin15.6.0
-(64-bit) Running under: macOS Catalina 10.15.4
+We conducted this additional analysis to ensure that the results
+obtained on the entire dataset were not driven primarily by the two most
+recent datasets (Santolin \& Saffran, 2019; Santolin et al., 2019), in
+which we first noticed the pattern of results (i.e., the flip in
+preference). Results closely mirrored those of the entire dataset,
+showing a statistically significant interaction between test item (novel
+vs.~familiar) and number of HPP visits (\emph{F}(1,50.00) = 11.00,
+\emph{p} = .002). As shown in the figure below, there is a decline in
+familiarity preference as the number of HPP visits increases (Panel A),
+and an interaction between test item (novel vs.~familiar) and number of
+HPP visits (Panel B).
+
+\begin{figure}
+\includegraphics[width=\textwidth]{/home/vant/Documents/Flip/Figures/Older/02_interaction} \caption{A: Difference in looking time between novel and familiar trials for data from Saffran \& Wilson (2003) and Saffran et al. (2008) only, as a function of HPP visits. Shaded bands indicate 95\% CIs. Points represent group means, with error bars representing 95\% CIs. B: Predicted looking time (in ms) for familiar and novel test items plotted against number of HPP visits (older datasets only). Shaded bands represent +1/-1 SEs. Points represent group means with +1/-1 SEs as error bars.}(\#fig:unnamed-chunk-19)
+\end{figure}
+
+\hypertarget{s6.-session-info}{%
+\subsection*{S6. Session info}\label{s6.-session-info}}
+\addcontentsline{toc}{subsection}{S6. Session info}
+
+R version 3.6.3 (2020-02-29) Platform: x86\_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 20.04.1 LTS
 
 Matrix products: default BLAS:
-/Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
-LAPACK:
-/Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+/usr/lib/x86\_64-linux-gnu/blas/libblas.so.3.9.0 LAPACK:
+/usr/lib/x86\_64-linux-gnu/lapack/liblapack.so.3.9.0
 
-locale: {[}1{]}
-en\_US.UTF-8/en\_US.UTF-8/en\_US.UTF-8/C/en\_US.UTF-8/en\_US.UTF-8
+locale: {[}1{]} LC\_CTYPE=en\_GB.UTF-8 LC\_NUMERIC=C\\
+{[}3{]} LC\_TIME=es\_ES.UTF-8 LC\_COLLATE=en\_GB.UTF-8\\
+{[}5{]} LC\_MONETARY=es\_ES.UTF-8 LC\_MESSAGES=en\_GB.UTF-8\\
+{[}7{]} LC\_PAPER=es\_ES.UTF-8 LC\_NAME=C\\
+{[}9{]} LC\_ADDRESS=C LC\_TELEPHONE=C\\
+{[}11{]} LC\_MEASUREMENT=es\_ES.UTF-8 LC\_IDENTIFICATION=C
 
 attached base packages: {[}1{]} stats graphics grDevices utils datasets
 methods base
 
-other attached packages: {[}1{]} purrr\_0.3.4 kableExtra\_1.1.0
+other attached packages: {[}1{]} purrr\_0.3.4 kableExtra\_1.2.1
 ggplot2\_3.3.2 here\_0.1\\
-{[}5{]} tibble\_3.0.1 dplyr\_1.0.0 magrittr\_1.5 knitr\_1.28\\
-{[}9{]} papaja\_0.1.0.9942
+{[}5{]} tibble\_3.0.3 dplyr\_1.0.2 magrittr\_1.5 knitr\_1.29\\
+{[}9{]} papaja\_0.1.0.9997
 
-loaded via a namespace (and not attached): {[}1{]} Rcpp\_1.0.4.6
-pillar\_1.4.4 compiler\_3.6.3 highr\_0.8\\
-{[}5{]} base64enc\_0.1-3 tools\_3.6.3 digest\_0.6.25 viridisLite\_0.3.0
-{[}9{]} evaluate\_0.14 lifecycle\_0.2.0 gtable\_0.3.0 pkgconfig\_2.0.3\\
-{[}13{]} rlang\_0.4.6 rstudioapi\_0.11 yaml\_2.2.1 xfun\_0.15\\
-{[}17{]} xml2\_1.3.2 httr\_1.4.1 withr\_2.2.0 stringr\_1.4.0\\
-{[}21{]} generics\_0.0.2 vctrs\_0.3.1 hms\_0.5.3 webshot\_0.5.2\\
-{[}25{]} rprojroot\_1.3-2 grid\_3.6.3 tidyselect\_1.1.0 glue\_1.4.1\\
-{[}29{]} R6\_2.4.1 rmarkdown\_2.3 bookdown\_0.18 readr\_1.3.1\\
-{[}33{]} backports\_1.1.8 scales\_1.1.1 ellipsis\_0.3.1
-htmltools\_0.5.0\\
-{[}37{]} rvest\_0.3.5 colorspace\_1.4-1 stringi\_1.4.6 munsell\_0.5.0\\
-{[}41{]} crayon\_1.3.4
+loaded via a namespace (and not attached): {[}1{]} pillar\_1.4.6
+compiler\_3.6.3 highr\_0.8 base64enc\_0.1-3\\
+{[}5{]} tools\_3.6.3 digest\_0.6.25 viridisLite\_0.3.0 evaluate\_0.14\\
+{[}9{]} lifecycle\_0.2.0 gtable\_0.3.0 pkgconfig\_2.0.3 rlang\_0.4.7\\
+{[}13{]} rstudioapi\_0.11 yaml\_2.2.1 xfun\_0.16 xml2\_1.3.2\\
+{[}17{]} httr\_1.4.2 withr\_2.2.0 stringr\_1.4.0 generics\_0.0.2\\
+{[}21{]} vctrs\_0.3.2 webshot\_0.5.2 rprojroot\_1.3-2 grid\_3.6.3\\
+{[}25{]} tidyselect\_1.1.0 glue\_1.4.1 R6\_2.4.1 rmarkdown\_2.3\\
+{[}29{]} bookdown\_0.20 backports\_1.1.9 scales\_1.1.1 ellipsis\_0.3.1\\
+{[}33{]} htmltools\_0.5.0 rvest\_0.3.6 colorspace\_1.4-1
+stringi\_1.4.6\\
+{[}37{]} munsell\_0.5.0 crayon\_1.3.4
 
 \hypertarget{references}{%
 \subsection*{References}\label{references}}

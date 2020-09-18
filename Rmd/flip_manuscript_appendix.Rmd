@@ -33,8 +33,7 @@ anova5 <- read.csv(here("Data", "HPP5", "02_results-lmem-5.csv"))
 anova4 <- read.csv(here("Data", "HPP4", "02_results-lmem-4.csv"))
 anova3 <- read.csv(here("Data", "HPP3", "02_results-lmem-3.csv"))
 anova2 <- read.csv(here("Data", "HPP2", "02_results-lmem-2.csv"))
-
-
+anova_older <- read.csv(here("Data", "Older", "02_results-lmem-older.csv"))
 
 n_HPP2 <- dat %>% filter(hpp<3) %>% distinct(participant) %>% nrow()
 n_HPP3 <- dat %>% filter(hpp<4) %>% distinct(participant) %>% nrow()
@@ -43,7 +42,6 @@ n_HPP5 <- dat %>% filter(hpp<6) %>% distinct(participant) %>% nrow()
 n_HPP6 <- dat %>% distinct(participant) %>% nrow()
 
 ```
-
 
 ## S1: Experiments included in the linear mixed-effects model {#s1}
 
@@ -63,7 +61,9 @@ We replicated the Predictive Language condition of @santolin2019 at the Universi
 
 ## S2: Participants information {#s2}
 
-We retrieved data from `r printnum(n_HPP6)` infants who had participated in a range of 1-6 HPP visits. Three of the experiments were run in Madison, WI (University of Wisconsin-Madison): Saffran & Wilson, 2003 (Exp. 2; *N*=`r printnum(table(filter(dat, item=="1")$study)[1])`, mean age: 11.5 months); Saffran et al., 2008 (Exp. 1, Condition P-Language: *N*=`r printnum(table(filter(dat, item=="1")$study)[2])`, mean age: 12.8 months); Santolin & Saffran, 2019 (Condition 1; *N*=`r printnum(table(filter(dat, item=="1")$study)[3])`, mean age: 12.9 months). One study was run in Barcelona, Spain (Universitat Pompeu Fabra): Santolin, Saffran & Sebastian-Galles, 2019 (*N*=`r printnum(table(filter(dat, item=="1")$study)[4])`, mean age: 13 months).
+We retrieved data from `r printnum(n_HPP6)` infants who had participated in a range of 1-6 HPP visits. Three of the experiments were run in Madison, WI (University of Wisconsin-Madison): Saffran & Wilson, 2003 (Exp. 2; *N*=`r printnum(table(filter(dat, item=="1")$study)[1])`, mean age: 11.5 months); Saffran et al., 2008 (Exp. 1, Condition P-Language: *N*=`r printnum(table(filter(dat, item=="1")$study)[2])`, mean age: 12.8 months); Santolin & Saffran, 2019 (Condition 1; *N*=`r printnum(table(filter(dat, item=="1")$study)[3])`, mean age: 12.9 months). One study was run in Barcelona, Spain (Universitat Pompeu Fabra): Santolin, Saffran & Sebastian-Galles, 2019 (*N*=`r printnum(table(filter(dat, item=="1")$study)[4])`, mean age: 13 months). All studies were conducted according to guidelines provided by the Declaration of Helsinki, with written informed consent obtained from a caregiver for each child before any assessment or data collection. Ethical approval was granted by the University of Wisconsin-Madison Social and Behavioral Sciences IRB for @saffran2003, @saffran2008, and @santolin2019, and by the Comitè Etic d'Investigació Clinica, Parc de Salut Mar Barcelona, for @santolin2019a.
+
+Two data points (average looking time for familiar and novel test items) were available for each participant. Participants included in the current analysis are those included in the final version of the studies.
 
 
 ## S3: Linear mixed-effects model - additional information {#s3}
@@ -73,7 +73,7 @@ We fit a model predicting looking time ($LT$) including $Item$ (Familiar vs. Nov
 
 ## S4: Results sub-setting data to participants with less than 6, 5, 4, and 3 HPP studies {#s4}
 
-Consistent with the results of the entire dataset, we found a statistically significant interaction of *Test Item* with the number of *HPP* visits when reducing the sample to the infants who participated in less than 6, 5, 4, and 3 HPP experiments. Below, a table reporting the output of the linear mixed-effects model fitted on the original and reduced samples (Table S4.1). 
+Consistent with the results of the entire dataset, we found a statistically significant interaction of *Test Item* with the number of *HPP* visits when reducing the sample to the infants who participated in less than 6, 5, 4, and 3 HPP experiments. Below, a table reporting the output of the linear mixed-effects model fitted on the original and reduced samples. 
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, results="asis"}
@@ -87,20 +87,34 @@ anova %>%
   select(subset, term, estimate, std_error, ci95, f, df_res, p) %>%
   kable(format = "pandoc",
         col.names = c("**Subset**", "**Term**", "**Coefficient**", "***SEM***", "**95\\% CI**", "**F**", "**Den. *df***", "***p***"), 
-        align = "c",
+        align = "l",
         digits = 1,
-        caption = "Estimated coefficients for the three predictors (Test Item, HPP, and their interaction) across the same linear mixed-effects model fitted on the overall sample (HPP 1-6, including all participants), and its subsets (including participants that completed less than 6, 5, 4, 3 HPP studies). Dots indicate point estimates, error bars indicate +1/-1 SE, and shaded boxes indicate 95\\% CIs.")
+        caption = "Summary of the results of the linear mixed-effects model performed on the reduced data.")
 
 ```
 
 
-```{r message=FALSE, warning=FALSE, paged.print=FALSE, echo=FALSE, fig.cap="Graphical representation of the coefficients of the Test Item by HPP visits interaction term of the model fitted on the complete data-set (reported in the main manuscript), and of the models fitted on the reduced data-sets. Black dots represent the point estimate of the coefficient, black whiskers represent the standard error of the mean, and grey boxes represent the bootstrapped 95\\% confidence interval around the point estimate."}
+```{r message=FALSE, warning=FALSE, paged.print=FALSE, echo=FALSE, fig.cap="Estimated coefficients for the three predictors (Test Item, HPP, and their interaction) across the same linear mixed-effects model fitted on the overall sample (HPP 1-6, including all participants), and its subsets (including particpiants that completed less than 6, 5, 4, 3 HPP studies). Dots indicate point estimates, error bars indicate SEs, and shaded boxes indicate 95\\% CIs."}
 
 include_graphics(here("Figures", "05_anova-merged.png"))
 
 ```
 
-# Session info {-}
+## S5: Results of Saffran & Wilson (2003) and Saffran et al. (2008) only {#s5}
+
+We conducted this additional analysis to ensure that the results obtained on the
+entire dataset were not driven primarily by the two most recent datasets [@santolin2019; @santolin2019a], in which we first noticed the pattern of results (i.e., the flip in preference). Results closely mirrored
+those of the entire dataset, showing a statistically significant interaction
+between test item (novel vs. familiar) and number of HPP visits (*F*(`r printnum(anova_older$df[4])`,`r printnum(anova_older$df_res[4])`) `r printnum(anova_older$f[4], add_equals=TRUE)`, *p* `r printp(anova_older$p[4], add_equals = TRUE)`). As shown in the figure below, there is a decline in familiarity preference as the number of HPP visits increases (Panel A), and an interaction between test item
+(novel vs. familiar) and number of HPP visits (Panel B).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.cap="A: Difference in looking time between novel and familiar trials for data from Saffran \\& Wilson (2003) and Saffran et al. (2008) only, as a function of HPP visits. Shaded bands indicate 95\\% CIs. Points represent group means, with error bars representing 95\\% CIs. B: Predicted looking time (in ms) for familiar and novel test items plotted against number of HPP visits (older datasets only). Shaded bands represent +1/-1 SEs. Points represent group means with +1/-1 SEs as error bars."}
+
+include_graphics(here("Figures", "Older", "02_interaction.png"))
+
+```
+
+## S6. Session info {-}
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 

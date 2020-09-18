@@ -28,9 +28,9 @@ abstract: |
   
 keywords          : "preferential looking, familiarity preference, novelty preference, head-turn preference procedure, linear mixed-effects model"
 wordcount         : "2307"
-note              : "Preprint submitted to peer-review on February 17th, 2020. Resubmitted addressing reviewers' comments on June 4th, 2020."  
+note              : "Preprint submitted to peer-review on February 17th, 2020. Resubmitted addressing reviewers' comments on September 4th, 2020."  
 
-bibliography      : ["./References/Flip.bib"]
+bibliography      : ["../References/Flip.bib"]
 
 floatsintext      : yes
 figurelist        : no
@@ -46,18 +46,17 @@ class             : "man"
 documentclass     : "apa6"
 classoption       : "man"
 output            :
-  papaja::apa6_pdf
+  papaja::apa6_pdf:
+    latex_engine  : "xelatex"
 appendix: "flip_manuscript_appendix.Rmd"
 
-params: 
-  output_dir: "../Rmd/"
 ---
 
 ```{r setup, include = FALSE}
 library(papaja)   # for APA formatting
 library(knitr)    # for graphs and tables
 library(magrittr) # for using pipes
-library(dplyr)    # for manpulating data
+library(dplyr)    # for manipulating data
 library(tibble)   # for reshaping data-sets
 library(here)     # for locating files
 ```
@@ -77,6 +76,7 @@ anova5 <- read.csv(here("Data", "HPP5", "02_results-lmem-5.csv")) # ANOVA with H
 anova4 <- read.csv(here("Data", "HPP4", "02_results-lmem-4.csv")) # ANOVA with HPP 1-4
 anova3 <- read.csv(here("Data", "HPP3", "02_results-lmem-3.csv")) # ANOVA with HPP 1-3
 anova2 <- read.csv(here("Data", "HPP2", "02_results-lmem-2.csv")) # ANOVA with HPP 1-2
+anova_older <- read.csv(here("Data", "Older", "02_results-lmem-older.csv"))
 correlation <- read.csv(here("Data", "04_total-vs-hpp.csv"))
 
 ```
@@ -94,7 +94,7 @@ One frequently-overlooked factor is that infants do not arrive at the lab as na�
 In an influential model of preferential behavior in infants, @hunter1988 hypothesized three central factors to affect the strength and direction of preference: age, familiarization duration, and task complexity. In a given task, younger infants tend to prefer familiar stimuli whereas older infants are more likely to prefer novel stimuli [e.g., @colombo1983; though see @bergmann2016, for a meta-analysis suggesting that age does not predict shifts in preference]. A shorter exposure to familiar stimuli prior to testing also leads infants to subsequently prefer the familiar items [for reviews, see @rose2004]. Task complexity refers to the stage of stimulus processing. For example, in a visual recognition task, 4-month-old infants preferred familiar objects before subsequently showing a strong preference for the novel object [@roder2000]. Task complexity can also refer to the complexity of the stimuli. For example, sequential stimuli put greater strain on memory resources than materials in which all components are simultaneously available [e.g., @ferguson2018]. A related dimension is the similarity between stimuli used during familiarization and test: when there is a close perceptual match, infants are more likely to show a novelty preference [e.g., @hunter1988; @thiessen2003]. The combination of these factors informs predictions concerning direction of preference in systematic ways. For example, @thiessen2005 manipulated length of exposure and observed a flip from familiarity to novelty preference after doubling the amount of familiarization received by infants. Similarly, @ferguson2018 manipulated sequential vs. spatial presentation of visual patterns, and observed stronger novelty effects with (a) increasing age and (b) spatial presentation. 
 
 
-The idea behind the current paper emerged from a puzzling pattern of results in a replication of a published study focused on non-linguistic artificial grammar learning in 12-month-olds [@santolin2019]. We observed a flip in preference from novelty to familiarity between the original study and its replication [@santolin2019a], despite the use of identical stimuli and procedures. While there were some differences between the studies (most notably, in the location in which the studies were run), one main factor stood out to us: many of the infants in the study that elicited a novelty preference had participated in prior studies using the Head-turn Preference Procedure (HPP), whereas most of the infants in the study that elicited a familiarity preference were first-time HPP participants. We reasoned that the more familiarity infants had with the lab apparatus and task demands, the more likely they would be to learn rapidly, leading to a novelty preference. To explore this question, we combined the data from these two experiments with the data from two other published artificial grammar learning tasks with similar designs that included 12-month-olds who ranged in the number of lab visits [@saffran2008, Exp. 1 Language P; and @saffran2003, Exp. 2]. Our hypothesis was that the amount of infants’ experience with HPP would affect direction of preference.
+The idea behind the current paper emerged from a puzzling pattern of results in a replication of a published study focused on non-linguistic artificial grammar learning in 12-month-olds [@santolin2019]. We observed a flip in preference from novelty to familiarity between the original study and its replication [@santolin2019a], despite the use of identical stimuli and procedures. While there were some differences between the studies (most notably, in the location in which the studies were run), one main factor stood out to us: many of the infants in the study that elicited a novelty preference had participated in prior studies using the Head-turn Preference Procedure (HPP), whereas most of the infants in the study that elicited a familiarity preference were first-time HPP participants. We reasoned that the more familiarity infants had with the lab apparatus and task demands, the more likely they would be to learn rapidly, leading to a novelty preference. To investigate this question, we conducted exploratory analyses combining the data from these two experiments with the data from two other published artificial grammar learning tasks with similar design that included 12-month-olds who ranged in the number of lab visits [@saffran2008, Exp. 1 Language P; and @saffran2003, Exp. 2]. Our hypothesis was that the amount of infants’ experience with HPP would affect direction of preference.
 
 
 # Methods {#methods}
@@ -122,8 +122,10 @@ The interaction was statistically significant, *F*(`r printnum(anova$df[4])`,`r 
 
 The main effect of the HPP predictor was also significant, *F*(`r printnum(anova$df[3])`,`r printnum(anova$df_res[3])`) `r printnum(anova$f[3], add_equals=TRUE)`, *p* `r printp(anova$p[3], add_equals = TRUE)`, indicating that the Test Item by HPP interaction is mainly driven by a significant decrease in looking time to familiar items as the number of HPP visits increases. There was no evidence that a greater number of HPP visits was accompanied by longer looking to novel items, *F*(`r printnum(anova.novel$df[3])`,`r printnum(anova.novel$df_res[3])`) `r printnum(anova.novel$f[3], add_equals=TRUE)`, *p* `r printp(anova.novel$p[3], add_equals = TRUE)`. 
 
+The number of infants in our dataset who had participated in many HPP studies were very small; in particular, the five and six HPP visits groups each included only a single infant. We thus reanalyzed the data to ensure that the pattern of results was not driven by the small number of infants who had visited the lab far more times than most; these participants may not be representative of our samples more generally. The pattern of results was unchanged, indicating that the interaction effect was not driven exclusively by participants with an unusually high number of visits (HPP 1-5: *F*(`r printnum(anova5$df[4])`,`r printnum(anova5$df_res[4])`) `r printnum(anova5$f[4], add_equals=TRUE)`, *p* `r printp(anova5$p[4], add_equals = TRUE)`; HPP 1-4: *F*(`r printnum(anova4$df[4])`,`r printnum(anova4$df_res[4])`) `r printnum(anova4$f[4], add_equals=TRUE)`, *p* `r printp(anova4$p[4], add_equals = TRUE)`; HPP 1-3: *F*(`r printnum(anova3$df[4])`,`r printnum(anova3$df_res[4])`) `r printnum(anova3$f[4], add_equals=TRUE)`, *p* `r printp(anova3$p[4], add_equals = TRUE)`). Notably, the interaction is significant even with the subset of infants who participated in 1-2 HPP experiments only *F*(`r printnum(anova2$df[4])`,`r printnum(anova2$df_res[4])`) `r printnum(anova2$f[4], add_equals=TRUE)`, *p* `r printp(anova2$p[4], add_equals = TRUE)`; see SI, [Section 4](#s4),  for details).
 
-Results also hold when reducing the data to infants with less than six HPP visits, indicating that the interaction effect was not driven exclusively by participants with an unusually high number of visits [HPP 1-5: *F*(`r printnum(anova5$df[4])`,`r printnum(anova5$df_res[4])`) `r printnum(anova5$f[4], add_equals=TRUE)`, *p* `r printp(anova5$p[4], add_equals = TRUE)`; HPP 1-4: *F*(`r printnum(anova4$df[4])`,`r printnum(anova4$df_res[4])`) `r printnum(anova4$f[4], add_equals=TRUE)`, *p* `r printp(anova4$p[4], add_equals = TRUE)`; HPP 1-3: *F*(`r printnum(anova3$df[4])`,`r printnum(anova3$df_res[4])`) `r printnum(anova3$f[4], add_equals=TRUE)`, *p* `r printp(anova3$p[4], add_equals = TRUE)`]. Notably, the interaction is significant even with the subset of infants who participated in 1-2 HPP experiments only, HPP 1-2: *F*(`r printnum(anova2$df[4])`,`r printnum(anova2$df_res[4])`) `r printnum(anova2$f[4], add_equals=TRUE)`, *p* `r printp(anova2$p[4], add_equals = TRUE)`.
+In addition, we conducted the main analysis on the older datasets of @saffran2003 and @saffran2008 alone, and found a similar significant interaction between test item (novel vs. familiar) and number of HPP visits (*F*(`r printnum(anova_older$df[4])`,`r printnum(anova_older$df_res[4])`) `r printnum(anova_older$f[4], add_equals=TRUE)`, *p* `r printp(anova_older$p[4], add_equals = TRUE)`); see SI, [Section 5](#s5) for details). 
+
 
 
 ```{r tab1, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -137,7 +139,7 @@ anova %>%
   kable(#note = "Degrees of freedom were approximated using the Kenward-Rogers approach, thus sometimes result in non-integers. ",
         col.names = c("**Coefficient**", "***SEM***", "**95\\% CI**", "***F***", "**Den. *df***", "***p***"),
         row.names = TRUE,
-        align = "c",
+        align = "l",
         digits = 3,
         caption = "Summary of the results of the linear mixed-effects model.",
         format = "pandoc")
@@ -145,7 +147,7 @@ anova %>%
 ```
 
 
-```{r fig2, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.cap="A: Difference in looking time between novel and familiar trials, as a function of HPP visits. Shaded bands indicate 95\\% CIs. Points represente group means, with error bars representing 95\\% CIs. B: Predicted looking time (in ms) for familiar and novel test items plotted against number of HPP visits. Shaded bands represent +1/-1 SEs. Points represent group means with +1/-1 SEs as error bars."}
+```{r fig2, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.cap="A: Difference in looking time between novel and familiar trials, as a function of HPP visits. Shaded bands indicate 95\\% CIs. Points represent group means, with error bars representing 95\\% CIs. B: Predicted looking time (in ms) for familiar and novel test items plotted against number of HPP visits. Shaded bands represent +1/-1 SEs. Points represent group means with +1/-1 SEs as error bars."}
 
 include_graphics(here("Figures", "02_interaction.png"))
 
@@ -155,13 +157,15 @@ include_graphics(here("Figures", "02_interaction.png"))
 # Discussion {#discussion}
 
 
-Experience with the Head-turn Preference Procedure affects direction of preference, at least for the subset of studies examined in this article. The model combined four experiments with 12-month-old infants performing artificial grammar learning tasks. Infants who had *not* previously experienced the HPP setting were more likely to show familiarity preferences than infants who had prior experience. One possible explanation for this finding relates to the structure of the HPP task. There are at least two types of information that must be simultaneously encoded during an infant’s first HPP experiment: 1) visual-auditory contingency (i.e., sounds appear contingently on the infant looking at the screen), and 2) the experiment stimuli (e.g., word sequences, sound streams). When experiencing HPP for the first time, infants must both learn the structure of the HPP method and solve the learning problem itself (e.g., grammatical pattern learning). Such double-processing of information likely increases the task complexity, biasing results towards familiarity preferences. Infants who return to the lab for subsequent HPP experiments may be more able to focus on the learning problem, resulting in better learning as evidenced by novelty preferences. 
+Experience with the Head-turn Preference Procedure affects direction of preference, at least for the subset of studies examined in this article. The exploratory analyses included data from four experiments with 12-month-old infants performing artificial grammar learning tasks. Infants who had *not* previously experienced the HPP setting were more likely to show familiarity preferences than infants who had prior experience. One possible explanation for this finding relates to the structure of the HPP task. There are at least two types of information that must be simultaneously encoded during an infant’s first HPP experiment: 1) visual-auditory contingency (i.e., sounds appear contingently on the infant looking at the screen), and 2) the experiment stimuli (e.g., word sequences, sound streams). When experiencing HPP for the first time, infants must both learn the structure of the HPP method and solve the learning problem itself (e.g., grammatical pattern learning). Such double-processing of information likely increases the task complexity, biasing results towards familiarity preferences. Infants who return to the lab for subsequent HPP experiments may be more able to focus on the learning problem, resulting in better learning as evidenced by novelty preferences. 
 
 
 It is important to notice that this effect may not just be limited to experiencing the HPP setting *per se*, but may also be influenced by the laboratory visit itself. When infants visit the lab for the first time, they face an unusual situation: a new environment with unfamiliar people, testing rooms with a peculiar design (e.g., monochrome walls with big screens), and novel sounds and images (e.g., blinking lights). This is a significant amount of information for a young infant to process at once. In contrast, as infants come back to the lab for subsequent studies, the location, testing room and research staff may become more familiar, reducing the information load [see @rovee-collier1997, for effects of consistent training and testing contexts on reminding infants of details of prior experiences]. In the current study, the number of laboratory visits was significantly correlated with the number of HPP visits, *r*(`r printnum(correlation$df)` = `r printnum(correlation$r, gt1 = FALSE)`, *p* `r printp(correlation$p)`, 95% CI = [`r printnum(correlation$ci_low, gt1 = FALSE)`, `r printnum(correlation$ci_high, gt1 = FALSE)`]), therefore the current analyses cannot discern which type of previous experience (HPP procedure and/or lab setting) is responsible for the observed results. 
 
 	
-Our findings have important implications for the interpretation of directions of preference in future studies. Prior experience with a lab or research paradigm could account for distinct, and sometimes counterintuitive, patterns of preference. We encourage researchers to track number of visits as part of their lab’s workflow, and to consider this form of prior experience when preregistering analytic plans and interpreting results. Doing so may be particularly informative when unpredicted directions of preferences emerge, as in the replication that spawned the current set of analyses. It is also possible that apparent null effects may be driven by variability in the number of lab visits; infants with more lab experience may show novelty preferences while infants with less lab experience may exhibit familiarity preferences, leading to an overall lack of preference across the sample. Effects of prior research experience are less likely to be evident in studies with large effect sizes, where there is less intra-infant variability. In addition, apparent age differences may conceivably be the result not of age per se, but of the number of prior studies, since older infants are likely to have participated in more experiments than younger infants, on average. By tracking infants’ study participation, it becomes possible to examine these potential effects, which may be especially apparent in tasks that yield relatively small effects (as most infant studies do). 
+Our findings have important implications for the interpretation of directions of preference in future studies. Prior experience with a lab or research paradigm could account for distinct, and sometimes counterintuitive, patterns of preference. We encourage researchers to track number of visits as part of their lab’s workflow, and to consider this form of prior experience when preregistering analytic plans and interpreting results. Doing so may be particularly informative when unpredicted directions of preferences emerge, as in the replication that spawned the current set of analyses. Recording the type of task implemented with HPP might also be informative. Accumulating experience with different tasks (e.g., those measuring spontaneous preferences versus those measuring learning over the course of an experiment) might have a different effect on the results than having experienced only tasks including a learning phase.
+
+It is also possible that apparent null effects may be driven by variability in the number of lab visits; infants with more lab experience may show novelty preferences while infants with less lab experience may exhibit familiarity preferences, leading to an overall lack of preference across the sample. Effects of prior research experience are less likely to be evident in studies with large effect sizes, where there is less intra-infant variability. In addition, apparent age differences may conceivably be the result not of age per se, but of the number of prior studies, since older infants are likely to have participated in more experiments than younger infants, on average. By tracking infants’ study participation, it becomes possible to examine these potential effects, which may be especially apparent in tasks that yield relatively small effects (as most infant studies do). 
 
 
 A related hypothesis suggests that less-common directions of preference for studies addressing a given topic (e.g., rule learning) likely represent sign errors [a sampling error in which the estimated effect has the wrong sign, e.g. a novelty preference is incorrectly estimated to be a familiarity preference; see also @gelman2014] as opposed to true infant preferences [@rabagliati2019; @bergmann2019]. While this may be the case, it is also possible that some discrepancies in preferential looking are related to factors like those investigated in the current study: prior experience with the testing environment. For this reason, unexpected directions of preference may actually be meaningful and informative about the state of infant learners in specific studies. 
@@ -174,7 +178,7 @@ These results also suggest extensions of models of the factors inducing differen
 
 ```{r render_appendix, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 
-render_appendix(x = "flip_manuscript_appendix.Rmd", bibliography = "./References/Flip.bib", csl = rmarkdown::metadata$csl, quiet = TRUE)
+render_appendix(x = "flip_manuscript_appendix.Rmd", bibliography = "../References/Flip.bib", csl = rmarkdown::metadata$csl, quiet = TRUE)
 
 ```
 
@@ -191,12 +195,11 @@ render_appendix(x = "flip_manuscript_appendix.Rmd", bibliography = "./References
 
 ```{r create_r-references, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-r_refs(file = "./References/Flip.bib")
+r_refs(file = "../References/Flip.bib")
 
 ```
 
 ```{r echo = FALSE, results = 'asis', cache = FALSE}
-render_appendix('flip_manuscript_appendix.Rmd')
+papaja::render_appendix('flip_manuscript_appendix.Rmd')
 ```
-
 

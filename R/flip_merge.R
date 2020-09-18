@@ -5,7 +5,11 @@
 # load package
 library(dplyr)
 library(purrr)
+library(here)
 library(ggplot2)
+
+# load functions
+source(here("R", "functions.R"))
 
 #### import data ################################################
 anova2 <- read.csv(here("Data", "HPP2", "02_results-lmem-2.csv"), stringsAsFactors = FALSE)      
@@ -29,20 +33,21 @@ anova %>%
          term = factor(term, ordered = TRUE),
          is6 = subset=="HPP6") %>%
   ggplot(aes(subset, estimate, shape = is6, colour = subset, fill = estimate)) +
-  facet_wrap(~term, ncol = 1) +
+  facet_wrap(~term, ncol = 2) +
   geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_errorbar(aes(ymin = ci1, ymax = ci2), alpha = 0.4, width = 0, size = 6) +
+  geom_errorbar(aes(ymin = ci1, ymax = ci2), alpha = 0.4, width = 0, size = 3) +
   geom_errorbar(aes(ymin = estimate-std_error, ymax = estimate+std_error), width = 0) +
-  geom_point(size = 5) +
+  geom_point(size = 2) +
   labs(x = "Term", y = "Coefficient\n") +
   coord_flip() +
   scale_color_brewer(palette = "Set1") +
   theme_custom +
   theme(legend.position = "none",
-        axis.ticks = element_blank(),
+        text = element_text(size = 8),
+        axis.ticks.y = element_blank(),
         axis.title.y = element_blank()) +
-  ggsave(here("Figures", "05_anova-merged.png"), height = 7) +
-  ggsave(here("Figures", "05_anova-merged.pdf"), height = 7)
+  ggsave(here("Figures", "05_anova-merged.png"), height = 2.5) +
+  ggsave(here("Figures", "05_anova-merged.pdf"), height = 2.5)
 
 
 #### export data ################################################

@@ -8,7 +8,7 @@ library(tidyr)       # for reshaping datasets
 library(ggplot2)     # for visualising data
 library(correlation) # for computing the Pearson correlation
 library(papaja)      # for formatting p-values
-library(janitor)     # for cleaning column namaes
+library(janitor)     # for cleaning column names
 library(here)        # for locating files
 
 # import functions
