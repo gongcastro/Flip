@@ -179,8 +179,8 @@ ggplot(study_data, aes(item, looking_time, fill = item)) +
   geom_segment(aes(x = 1, xend = 2, y = mean(dat$looking_time+1800), yend = mean(dat$looking_time+1800)), size = 0.5) +
   geom_text(aes(x = 1.5, y = mean(dat$looking_time+2000)), label = "*", size = 10) +
   labs(x = "Test item", y = "Looking time (ms)") +
-  scale_fill_grey(start = 0, end = 0.50) +
-  scale_y_continuous(limits = c(0, 10000), labels = add_big_mark) +
+  scale_fill_brewer(palette = "Set1") +
+  scale_y_continuous(limits = c(0, 10000)) +
   theme_custom +
   theme(legend.position = "none") +
   ggsave(here("Figures", "Older", "01_lookingtimes-study-older.png"), height = 6, width = 12)
@@ -194,10 +194,17 @@ ggplot(dat_diff_hpp, aes(hpp, mean_novelty_preference)) +
   geom_point(aes(size = N), colour = "#e34a33") +
   xlab("HPP visits")+
   scale_x_continuous(breaks = seq(1, 6))+
-  scale_y_continuous(breaks = seq(-1000, 4000, 1000), labels = add_big_mark)+
-  ylab("Difference in Looking Time (ms)\n(Novel - Familiar)")+
+  scale_y_continuous(breaks = seq(-1000, 4000, 1000))+
+  ylab("Difference in Looking Time (ms)\n(Novel - Familiar)\n")+
   theme_custom +
-  theme(legend.position = c(0.15, 0.7)) +
+  theme(legend.position = c(0.15, 0.7),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 15),
+        axis.title = element_text(size = 15),
+        axis.text = element_text(size = 12)) +
+  
+  plot_spacer() +
+  
   
   # 9.3. Predictions
   ggplot(predictions, aes(hpp, fit, fill = item, shape = item, colour = item, linetype = item)) +
@@ -207,19 +214,22 @@ ggplot(dat_diff_hpp, aes(hpp, mean_novelty_preference)) +
              size = 3, position = position_dodge(width = 0.3)) +
   geom_errorbar(data = dat_aggregated, aes(x = hpp, y = mean_looking_time, ymax = mean_looking_time+sem, ymin = mean_looking_time-sem),
                 width = 0, position = position_dodge(width = 0.3), linetype = "solid") +
-  labs(x = "HPP visits", y = "Looking time (ms)\n",
+  labs(x = "\nHPP visits", y = "Looking time (ms)\n",
        colour = "Test item", fill = "Test item", linetype = "Test item", shape = "Test item") +
-  scale_y_continuous(labels = add_big_mark) +
   scale_x_continuous(breaks = seq(1, 6, by = 1)) +
   scale_colour_brewer(palette = "Set1") +
   scale_fill_brewer(palette = "Set1") +
   theme_custom +
   theme(legend.position = c(0.2, 0.2), 
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 15),
+        axis.title = element_text(size = 15),
+        axis.text = element_text(size = 12),
         legend.direction = "vertical") +
-  plot_layout(guides = "keep") +
+  plot_layout(guides = "keep", widths = c(0.45, 0.1, 0.45)) +
   plot_annotation(tag_levels = "A", theme = theme_custom) +
-  ggsave(here("Figures", "Older", "02_interaction.png"), width = 12, height = 5) +
-  ggsave(here("Figures", "Older", "02_interaction.pdf"), width = 12, height = 5) 
+  ggsave(here("Figures", "Older", "02_interaction-older.png"), width = 12, height = 5) +
+  ggsave(here("Figures", "Older", "02_interaction-older.pdf"), width = 12, height = 5) 
 
 
 #### 10. Export results ########################################################
