@@ -9,3 +9,5 @@ This repository is organised as follows:
 * **Figures**: PNG files to be included in the RMarkdown files.
 * `flip_manuscript.Rmd`: RMarkdown script to generate the reproducible manuscript using the `papaja` package. 
 * `flip_manuscript_appendix.Rmd`: RMarkdown script to generate the reproducible manuscript using the `papaja` package. 
+
+More information an be found at the OSF repository: https://osf.io/g95ub/.
